@@ -1,0 +1,4437 @@
+{
+  "info": {
+    "name": "Flavor - Web Routes",
+    "description": "Flavor is a session authenticated, server rendered application. There is no JSON API.\n\nHow to use this collection:\n1. Set base_url to your application URL, for example http://localhost:8000.\n2. Run 'Load sign in page' first. Its test script extracts the CSRF token into the csrf_token variable.\n3. Run 'Sign in'. Postman's cookie jar keeps the session cookie for every request that follows.\n4. Re-run 'Load sign in page' whenever a request returns 419, which means the token expired.\n\nEvery mutating request sends x-www-form-urlencoded data with a _token field. PUT, PATCH and DELETE are sent as POST with a _method override, matching how the HTML forms submit.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "csrf_token",
+      "value": ""
+    },
+    {
+      "key": "email",
+      "value": "manager@flavor.test"
+    },
+    {
+      "key": "password",
+      "value": "password"
+    },
+    {
+      "key": "meal_id",
+      "value": "1"
+    },
+    {
+      "key": "offer_id",
+      "value": "1"
+    },
+    {
+      "key": "order_id",
+      "value": "1"
+    },
+    {
+      "key": "reservation_id",
+      "value": "1"
+    },
+    {
+      "key": "category_id",
+      "value": "1"
+    },
+    {
+      "key": "ingredient_id",
+      "value": "1"
+    },
+    {
+      "key": "table_id",
+      "value": "1"
+    },
+    {
+      "key": "location_id",
+      "value": "1"
+    },
+    {
+      "key": "employee_id",
+      "value": "1"
+    },
+    {
+      "key": "customer_id",
+      "value": "1"
+    },
+    {
+      "key": "maintenance_id",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Public",
+      "description": "Pages any visitor can reach without signing in.",
+      "item": [
+        {
+          "name": "Home",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": []
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Menu",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/menu?search=&sort_by=name&sort_dir=asc&filters[category_id]={{category_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "menu"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": ""
+                },
+                {
+                  "key": "sort_by",
+                  "value": "name"
+                },
+                {
+                  "key": "sort_dir",
+                  "value": "asc"
+                },
+                {
+                  "key": "filters[category_id]",
+                  "value": "{{category_id}}"
+                }
+              ]
+            },
+            "description": "Supports search, sort and filter parameters shared by every listing."
+          },
+          "response": []
+        },
+        {
+          "name": "Meal detail",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/menu/{{meal_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "menu",
+                "{{meal_id}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Offers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/offers",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "offers"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Offer detail",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/offers/{{offer_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "offers",
+                "{{offer_id}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Switch to Arabic",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/locale/ar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "locale",
+                "ar"
+              ]
+            },
+            "description": "Writes the flavor_locale cookie and redirects back."
+          },
+          "response": []
+        },
+        {
+          "name": "Switch to French",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/locale/fr",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "locale",
+                "fr"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Switch to English",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/locale/en",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "locale",
+                "en"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02 Authentication",
+      "description": "Sign in, registration, verification and password reset.",
+      "item": [
+        {
+          "name": "Load sign in page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "login"
+              ]
+            },
+            "description": "Run this first. The test script stores the CSRF token."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.text();",
+                  "const match = body.match(/name=\"_token\" value=\"([^\"]+)\"/);",
+                  "if (match) {",
+                  "    pm.collectionVariables.set('csrf_token', match[1]);",
+                  "    pm.test('CSRF token captured', () => pm.expect(match[1]).to.be.a('string'));",
+                  "} else {",
+                  "    pm.test('CSRF token captured', () => pm.expect.fail('No _token field in the response'));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Sign in",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "{{email}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}",
+                  "type": "text"
+                },
+                {
+                  "key": "remember",
+                  "value": "1",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "login"
+              ]
+            },
+            "description": "Sets the session cookie and, with remember, the persistent login cookie."
+          },
+          "response": []
+        },
+        {
+          "name": "Load registration page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "register"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "first_name",
+                  "value": "Test",
+                  "type": "text"
+                },
+                {
+                  "key": "last_name",
+                  "value": "Customer",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "new.customer@flavor.test",
+                  "type": "text"
+                },
+                {
+                  "key": "phone",
+                  "value": "0933123456",
+                  "type": "text"
+                },
+                {
+                  "key": "gender",
+                  "value": "Male",
+                  "type": "text"
+                },
+                {
+                  "key": "location_id",
+                  "value": "{{location_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "password",
+                  "type": "text"
+                },
+                {
+                  "key": "password_confirmation",
+                  "value": "password",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "register"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Verification notice",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/verify-email",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "verify-email"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Submit verification code",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "code",
+                  "value": "123456",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/verify-email",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "verify-email"
+              ]
+            },
+            "description": "The code is written to the log when MAIL_MAILER=log."
+          },
+          "response": []
+        },
+        {
+          "name": "Resend verification code",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/verify-email/resend",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "verify-email",
+                "resend"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Forgot password page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/forgot-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "forgot-password"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Request reset link",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "{{email}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/forgot-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "forgot-password"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Sign out",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "logout"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03 Customer account",
+      "description": "Requires a signed in, verified customer.",
+      "item": [
+        {
+          "name": "Account dashboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/account",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/account/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "profile"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Update profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "first_name",
+                  "value": "Yara",
+                  "type": "text"
+                },
+                {
+                  "key": "last_name",
+                  "value": "Mansour",
+                  "type": "text"
+                },
+                {
+                  "key": "phone",
+                  "value": "0933200000",
+                  "type": "text"
+                },
+                {
+                  "key": "gender",
+                  "value": "Female",
+                  "type": "text"
+                },
+                {
+                  "key": "location_id",
+                  "value": "{{location_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "_method",
+                  "value": "PUT",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/account/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "profile"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Change password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "current_password",
+                  "value": "password",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "newpassword",
+                  "type": "text"
+                },
+                {
+                  "key": "password_confirmation",
+                  "value": "newpassword",
+                  "type": "text"
+                },
+                {
+                  "key": "_method",
+                  "value": "PUT",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/account/profile/password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "profile",
+                "password"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Cart",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/account/cart",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "cart"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Add meal to cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "type",
+                  "value": "meal",
+                  "type": "text"
+                },
+                {
+                  "key": "id",
+                  "value": "{{meal_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "quantity",
+                  "value": "2",
+                  "type": "text"
+                },
+                {
+                  "key": "notes",
+                  "value": "No chilli please",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/account/cart",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "cart"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Add offer to cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "type",
+                  "value": "offer",
+                  "type": "text"
+                },
+                {
+                  "key": "id",
+                  "value": "{{offer_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "quantity",
+                  "value": "1",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/account/cart",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "cart"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Update cart line",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "type",
+                  "value": "meal",
+                  "type": "text"
+                },
+                {
+                  "key": "id",
+                  "value": "{{meal_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "quantity",
+                  "value": "3",
+                  "type": "text"
+                },
+                {
+                  "key": "notes",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "_method",
+                  "value": "PUT",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/account/cart",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "cart"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Remove cart line",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "_method",
+                  "value": "DELETE",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/account/cart/meal/{{meal_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "cart",
+                "meal",
+                "{{meal_id}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Clear cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "_method",
+                  "value": "DELETE",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/account/cart",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "cart"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Checkout page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/account/checkout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "checkout"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Place order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "location_id",
+                  "value": "{{location_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "notes",
+                  "value": "Ring the top bell",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/account/checkout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "checkout"
+              ]
+            },
+            "description": "Runs in a transaction: locks stock, writes the order, consumes ingredients."
+          },
+          "response": []
+        },
+        {
+          "name": "My orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/account/orders?filters[status]=Pending",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "filters[status]",
+                  "value": "Pending"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Order detail",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/account/orders/{{order_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "orders",
+                "{{order_id}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Move order back to cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/account/orders/{{order_id}}/revert",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "orders",
+                "{{order_id}}",
+                "revert"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "_method",
+                  "value": "DELETE",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/account/orders/{{order_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "orders",
+                "{{order_id}}"
+              ]
+            },
+            "description": "Restores the consumed stock."
+          },
+          "response": []
+        },
+        {
+          "name": "Restore cancelled order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/account/orders/{{order_id}}/restore",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "orders",
+                "{{order_id}}",
+                "restore"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "My reservations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/account/reservations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "reservations"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Booking form with availability",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/account/reservations/create?start_time=2026-08-12T19:00&end_time=2026-08-12T21:00&party_size=4",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "reservations",
+                "create"
+              ],
+              "query": [
+                {
+                  "key": "start_time",
+                  "value": "2026-08-12T19:00"
+                },
+                {
+                  "key": "end_time",
+                  "value": "2026-08-12T21:00"
+                },
+                {
+                  "key": "party_size",
+                  "value": "4"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Create reservation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "start_time",
+                  "value": "2026-08-12 19:00:00",
+                  "type": "text"
+                },
+                {
+                  "key": "end_time",
+                  "value": "2026-08-12 21:00:00",
+                  "type": "text"
+                },
+                {
+                  "key": "party_size",
+                  "value": "4",
+                  "type": "text"
+                },
+                {
+                  "key": "table_ids[]",
+                  "value": "{{table_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "special_requests",
+                  "value": "Birthday table",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/account/reservations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "reservations"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Reservation detail",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/account/reservations/{{reservation_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "reservations",
+                "{{reservation_id}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel reservation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "_method",
+                  "value": "DELETE",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/account/reservations/{{reservation_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "reservations",
+                "{{reservation_id}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Rate a meal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "stars",
+                  "value": "5",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/account/ratings/meals/{{meal_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "ratings",
+                "meals",
+                "{{meal_id}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Rate an offer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                },
+                {
+                  "key": "stars",
+                  "value": "4",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/account/ratings/offers/{{offer_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "ratings",
+                "offers",
+                "{{offer_id}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04 Staff workspace",
+      "description": "Every group is guarded by an ability derived from the employee position. Sign in as manager@flavor.test to reach all of them; other roles receive 403 outside their sections.",
+      "item": [
+        {
+          "name": "Reports",
+          "item": [
+            {
+              "name": "Workspace dashboard",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Finance report",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/reports/finance?from=2026-08-01&to=2026-08-31",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "reports",
+                    "finance"
+                  ],
+                  "query": [
+                    {
+                      "key": "from",
+                      "value": "2026-08-01"
+                    },
+                    {
+                      "key": "to",
+                      "value": "2026-08-31"
+                    }
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Inventory report",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/reports/inventory",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "reports",
+                    "inventory"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Menu performance",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/reports/menu",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "reports",
+                    "menu"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Sales",
+          "item": [
+            {
+              "name": "Orders",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/orders?filters[status]=Confirmed&filters[order_type]=Delivery",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "orders"
+                  ],
+                  "query": [
+                    {
+                      "key": "filters[status]",
+                      "value": "Confirmed"
+                    },
+                    {
+                      "key": "filters[order_type]",
+                      "value": "Delivery"
+                    }
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Cancelled orders",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/orders/trashed",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "orders",
+                    "trashed"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Order detail",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/orders/{{order_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "orders",
+                    "{{order_id}}"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Change order status",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "status",
+                      "value": "Confirmed",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "PATCH",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/orders/{{order_id}}/status",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "orders",
+                    "{{order_id}}",
+                    "status"
+                  ]
+                },
+                "description": "Rejected unless the transition is allowed by the status map."
+              },
+              "response": []
+            },
+            {
+              "name": "Restore order",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/orders/{{order_id}}/restore",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "orders",
+                    "{{order_id}}",
+                    "restore"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Delete order permanently",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "DELETE",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/orders/{{order_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "orders",
+                    "{{order_id}}"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Floor",
+          "item": [
+            {
+              "name": "Reservations",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/reservations?filters[status]=Confirmed",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "reservations"
+                  ],
+                  "query": [
+                    {
+                      "key": "filters[status]",
+                      "value": "Confirmed"
+                    }
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Booking form",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/reservations/create?start_time=2026-08-12T19:00&end_time=2026-08-12T21:00&party_size=6",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "reservations",
+                    "create"
+                  ],
+                  "query": [
+                    {
+                      "key": "start_time",
+                      "value": "2026-08-12T19:00"
+                    },
+                    {
+                      "key": "end_time",
+                      "value": "2026-08-12T21:00"
+                    },
+                    {
+                      "key": "party_size",
+                      "value": "6"
+                    }
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Create reservation",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "start_time",
+                      "value": "2026-08-12 19:00:00",
+                      "type": "text"
+                    },
+                    {
+                      "key": "end_time",
+                      "value": "2026-08-12 21:00:00",
+                      "type": "text"
+                    },
+                    {
+                      "key": "party_size",
+                      "value": "6",
+                      "type": "text"
+                    },
+                    {
+                      "key": "table_ids[]",
+                      "value": "{{table_id}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "special_requests",
+                      "value": "",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/reservations",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "reservations"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Reservation detail",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/reservations/{{reservation_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "reservations",
+                    "{{reservation_id}}"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Change reservation status",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "status",
+                      "value": "Confirmed",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "PATCH",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/reservations/{{reservation_id}}/status",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "reservations",
+                    "{{reservation_id}}",
+                    "status"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Reassign tables",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "start_time",
+                      "value": "2026-08-12 19:00:00",
+                      "type": "text"
+                    },
+                    {
+                      "key": "end_time",
+                      "value": "2026-08-12 21:30:00",
+                      "type": "text"
+                    },
+                    {
+                      "key": "table_ids[]",
+                      "value": "{{table_id}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "PUT",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/reservations/{{reservation_id}}/tables",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "reservations",
+                    "{{reservation_id}}",
+                    "tables"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Delete reservation",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "DELETE",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/reservations/{{reservation_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "reservations",
+                    "{{reservation_id}}"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Tables",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/tables",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "tables"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "New table form",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/tables/create",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "tables",
+                    "create"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Create table",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "table_number",
+                      "value": "T99",
+                      "type": "text"
+                    },
+                    {
+                      "key": "capacity",
+                      "value": "4",
+                      "type": "text"
+                    },
+                    {
+                      "key": "location",
+                      "value": "Indoor",
+                      "type": "text"
+                    },
+                    {
+                      "key": "price_per_hour",
+                      "value": "0",
+                      "type": "text"
+                    },
+                    {
+                      "key": "is_active",
+                      "value": "1",
+                      "type": "text"
+                    },
+                    {
+                      "key": "description",
+                      "value": "Corner table",
+                      "type": "text"
+                    },
+                    {
+                      "key": "translations[ar][description]",
+                      "value": "طاولة زاوية",
+                      "type": "text"
+                    },
+                    {
+                      "key": "translations[fr][description]",
+                      "value": "Table d'angle",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/tables",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "tables"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Edit table form",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/tables/{{table_id}}/edit",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "tables",
+                    "{{table_id}}",
+                    "edit"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Update table",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "table_number",
+                      "value": "T99",
+                      "type": "text"
+                    },
+                    {
+                      "key": "capacity",
+                      "value": "6",
+                      "type": "text"
+                    },
+                    {
+                      "key": "location",
+                      "value": "Outdoor",
+                      "type": "text"
+                    },
+                    {
+                      "key": "price_per_hour",
+                      "value": "15000",
+                      "type": "text"
+                    },
+                    {
+                      "key": "is_active",
+                      "value": "1",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "PUT",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/tables/{{table_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "tables",
+                    "{{table_id}}"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Delete table",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "DELETE",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/tables/{{table_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "tables",
+                    "{{table_id}}"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Kitchen",
+          "item": [
+            {
+              "name": "Meals",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/meals?filters[availability]=available&sort_by=percentage",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "meals"
+                  ],
+                  "query": [
+                    {
+                      "key": "filters[availability]",
+                      "value": "available"
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "percentage"
+                    }
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "New meal form",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/meals/create",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "meals",
+                    "create"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Create meal",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "name",
+                      "value": "Grilled halloumi",
+                      "type": "text"
+                    },
+                    {
+                      "key": "category_id",
+                      "value": "{{category_id}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "prep_time",
+                      "value": "00:15",
+                      "type": "text"
+                    },
+                    {
+                      "key": "percentage",
+                      "value": "45",
+                      "type": "text"
+                    },
+                    {
+                      "key": "availability",
+                      "value": "available",
+                      "type": "text"
+                    },
+                    {
+                      "key": "description",
+                      "value": "Halloumi grilled with olive oil and thyme",
+                      "type": "text"
+                    },
+                    {
+                      "key": "is_vegetarian",
+                      "value": "1",
+                      "type": "text"
+                    },
+                    {
+                      "key": "translations[ar][name]",
+                      "value": "حلوم مشوي",
+                      "type": "text"
+                    },
+                    {
+                      "key": "translations[ar][description]",
+                      "value": "حلوم مشوي بزيت الزيتون والزعتر",
+                      "type": "text"
+                    },
+                    {
+                      "key": "translations[fr][name]",
+                      "value": "Halloumi grillé",
+                      "type": "text"
+                    },
+                    {
+                      "key": "translations[fr][description]",
+                      "value": "Halloumi grillé à l'huile d'olive et au thym",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/meals",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "meals"
+                  ]
+                },
+                "description": "Send as multipart/form-data instead if you are attaching an image field."
+              },
+              "response": []
+            },
+            {
+              "name": "Edit meal form",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/meals/{{meal_id}}/edit",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "meals",
+                    "{{meal_id}}",
+                    "edit"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Update meal",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "name",
+                      "value": "Grilled halloumi",
+                      "type": "text"
+                    },
+                    {
+                      "key": "category_id",
+                      "value": "{{category_id}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "prep_time",
+                      "value": "00:18",
+                      "type": "text"
+                    },
+                    {
+                      "key": "percentage",
+                      "value": "50",
+                      "type": "text"
+                    },
+                    {
+                      "key": "availability",
+                      "value": "available",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "PUT",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/meals/{{meal_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "meals",
+                    "{{meal_id}}"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Save recipe",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "ingredients[{{ingredient_id}}]",
+                      "value": "0.25",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "PUT",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/meals/{{meal_id}}/recipe",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "meals",
+                    "{{meal_id}}",
+                    "recipe"
+                  ]
+                },
+                "description": "Quantities of zero detach the ingredient."
+              },
+              "response": []
+            },
+            {
+              "name": "Detach ingredient",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "DELETE",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/meals/{{meal_id}}/recipe/{{ingredient_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "meals",
+                    "{{meal_id}}",
+                    "recipe",
+                    "{{ingredient_id}}"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Remove meal photo",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "DELETE",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/meals/{{meal_id}}/photo",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "meals",
+                    "{{meal_id}}",
+                    "photo"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Delete meal",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "DELETE",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/meals/{{meal_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "meals",
+                    "{{meal_id}}"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Categories",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/categories",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "categories"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Create category",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "name",
+                      "value": "Breakfast",
+                      "type": "text"
+                    },
+                    {
+                      "key": "description",
+                      "value": "Morning plates",
+                      "type": "text"
+                    },
+                    {
+                      "key": "translations[ar][name]",
+                      "value": "الفطور",
+                      "type": "text"
+                    },
+                    {
+                      "key": "translations[ar][description]",
+                      "value": "أطباق الصباح",
+                      "type": "text"
+                    },
+                    {
+                      "key": "translations[fr][name]",
+                      "value": "Petit déjeuner",
+                      "type": "text"
+                    },
+                    {
+                      "key": "translations[fr][description]",
+                      "value": "Assiettes du matin",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/categories",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "categories"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Update category",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "name",
+                      "value": "Breakfast",
+                      "type": "text"
+                    },
+                    {
+                      "key": "description",
+                      "value": "Morning plates",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "PUT",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/categories/{{category_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "categories",
+                    "{{category_id}}"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Delete category",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "DELETE",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/categories/{{category_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "categories",
+                    "{{category_id}}"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Offers",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/offers",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "offers"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Create offer",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "title",
+                      "value": "Weekend brunch",
+                      "type": "text"
+                    },
+                    {
+                      "key": "description",
+                      "value": "Two mains and two drinks",
+                      "type": "text"
+                    },
+                    {
+                      "key": "discount_amount",
+                      "value": "18",
+                      "type": "text"
+                    },
+                    {
+                      "key": "start_date",
+                      "value": "2026-08-10",
+                      "type": "text"
+                    },
+                    {
+                      "key": "end_date",
+                      "value": "2026-08-31",
+                      "type": "text"
+                    },
+                    {
+                      "key": "is_active",
+                      "value": "1",
+                      "type": "text"
+                    },
+                    {
+                      "key": "meals[{{meal_id}}]",
+                      "value": "2",
+                      "type": "text"
+                    },
+                    {
+                      "key": "translations[ar][title]",
+                      "value": "برانش نهاية الأسبوع",
+                      "type": "text"
+                    },
+                    {
+                      "key": "translations[fr][title]",
+                      "value": "Brunch du week-end",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/offers",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "offers"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Update offer",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "title",
+                      "value": "Weekend brunch",
+                      "type": "text"
+                    },
+                    {
+                      "key": "description",
+                      "value": "Two mains and two drinks",
+                      "type": "text"
+                    },
+                    {
+                      "key": "discount_amount",
+                      "value": "20",
+                      "type": "text"
+                    },
+                    {
+                      "key": "start_date",
+                      "value": "2026-08-10",
+                      "type": "text"
+                    },
+                    {
+                      "key": "end_date",
+                      "value": "2026-08-31",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "PUT",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/offers/{{offer_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "offers",
+                    "{{offer_id}}"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Toggle offer",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "PATCH",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/offers/{{offer_id}}/toggle",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "offers",
+                    "{{offer_id}}",
+                    "toggle"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Remove meal from offer",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "DELETE",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/offers/{{offer_id}}/meals/{{meal_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "offers",
+                    "{{offer_id}}",
+                    "meals",
+                    "{{meal_id}}"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Delete offer",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "DELETE",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/offers/{{offer_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "offers",
+                    "{{offer_id}}"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Inventory",
+          "item": [
+            {
+              "name": "Ingredients",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/ingredients?filters[low_stock]=1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "ingredients"
+                  ],
+                  "query": [
+                    {
+                      "key": "filters[low_stock]",
+                      "value": "1"
+                    }
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Create ingredient",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "name",
+                      "value": "Thyme",
+                      "type": "text"
+                    },
+                    {
+                      "key": "unit",
+                      "value": "g",
+                      "type": "text"
+                    },
+                    {
+                      "key": "stock_quantity",
+                      "value": "800",
+                      "type": "text"
+                    },
+                    {
+                      "key": "unit_cost",
+                      "value": "90",
+                      "type": "text"
+                    },
+                    {
+                      "key": "is_active",
+                      "value": "1",
+                      "type": "text"
+                    },
+                    {
+                      "key": "translations[ar][name]",
+                      "value": "زعتر",
+                      "type": "text"
+                    },
+                    {
+                      "key": "translations[ar][unit]",
+                      "value": "غ",
+                      "type": "text"
+                    },
+                    {
+                      "key": "translations[fr][name]",
+                      "value": "Thym",
+                      "type": "text"
+                    },
+                    {
+                      "key": "translations[fr][unit]",
+                      "value": "g",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/ingredients",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "ingredients"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Update ingredient",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "name",
+                      "value": "Thyme",
+                      "type": "text"
+                    },
+                    {
+                      "key": "unit",
+                      "value": "g",
+                      "type": "text"
+                    },
+                    {
+                      "key": "stock_quantity",
+                      "value": "600",
+                      "type": "text"
+                    },
+                    {
+                      "key": "unit_cost",
+                      "value": "95",
+                      "type": "text"
+                    },
+                    {
+                      "key": "is_active",
+                      "value": "1",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "PUT",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/ingredients/{{ingredient_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "ingredients",
+                    "{{ingredient_id}}"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Adjust stock",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "stock_quantity",
+                      "value": "250",
+                      "type": "text"
+                    },
+                    {
+                      "key": "reason",
+                      "value": "Weekly delivery",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "PATCH",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/ingredients/{{ingredient_id}}/stock",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "ingredients",
+                    "{{ingredient_id}}",
+                    "stock"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Delete ingredient",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "DELETE",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/ingredients/{{ingredient_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "ingredients",
+                    "{{ingredient_id}}"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Maintenance",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/maintenances",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "maintenances"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Create maintenance",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "maintenance_item",
+                      "value": "Oven belt",
+                      "type": "text"
+                    },
+                    {
+                      "key": "employee_id",
+                      "value": "{{employee_id}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "price",
+                      "value": "240000",
+                      "type": "text"
+                    },
+                    {
+                      "key": "discount",
+                      "value": "5",
+                      "type": "text"
+                    },
+                    {
+                      "key": "notes",
+                      "value": "Ordered from the supplier",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/maintenances",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "maintenances"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Update maintenance",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "maintenance_item",
+                      "value": "Oven belt",
+                      "type": "text"
+                    },
+                    {
+                      "key": "employee_id",
+                      "value": "{{employee_id}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "price",
+                      "value": "260000",
+                      "type": "text"
+                    },
+                    {
+                      "key": "discount",
+                      "value": "0",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "PUT",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/maintenances/{{maintenance_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "maintenances",
+                    "{{maintenance_id}}"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Delete maintenance",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "DELETE",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/maintenances/{{maintenance_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "maintenances",
+                    "{{maintenance_id}}"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "People",
+          "item": [
+            {
+              "name": "Employees",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/employees?filters[position]=Waiter",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "employees"
+                  ],
+                  "query": [
+                    {
+                      "key": "filters[position]",
+                      "value": "Waiter"
+                    }
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Create employee",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "first_name",
+                      "value": "Rami",
+                      "type": "text"
+                    },
+                    {
+                      "key": "last_name",
+                      "value": "Attar",
+                      "type": "text"
+                    },
+                    {
+                      "key": "email",
+                      "value": "rami@flavor.test",
+                      "type": "text"
+                    },
+                    {
+                      "key": "phone",
+                      "value": "0955111222",
+                      "type": "text"
+                    },
+                    {
+                      "key": "gender",
+                      "value": "Male",
+                      "type": "text"
+                    },
+                    {
+                      "key": "location_id",
+                      "value": "{{location_id}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "national_id",
+                      "value": "01234567890",
+                      "type": "text"
+                    },
+                    {
+                      "key": "position",
+                      "value": "Waiter",
+                      "type": "text"
+                    },
+                    {
+                      "key": "salary",
+                      "value": "950000",
+                      "type": "text"
+                    },
+                    {
+                      "key": "bonus",
+                      "value": "50000",
+                      "type": "text"
+                    },
+                    {
+                      "key": "hire_date",
+                      "value": "2026-08-01",
+                      "type": "text"
+                    },
+                    {
+                      "key": "birth_date",
+                      "value": "1998-04-12",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/employees",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "employees"
+                  ]
+                },
+                "description": "Leaving password empty generates one and emails the credentials."
+              },
+              "response": []
+            },
+            {
+              "name": "Update employee",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "first_name",
+                      "value": "Rami",
+                      "type": "text"
+                    },
+                    {
+                      "key": "last_name",
+                      "value": "Attar",
+                      "type": "text"
+                    },
+                    {
+                      "key": "email",
+                      "value": "rami@flavor.test",
+                      "type": "text"
+                    },
+                    {
+                      "key": "phone",
+                      "value": "0955111222",
+                      "type": "text"
+                    },
+                    {
+                      "key": "gender",
+                      "value": "Male",
+                      "type": "text"
+                    },
+                    {
+                      "key": "national_id",
+                      "value": "01234567890",
+                      "type": "text"
+                    },
+                    {
+                      "key": "position",
+                      "value": "Chef",
+                      "type": "text"
+                    },
+                    {
+                      "key": "salary",
+                      "value": "1500000",
+                      "type": "text"
+                    },
+                    {
+                      "key": "bonus",
+                      "value": "80000",
+                      "type": "text"
+                    },
+                    {
+                      "key": "hire_date",
+                      "value": "2026-08-01",
+                      "type": "text"
+                    },
+                    {
+                      "key": "birth_date",
+                      "value": "1998-04-12",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "PUT",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/employees/{{employee_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "employees",
+                    "{{employee_id}}"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Delete employee",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "DELETE",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/employees/{{employee_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "employees",
+                    "{{employee_id}}"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Customers",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/customers?filters[ban]=0",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "customers"
+                  ],
+                  "query": [
+                    {
+                      "key": "filters[ban]",
+                      "value": "0"
+                    }
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Customer detail",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/customers/{{customer_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "customers",
+                    "{{customer_id}}"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Ban customer",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "PATCH",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/customers/{{customer_id}}/ban",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "customers",
+                    "{{customer_id}}",
+                    "ban"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Lift ban",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "PATCH",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/customers/{{customer_id}}/unban",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "customers",
+                    "{{customer_id}}",
+                    "unban"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Locations",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/locations",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "locations"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Create location",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "country",
+                      "value": "Syria",
+                      "type": "text"
+                    },
+                    {
+                      "key": "state",
+                      "value": "Damascus",
+                      "type": "text"
+                    },
+                    {
+                      "key": "region",
+                      "value": "Shaalan",
+                      "type": "text"
+                    },
+                    {
+                      "key": "city",
+                      "value": "Damascus",
+                      "type": "text"
+                    },
+                    {
+                      "key": "street",
+                      "value": "Shaalan Street",
+                      "type": "text"
+                    },
+                    {
+                      "key": "delivery_time",
+                      "value": "00:35",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/locations",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "locations"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Update location",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "country",
+                      "value": "Syria",
+                      "type": "text"
+                    },
+                    {
+                      "key": "state",
+                      "value": "Damascus",
+                      "type": "text"
+                    },
+                    {
+                      "key": "region",
+                      "value": "Shaalan",
+                      "type": "text"
+                    },
+                    {
+                      "key": "city",
+                      "value": "Damascus",
+                      "type": "text"
+                    },
+                    {
+                      "key": "street",
+                      "value": "Shaalan Street",
+                      "type": "text"
+                    },
+                    {
+                      "key": "delivery_time",
+                      "value": "00:40",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "PUT",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/locations/{{location_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "locations",
+                    "{{location_id}}"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Delete location",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  },
+                  {
+                    "key": "X-Requested-With",
+                    "value": "XMLHttpRequest"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "_token",
+                      "value": "{{csrf_token}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "_method",
+                      "value": "DELETE",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/manage/locations/{{location_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "locations",
+                    "{{location_id}}"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
