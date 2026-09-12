@@ -1,29 +1,50 @@
-# Flavor
+<div align="center">
 
-Flavor is a restaurant management system built on Laravel 10. It covers the public menu, customer ordering and table booking, and a staff workspace for the kitchen, the floor, inventory, people and reporting.
+# Flavor — Restaurant Management System
 
-The application ships two delivery mechanisms over one shared domain layer: a server-rendered, session-authenticated web application for the browser, and a versioned, token-authenticated JSON API (`/api/v1`) for mobile and third-party clients. Neither duplicates the other's business logic — both call the same `Service` classes underneath.
+**A clean-architecture restaurant management platform**
+Menu, ordering, reservations, inventory and staff operations in one Laravel application
+
+[![Laravel](https://img.shields.io/badge/Laravel-10-FF2D20?style=flat-square&logo=laravel&logoColor=white)](https://laravel.com)
+[![PHP](https://img.shields.io/badge/PHP-8.1+-777BB4?style=flat-square&logo=php&logoColor=white)](https://php.net)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat-square&logo=mysql&logoColor=white)](https://mysql.com)
+[![Redis](https://img.shields.io/badge/Redis-optional%20cache%20%2B%20queue-DC382D?style=flat-square&logo=redis&logoColor=white)](https://redis.io)
+
+**117** API endpoints · **15** domain entities · **20** services · **11** policies · **26** migrations
+
+[API Reference](docs/API.md) · [Postman Collection](docs/flavor-api.postman_collection.json) · [Interface Gallery](docs/screenshots/README.md) · [Diagrams](docs/diagrams/index.html) · [العربية](README.ar.md)
+
+</div>
 
 ---
 
 ## Table of contents
 
-1. [Architecture](#architecture)
-2. [Directory layout](#directory-layout)
-3. [Domain modules](#domain-modules)
-4. [Roles and abilities](#roles-and-abilities)
-5. [Web authentication and cookies](#web-authentication-and-cookies)
-6. [The API](#the-api)
-7. [Notifications](#notifications)
-8. [Diagrams](#diagrams)
-9. [Localisation](#localisation)
-10. [Theming and design system](#theming-and-design-system)
-11. [Data integrity](#data-integrity)
-12. [Background work](#background-work)
-13. [Caching](#caching)
-14. [Installation](#installation)
-15. [Demo accounts](#demo-accounts)
-16. [Further reading](#further-reading)
+1. [Overview](#overview)
+2. [Architecture](#architecture)
+3. [Directory layout](#directory-layout)
+4. [Domain modules](#domain-modules)
+5. [Roles and abilities](#roles-and-abilities)
+6. [Web authentication and cookies](#web-authentication-and-cookies)
+7. [The API](#the-api)
+8. [Notifications](#notifications)
+9. [Diagrams](#diagrams)
+10. [Localisation](#localisation)
+11. [Theming and design system](#theming-and-design-system)
+12. [Data integrity](#data-integrity)
+13. [Background work](#background-work)
+14. [Caching](#caching)
+15. [Installation](#installation)
+16. [Demo accounts](#demo-accounts)
+17. [Further reading](#further-reading)
+
+---
+
+## Overview
+
+Flavor is a restaurant management system built on Laravel 10. It covers the public menu, customer ordering and table booking, and a staff workspace for the kitchen, the floor, inventory, people and reporting.
+
+The application ships two delivery mechanisms over one shared domain layer: a server-rendered, session-authenticated web application for the browser, and a versioned, token-authenticated JSON API (`/api/v1`) for mobile and third-party clients. Neither duplicates the other's business logic — both call the same `Service` classes underneath.
 
 ---
 
