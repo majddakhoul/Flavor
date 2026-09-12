@@ -1,0 +1,21 @@
+sequenceDiagram
+    autonumber
+    actor D as delivery
+    participant API as Laravel API
+    participant DB as Database
+
+    D->>API: POST /api/auth/login
+    API-->>D: 200 token (position=Delivery)
+    D->>API: GET /api/orders?order_type=Delivery&employee_id=self
+    API-->>D: 200 assigned delivery orders with location and delivery_time
+    D->>API: PATCH /api/orders/:id (status=Confirmed)
+    Note over D: picked up from kitchen, en route
+    alt delivered successfully
+        D->>API: PATCH /api/orders/:id (status=Completed)
+        API->>DB: update orders.status
+        API-->>D: 200 delivery closed
+    else customer unreachable
+        D->>API: PATCH /api/orders/:id (status=Cancelled, notes)
+        API->>DB: update orders.status, notes
+        API-->>D: 200 delivery cancelled
+    end

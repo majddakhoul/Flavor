@@ -1,0 +1,34 @@
+flowchart LR
+    classDef actor fill:#2563eb,stroke:#1d4ed8,color:#ffffff,stroke-width:2px
+    classDef uc fill:#eff6ff,stroke:#2563eb,color:#0f172a,stroke-width:1.5px
+    classDef sub fill:#f0fdfa,stroke:#0d9488,color:#0f172a,stroke-width:1px
+
+    ACTOR["Chef"]:::actor
+
+    UC1(["View kitchen queue"]):::uc
+    ACTOR --- UC1
+    S1_1(["View confirmed orders"]):::sub
+    UC1 -.->|includes| S1_1
+    S1_2(["View meal_order lines and quantities"]):::sub
+    UC1 -.->|includes| S1_2
+
+    UC2(["Manage recipes"]):::uc
+    ACTOR --- UC2
+    S2_1(["View ingredients per meal"]):::sub
+    UC2 -.->|includes| S2_1
+    S2_2(["Check ingredient stock_quantity"]):::sub
+    UC2 -.->|includes| S2_2
+
+    UC3(["Control availability"]):::uc
+    ACTOR --- UC3
+    S3_1(["Mark meal unavailable"]):::sub
+    UC3 -.->|includes| S3_1
+    S3_2(["Mark meal available again"]):::sub
+    UC3 -.->|includes| S3_2
+
+    UC4(["Prepare orders"]):::uc
+    ACTOR --- UC4
+    S4_1(["Mark order line prepared"]):::sub
+    UC4 -.->|includes| S4_1
+    S4_2(["Hand off to waiter or delivery"]):::sub
+    UC4 -.->|includes| S4_2

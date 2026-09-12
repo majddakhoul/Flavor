@@ -1,0 +1,27 @@
+flowchart LR
+    classDef actor fill:#2563eb,stroke:#1d4ed8,color:#ffffff,stroke-width:2px
+    classDef uc fill:#eff6ff,stroke:#2563eb,color:#0f172a,stroke-width:1.5px
+    classDef sub fill:#f0fdfa,stroke:#0d9488,color:#0f172a,stroke-width:1px
+
+    ACTOR["Guest"]:::actor
+
+    UC1(["Browse public menu"]):::uc
+    ACTOR --- UC1
+    S1_1(["View categories and meals"]):::sub
+    UC1 -.->|includes| S1_1
+    S1_2(["View active offers"]):::sub
+    UC1 -.->|includes| S1_2
+
+    UC2(["View feedback"]):::uc
+    ACTOR --- UC2
+    S2_1(["View meal ratings"]):::sub
+    UC2 -.->|includes| S2_1
+    S2_2(["View offer ratings"]):::sub
+    UC2 -.->|includes| S2_2
+
+    UC3(["Join Flavor"]):::uc
+    ACTOR --- UC3
+    S3_1(["Register account"]):::sub
+    UC3 -.->|includes| S3_1
+    S3_2(["Verify email"]):::sub
+    UC3 -.->|includes| S3_2

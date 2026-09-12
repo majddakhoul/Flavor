@@ -1,0 +1,3427 @@
+{
+  "info": {
+    "_postman_id": "223ec508-ae5d-4fcf-a2e2-e7dcc1fba18d",
+    "name": "Flavor API v1",
+    "description": "Flavor is a restaurant management API built with Laravel 10 and Laravel Sanctum. This collection covers every endpoint in `routes/api.php`, versioned under `/api/v1`.\n\n## Authentication\n\nMost endpoints need a bearer token. Call **Auth > Login** (or **Auth > Register** then **Auth > Verify email**) and copy the `data.token` field from the response into the collection variable `token` — every other request already points at `{{token}}` via the collection-level Bearer auth, so nothing else needs editing. Tokens do not expire unless you set `SANCTUM_TOKEN_EXPIRATION` in `.env`; call **Auth > Logout** to revoke the one you are using.\n\n## Response shape\n\nEvery endpoint returns the same envelope:\n\n```json\n{\n  \"success\": true,\n  \"message\": \"Human readable summary, or null\",\n  \"data\": {}\n}\n```\n\nPaginated list endpoints add a `meta` block:\n\n```json\n{\n  \"success\": true,\n  \"data\": [ ... ],\n  \"meta\": {\n    \"current_page\": 1,\n    \"per_page\": 15,\n    \"total\": 42,\n    \"last_page\": 3\n  }\n}\n```\n\nValidation and domain errors return `success: false` with a matching HTTP status (422 for validation, 403 for authorization, 404 for missing records) and, for validation failures, a Laravel-standard `errors` object keyed by field.\n\n## Search, filter, sort and pagination\n\nEvery `index` endpoint in this collection accepts the same four query parameters, handled centrally by `App\\Support\\QueryOptions`:\n\n| Parameter | Example | Effect |\n| --- | --- | --- |\n| `search` | `search=grill` | Matches against that resource's searchable columns (see each model, e.g. a meal searches its name, description and category name). |\n| `filters[column]` | `filters[status]=Pending` | Exact-match or column-specific filter. Each folder lists the filters its resource supports. Repeat the key for arrays: `filters[category_id][]=1&filters[category_id][]=2`. |\n| `sort_by` / `sort_dir` | `sort_by=price&sort_dir=asc` | Sorts by an allow-listed column; unrecognised columns are ignored rather than erroring. `sort_dir` is `asc` or `desc` (default `desc`). |\n| `per_page` | `per_page=25` | Page size, clamped between 1 and 100 (default 15, or 12 for menu browsing). |\n\nCombine freely: `GET /catalog/meals?search=chicken&filters[vegetarian]=0&sort_by=price&sort_dir=asc&per_page=20&page=2`.\n\n## Language\n\nEvery user has a `preferred_locale` (`en`, `ar` or `fr`), set automatically at registration and updated whenever they switch language. Validation messages, notification text and transactional email all render in that language automatically — no request header required. To preview a *public* endpoint in another language before logging in, pass `?locale=ar` or the `X-Locale: ar` header.\n\n## Roles\n\n- **Guest** — the whole **Catalog** folder, plus **Auth**.\n- **Customer** — everything in **Account**, plus **Profile & Notifications**. Requires a verified email.\n- **Staff** — everything in **Manage**, split into folders gated by ability (`catalog`, `inventory`, `floor`, `sales`, `people`, `reports`). A manager holds every ability; other positions hold the subset described in `docs/API.md`.\n\nSee `docs/API.md` in the repository for the full endpoint reference, error catalogue and a worked authentication flow.\n",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "notification_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Catalog (public)",
+      "description": "Read-only endpoints anyone can call -- no token required. Powers the public menu, offers page and reference data pickers.",
+      "item": [
+        {
+          "name": "List meals",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/catalog/meals?search=grill&sort_by=name&sort_dir=asc&per_page=15&page=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "catalog",
+                "meals"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "grill",
+                  "description": ""
+                },
+                {
+                  "key": "sort_by",
+                  "value": "name",
+                  "description": ""
+                },
+                {
+                  "key": "sort_dir",
+                  "value": "asc",
+                  "description": ""
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": ""
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": ""
+                }
+              ]
+            },
+            "description": "Browse the public menu. Supports search, filtering, sorting and pagination -- see the collection-level docs. Filters: filters[category_id], filters[availability], filters[vegetarian].",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Featured meals",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/catalog/meals/featured?limit=6",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "catalog",
+                "meals",
+                "featured"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "6",
+                  "description": ""
+                }
+              ]
+            },
+            "description": "Top rated meals for a home screen carousel.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Top selling meals",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/catalog/meals/top-selling?limit=5",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "catalog",
+                "meals",
+                "top-selling"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5",
+                  "description": ""
+                }
+              ]
+            },
+            "description": "Meals ranked by total quantity ordered across all-time confirmed orders.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show one meal",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/catalog/meals/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "catalog",
+                "meals",
+                "1"
+              ]
+            },
+            "description": "Full detail for a single meal, including ingredients and rating average.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List offers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/catalog/offers?search=grill&sort_by=name&sort_dir=asc&per_page=15&page=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "catalog",
+                "offers"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "grill",
+                  "description": ""
+                },
+                {
+                  "key": "sort_by",
+                  "value": "name",
+                  "description": ""
+                },
+                {
+                  "key": "sort_dir",
+                  "value": "asc",
+                  "description": ""
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": ""
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": ""
+                }
+              ]
+            },
+            "description": "Browse bundle offers. Filters: filters[is_active].",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Running offers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/catalog/offers/running?limit=4",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "catalog",
+                "offers",
+                "running"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "4",
+                  "description": ""
+                }
+              ]
+            },
+            "description": "Offers currently inside their active date window.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Top selling offers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/catalog/offers/top-selling?limit=5",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "catalog",
+                "offers",
+                "top-selling"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5",
+                  "description": ""
+                }
+              ]
+            },
+            "description": "Offers ranked by total quantity ordered.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show one offer",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/catalog/offers/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "catalog",
+                "offers",
+                "1"
+              ]
+            },
+            "description": "Full detail for a single offer, including the meals it bundles.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/catalog/categories?search=grill&sort_by=name&sort_dir=asc&per_page=15&page=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "catalog",
+                "categories"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "grill",
+                  "description": ""
+                },
+                {
+                  "key": "sort_by",
+                  "value": "name",
+                  "description": ""
+                },
+                {
+                  "key": "sort_dir",
+                  "value": "asc",
+                  "description": ""
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": ""
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": ""
+                }
+              ]
+            },
+            "description": "Menu categories, paginated.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Category tree",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/catalog/categories/tree",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "catalog",
+                "categories",
+                "tree"
+              ]
+            },
+            "description": "Root categories with their children nested, for a menu sidebar.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show one category",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/catalog/categories/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "catalog",
+                "categories",
+                "1"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List tables",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/catalog/tables?search=grill&sort_by=name&sort_dir=asc&per_page=15&page=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "catalog",
+                "tables"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "grill",
+                  "description": ""
+                },
+                {
+                  "key": "sort_by",
+                  "value": "name",
+                  "description": ""
+                },
+                {
+                  "key": "sort_dir",
+                  "value": "asc",
+                  "description": ""
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": ""
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": ""
+                }
+              ]
+            },
+            "description": "Dining tables, for building a reservation UI. Filters: filters[location], filters[is_active], filters[capacity].",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List locations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/catalog/locations?search=grill&sort_by=name&sort_dir=asc&per_page=15&page=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "catalog",
+                "locations"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "grill",
+                  "description": ""
+                },
+                {
+                  "key": "sort_by",
+                  "value": "name",
+                  "description": ""
+                },
+                {
+                  "key": "sort_dir",
+                  "value": "asc",
+                  "description": ""
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": ""
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": ""
+                }
+              ]
+            },
+            "description": "Delivery locations, needed to populate checkout and registration forms.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "description": "Registration, token login/logout, password reset and email verification.",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Create a customer account. A six digit verification code is emailed immediately.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"Amina\",\n  \"last_name\": \"Khoury\",\n  \"email\": \"amina@example.com\",\n  \"phone\": \"0912345678\",\n  \"gender\": \"Female\",\n  \"location_id\": 1,\n  \"password\": \"Passw0rd!\",\n  \"password_confirmation\": \"Passw0rd!\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Exchange credentials for a Sanctum bearer token. Save the returned token as {{token}}.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"amina@example.com\",\n  \"password\": \"Passw0rd!\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Forgot password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/forgot-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "forgot-password"
+              ]
+            },
+            "description": "Emails a password reset link.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"amina@example.com\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reset password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/reset-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "reset-password"
+              ]
+            },
+            "description": "Completes a reset using the token emailed by forgot-password.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"the-reset-token\",\n  \"email\": \"amina@example.com\",\n  \"password\": \"NewPassw0rd!\",\n  \"password_confirmation\": \"NewPassw0rd!\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "Revokes the bearer token used for this request."
+          },
+          "response": []
+        },
+        {
+          "name": "Verify email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/verify-email",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "verify-email"
+              ]
+            },
+            "description": "Confirms the six digit code sent at registration.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"123456\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Resend verification code",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/resend-verification",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "resend-verification"
+              ]
+            },
+            "description": "Issues a fresh six digit code."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Profile & Notifications",
+      "description": "Anything about the signed-in user themself: profile, password, and their notification feed. Every notification is written in the language the user last selected.",
+      "item": [
+        {
+          "name": "My profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "profile"
+              ]
+            },
+            "description": "The authenticated user, including their customer or employee profile if any."
+          },
+          "response": []
+        },
+        {
+          "name": "Update profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "profile"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"Amina\",\n  \"last_name\": \"Khoury\",\n  \"phone\": \"0912345678\",\n  \"gender\": \"Female\",\n  \"location_id\": 1,\n  \"allergies\": \"nuts\",\n  \"favorite_categories\": \"Grills\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Change password",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/profile/password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "profile",
+                "password"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"current_password\": \"Passw0rd!\",\n  \"password\": \"NewPassw0rd!\",\n  \"password_confirmation\": \"NewPassw0rd!\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Deactivate account",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "profile"
+              ]
+            },
+            "description": "Disables the account and revokes every issued token."
+          },
+          "response": []
+        },
+        {
+          "name": "List notifications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/notifications?page=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "notifications"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": ""
+                }
+              ]
+            },
+            "description": "Paginated notification feed for the authenticated user, newest first."
+          },
+          "response": []
+        },
+        {
+          "name": "Unread notification count",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/notifications/unread-count",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "notifications",
+                "unread-count"
+              ]
+            },
+            "description": "Lightweight count for a bell badge."
+          },
+          "response": []
+        },
+        {
+          "name": "Mark one notification read",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/notifications/{{notification_id}}/read",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "notifications",
+                "{{notification_id}}",
+                "read"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Mark all notifications read",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/notifications/read-all",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "notifications",
+                "read-all"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Delete a notification",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/notifications/{{notification_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "notifications",
+                "{{notification_id}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Account (customer)",
+      "description": "Everything a signed-in customer can do: cart, checkout, their own orders and reservations, and ratings. Requires a verified customer account.",
+      "item": [
+        {
+          "name": "Customer dashboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/account/dashboard",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "dashboard"
+              ]
+            },
+            "description": "Aggregate summary for a customer home screen: cart count, open orders, running offers, recent orders and upcoming reservations."
+          },
+          "response": []
+        },
+        {
+          "name": "View cart",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/account/cart",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "cart"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Add item to cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/account/cart",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "cart"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"meal\",\n  \"id\": 1,\n  \"quantity\": 2,\n  \"notes\": \"No onions\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update cart item quantity",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/account/cart",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "cart"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"meal\",\n  \"id\": 1,\n  \"quantity\": 3\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove item from cart",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/account/cart/meal/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "cart",
+                "meal",
+                "1"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Clear cart",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/account/cart",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "cart"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Checkout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/account/checkout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "checkout"
+              ]
+            },
+            "description": "Places an order from the current cart.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notes\": \"Ring the bell\",\n  \"location_id\": 1,\n  \"reservation_id\": null\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List my orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/account/orders?search=grill&sort_by=name&sort_dir=asc&per_page=15&page=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "grill",
+                  "description": ""
+                },
+                {
+                  "key": "sort_by",
+                  "value": "name",
+                  "description": ""
+                },
+                {
+                  "key": "sort_dir",
+                  "value": "asc",
+                  "description": ""
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": ""
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": ""
+                }
+              ]
+            },
+            "description": "Filters: filters[status], filters[order_type]."
+          },
+          "response": []
+        },
+        {
+          "name": "Show one order",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/account/orders/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "orders",
+                "1"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel an order",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/account/orders/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "orders",
+                "1"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Revert an order to cart",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/account/orders/1/revert",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "orders",
+                "1",
+                "revert"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Restore a cancelled order",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/account/orders/1/restore",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "orders",
+                "1",
+                "restore"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "List my reservations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/account/reservations?search=grill&sort_by=name&sort_dir=asc&per_page=15&page=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "reservations"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "grill",
+                  "description": ""
+                },
+                {
+                  "key": "sort_by",
+                  "value": "name",
+                  "description": ""
+                },
+                {
+                  "key": "sort_dir",
+                  "value": "asc",
+                  "description": ""
+                },
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": ""
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": ""
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Check table availability",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/account/reservations/availability?start_time=2026-09-01 19:00:00&end_time=2026-09-01 21:00:00&party_size=4",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "reservations",
+                "availability"
+              ],
+              "query": [
+                {
+                  "key": "start_time",
+                  "value": "2026-09-01 19:00:00",
+                  "description": ""
+                },
+                {
+                  "key": "end_time",
+                  "value": "2026-09-01 21:00:00",
+                  "description": ""
+                },
+                {
+                  "key": "party_size",
+                  "value": "4",
+                  "description": ""
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Create a reservation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/account/reservations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "reservations"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"party_size\": 4,\n  \"special_requests\": \"Window seat\",\n  \"table_ids\": [\n    1,\n    2\n  ],\n  \"start_time\": \"2026-09-01 19:00:00\",\n  \"end_time\": \"2026-09-01 21:00:00\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show one reservation",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/account/reservations/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "reservations",
+                "1"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel a reservation",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/account/reservations/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "reservations",
+                "1"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Rate a meal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/account/ratings/meals/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "ratings",
+                "meals",
+                "1"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"stars\": 5\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Rate an offer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/account/ratings/offers/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "account",
+                "ratings",
+                "offers",
+                "1"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"stars\": 4\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Manage (staff)",
+      "description": "Staff-only endpoints. Each folder is gated by the ability the position needs -- see the collection README. Requires a verified staff account.",
+      "item": [
+        {
+          "name": "Dashboard & Reports",
+          "description": "Requires the reports ability (managers by default).",
+          "item": [
+            {
+              "name": "Dashboard overview",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/dashboard",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "dashboard"
+                  ]
+                },
+                "description": "KPIs, charts and recent activity lists for the staff home screen."
+              },
+              "response": []
+            },
+            {
+              "name": "Finance report",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/reports/finance?from=2026-08-01&to=2026-08-31",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "reports",
+                    "finance"
+                  ],
+                  "query": [
+                    {
+                      "key": "from",
+                      "value": "2026-08-01",
+                      "description": ""
+                    },
+                    {
+                      "key": "to",
+                      "value": "2026-08-31",
+                      "description": ""
+                    }
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Inventory report",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/reports/inventory",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "reports",
+                    "inventory"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Menu performance report",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/reports/menu",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "reports",
+                    "menu"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Most consumed ingredients",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/reports/ingredients/most-consumed?limit=10",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "reports",
+                    "ingredients",
+                    "most-consumed"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "10",
+                      "description": ""
+                    }
+                  ]
+                },
+                "description": "Ingredients ranked by total quantity consumed across confirmed orders -- the raw materials moving fastest."
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Categories",
+          "description": "",
+          "item": [
+            {
+              "name": "List categories",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/categories?search=grill&sort_by=name&sort_dir=asc&per_page=15&page=1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "categories"
+                  ],
+                  "query": [
+                    {
+                      "key": "search",
+                      "value": "grill",
+                      "description": ""
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "name",
+                      "description": ""
+                    },
+                    {
+                      "key": "sort_dir",
+                      "value": "asc",
+                      "description": ""
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "15",
+                      "description": ""
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": ""
+                    }
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Create category",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/manage/categories",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "categories"
+                  ]
+                },
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Grills\",\n  \"description\": \"Charcoal grilled mains\",\n  \"parent_id\": null\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Show category",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/categories/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "categories",
+                    "1"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Update category",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/manage/categories/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "categories",
+                    "1"
+                  ]
+                },
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Grills\",\n  \"description\": \"Charcoal grilled mains\",\n  \"parent_id\": null\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete category",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/categories/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "categories",
+                    "1"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Meals",
+          "description": "",
+          "item": [
+            {
+              "name": "List meals",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/meals?search=grill&sort_by=name&sort_dir=asc&per_page=15&page=1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "meals"
+                  ],
+                  "query": [
+                    {
+                      "key": "search",
+                      "value": "grill",
+                      "description": ""
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "name",
+                      "description": ""
+                    },
+                    {
+                      "key": "sort_dir",
+                      "value": "asc",
+                      "description": ""
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "15",
+                      "description": ""
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": ""
+                    }
+                  ]
+                },
+                "description": "Filters: filters[category_id], filters[availability], filters[vegetarian]."
+              },
+              "response": []
+            },
+            {
+              "name": "Create meal",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/meals",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "meals"
+                  ]
+                },
+                "description": "",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "name",
+                      "value": "Mixed Grill",
+                      "type": "text"
+                    },
+                    {
+                      "key": "prep_time",
+                      "value": "00:25",
+                      "type": "text"
+                    },
+                    {
+                      "key": "percentage",
+                      "value": "40",
+                      "type": "text"
+                    },
+                    {
+                      "key": "is_vegetarian",
+                      "value": "0",
+                      "type": "text"
+                    },
+                    {
+                      "key": "description",
+                      "value": "Chicken, kafta and lamb skewers",
+                      "type": "text"
+                    },
+                    {
+                      "key": "availability",
+                      "value": "available",
+                      "type": "text"
+                    },
+                    {
+                      "key": "category_id",
+                      "value": "1",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Show meal",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/meals/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "meals",
+                    "1"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Update meal",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/manage/meals/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "meals",
+                    "1"
+                  ]
+                },
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Mixed Grill\",\n  \"prep_time\": \"00:25\",\n  \"percentage\": 40,\n  \"is_vegetarian\": 0,\n  \"description\": \"Updated\",\n  \"availability\": \"available\",\n  \"category_id\": 1\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete meal",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/meals/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "meals",
+                    "1"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Sync meal ingredients",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/manage/meals/1/ingredients",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "meals",
+                    "1",
+                    "ingredients"
+                  ]
+                },
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ingredients\": {\n    \"1\": 0.2,\n    \"2\": 0.1\n  }\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Detach an ingredient",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/meals/1/ingredients/2",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "meals",
+                    "1",
+                    "ingredients",
+                    "2"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Remove meal photo",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/meals/1/picture",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "meals",
+                    "1",
+                    "picture"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Offers",
+          "description": "",
+          "item": [
+            {
+              "name": "List offers",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/offers?search=grill&sort_by=name&sort_dir=asc&per_page=15&page=1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "offers"
+                  ],
+                  "query": [
+                    {
+                      "key": "search",
+                      "value": "grill",
+                      "description": ""
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "name",
+                      "description": ""
+                    },
+                    {
+                      "key": "sort_dir",
+                      "value": "asc",
+                      "description": ""
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "15",
+                      "description": ""
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": ""
+                    }
+                  ]
+                },
+                "description": "Filters: filters[is_active]."
+              },
+              "response": []
+            },
+            {
+              "name": "Create offer",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/manage/offers",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "offers"
+                  ]
+                },
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Family Bundle\",\n  \"description\": \"Feeds four\",\n  \"discount_amount\": 15,\n  \"is_active\": 1,\n  \"start_date\": \"2026-08-01\",\n  \"end_date\": \"2026-12-31\",\n  \"meals\": {\n    \"1\": 2,\n    \"3\": 1\n  }\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Show offer",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/offers/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "offers",
+                    "1"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Update offer",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/manage/offers/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "offers",
+                    "1"
+                  ]
+                },
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Family Bundle\",\n  \"description\": \"Feeds four\",\n  \"discount_amount\": 20,\n  \"is_active\": 1,\n  \"start_date\": \"2026-08-01\",\n  \"end_date\": \"2026-12-31\"\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete offer",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/offers/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "offers",
+                    "1"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Toggle offer active state",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/offers/1/toggle",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "offers",
+                    "1",
+                    "toggle"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Detach a meal from an offer",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/offers/1/meals/3",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "offers",
+                    "1",
+                    "meals",
+                    "3"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Ingredients",
+          "description": "",
+          "item": [
+            {
+              "name": "List ingredients",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/ingredients?search=grill&sort_by=name&sort_dir=asc&per_page=15&page=1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "ingredients"
+                  ],
+                  "query": [
+                    {
+                      "key": "search",
+                      "value": "grill",
+                      "description": ""
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "name",
+                      "description": ""
+                    },
+                    {
+                      "key": "sort_dir",
+                      "value": "asc",
+                      "description": ""
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "15",
+                      "description": ""
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": ""
+                    }
+                  ]
+                },
+                "description": "Filters: filters[is_active], filters[low_stock]."
+              },
+              "response": []
+            },
+            {
+              "name": "Create ingredient",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/manage/ingredients",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "ingredients"
+                  ]
+                },
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Lamb shoulder\",\n  \"unit\": \"kg\",\n  \"stock_quantity\": 50,\n  \"unit_cost\": 8500,\n  \"is_active\": 1\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Show ingredient",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/ingredients/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "ingredients",
+                    "1"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Update ingredient",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/manage/ingredients/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "ingredients",
+                    "1"
+                  ]
+                },
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Lamb shoulder\",\n  \"unit\": \"kg\",\n  \"stock_quantity\": 50,\n  \"unit_cost\": 8700,\n  \"is_active\": 1\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete ingredient",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/ingredients/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "ingredients",
+                    "1"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Adjust stock",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/manage/ingredients/1/stock",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "ingredients",
+                    "1",
+                    "stock"
+                  ]
+                },
+                "description": "Positive quantity restocks, negative quantity consumes.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"quantity\": -5\n}"
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Tables",
+          "description": "",
+          "item": [
+            {
+              "name": "List tables",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/tables?search=grill&sort_by=name&sort_dir=asc&per_page=15&page=1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "tables"
+                  ],
+                  "query": [
+                    {
+                      "key": "search",
+                      "value": "grill",
+                      "description": ""
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "name",
+                      "description": ""
+                    },
+                    {
+                      "key": "sort_dir",
+                      "value": "asc",
+                      "description": ""
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "15",
+                      "description": ""
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": ""
+                    }
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Create table",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/manage/tables",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "tables"
+                  ]
+                },
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"table_number\": \"T12\",\n  \"capacity\": 4,\n  \"location\": \"Indoor\",\n  \"is_active\": 1,\n  \"price_per_hour\": 0,\n  \"description\": \"Corner table\"\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update table",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/manage/tables/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "tables",
+                    "1"
+                  ]
+                },
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"table_number\": \"T12\",\n  \"capacity\": 6,\n  \"location\": \"Indoor\",\n  \"is_active\": 1,\n  \"price_per_hour\": 0,\n  \"description\": \"Corner table\"\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete table",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/tables/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "tables",
+                    "1"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Reservations",
+          "description": "",
+          "item": [
+            {
+              "name": "List reservations",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/reservations?search=grill&sort_by=name&sort_dir=asc&per_page=15&page=1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "reservations"
+                  ],
+                  "query": [
+                    {
+                      "key": "search",
+                      "value": "grill",
+                      "description": ""
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "name",
+                      "description": ""
+                    },
+                    {
+                      "key": "sort_dir",
+                      "value": "asc",
+                      "description": ""
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "15",
+                      "description": ""
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": ""
+                    }
+                  ]
+                },
+                "description": "Filters: filters[status], filters[type], filters[date], filters[date_from], filters[date_to]."
+              },
+              "response": []
+            },
+            {
+              "name": "Reservation statistics",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/reservations/statistics",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "reservations",
+                    "statistics"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Create reservation (staff-taken)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/manage/reservations",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "reservations"
+                  ]
+                },
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"party_size\": 2,\n  \"special_requests\": null,\n  \"table_ids\": [\n    3\n  ],\n  \"start_time\": \"2026-09-01 20:00:00\",\n  \"end_time\": \"2026-09-01 22:00:00\"\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Show reservation",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/reservations/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "reservations",
+                    "1"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Update reservation status",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/manage/reservations/1/status",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "reservations",
+                    "1",
+                    "status"
+                  ]
+                },
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"Confirmed\"\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Reassign tables",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/manage/reservations/1/tables",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "reservations",
+                    "1",
+                    "tables"
+                  ]
+                },
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"table_ids\": [\n    4,\n    5\n  ],\n  \"start_time\": \"2026-09-01 20:00:00\",\n  \"end_time\": \"2026-09-01 22:00:00\"\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete reservation",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/reservations/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "reservations",
+                    "1"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Orders",
+          "description": "",
+          "item": [
+            {
+              "name": "List orders",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/orders?search=grill&sort_by=name&sort_dir=asc&per_page=15&page=1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "orders"
+                  ],
+                  "query": [
+                    {
+                      "key": "search",
+                      "value": "grill",
+                      "description": ""
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "name",
+                      "description": ""
+                    },
+                    {
+                      "key": "sort_dir",
+                      "value": "asc",
+                      "description": ""
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "15",
+                      "description": ""
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": ""
+                    }
+                  ]
+                },
+                "description": "Filters: filters[status], filters[order_type], filters[customer_id], filters[location_id], filters[date_from], filters[date_to]."
+              },
+              "response": []
+            },
+            {
+              "name": "Order statistics",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/orders/statistics",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "orders",
+                    "statistics"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "List trashed orders",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/orders/trashed?search=grill&sort_by=name&sort_dir=asc&per_page=15&page=1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "orders",
+                    "trashed"
+                  ],
+                  "query": [
+                    {
+                      "key": "search",
+                      "value": "grill",
+                      "description": ""
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "name",
+                      "description": ""
+                    },
+                    {
+                      "key": "sort_dir",
+                      "value": "asc",
+                      "description": ""
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "15",
+                      "description": ""
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": ""
+                    }
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Show order",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/orders/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "orders",
+                    "1"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Update order status",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/manage/orders/1/status",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "orders",
+                    "1",
+                    "status"
+                  ]
+                },
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"Confirmed\"\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Restore a cancelled order",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/orders/1/restore",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "orders",
+                    "1",
+                    "restore"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Permanently delete an order",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/orders/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "orders",
+                    "1"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Employees",
+          "description": "",
+          "item": [
+            {
+              "name": "List employees",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/employees?search=grill&sort_by=name&sort_dir=asc&per_page=15&page=1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "employees"
+                  ],
+                  "query": [
+                    {
+                      "key": "search",
+                      "value": "grill",
+                      "description": ""
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "name",
+                      "description": ""
+                    },
+                    {
+                      "key": "sort_dir",
+                      "value": "asc",
+                      "description": ""
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "15",
+                      "description": ""
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": ""
+                    }
+                  ]
+                },
+                "description": "Filters: filters[position]."
+              },
+              "response": []
+            },
+            {
+              "name": "Payroll summary",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/employees/payroll",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "employees",
+                    "payroll"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Create employee",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/manage/employees",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "employees"
+                  ]
+                },
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"first_name\": \"Karim\",\n  \"last_name\": \"Aziz\",\n  \"email\": \"karim@flavor.test\",\n  \"phone\": \"0955512345\",\n  \"gender\": \"Male\",\n  \"location_id\": 1,\n  \"national_id\": \"01234567\",\n  \"position\": \"Waiter\",\n  \"salary\": 300000,\n  \"bonus\": 0,\n  \"hire_date\": \"2026-08-01\",\n  \"birth_date\": \"1998-01-01\",\n  \"notes\": null,\n  \"password\": null\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Show employee",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/employees/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "employees",
+                    "1"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Update employee",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/manage/employees/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "employees",
+                    "1"
+                  ]
+                },
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"first_name\": \"Karim\",\n  \"last_name\": \"Aziz\",\n  \"email\": \"karim@flavor.test\",\n  \"phone\": \"0955512345\",\n  \"gender\": \"Male\",\n  \"location_id\": 1,\n  \"national_id\": \"01234567\",\n  \"position\": \"Waiter\",\n  \"salary\": 320000,\n  \"bonus\": 10000,\n  \"hire_date\": \"2026-08-01\",\n  \"birth_date\": \"1998-01-01\"\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete employee",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/employees/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "employees",
+                    "1"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Customers",
+          "description": "",
+          "item": [
+            {
+              "name": "List customers",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/customers?search=grill&sort_by=name&sort_dir=asc&per_page=15&page=1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "customers"
+                  ],
+                  "query": [
+                    {
+                      "key": "search",
+                      "value": "grill",
+                      "description": ""
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "name",
+                      "description": ""
+                    },
+                    {
+                      "key": "sort_dir",
+                      "value": "asc",
+                      "description": ""
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "15",
+                      "description": ""
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": ""
+                    }
+                  ]
+                },
+                "description": "Filters: filters[ban]."
+              },
+              "response": []
+            },
+            {
+              "name": "Show customer",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/customers/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "customers",
+                    "1"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Ban a customer",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/customers/1/ban",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "customers",
+                    "1",
+                    "ban"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Lift a customer ban",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/customers/1/unban",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "customers",
+                    "1",
+                    "unban"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Locations",
+          "description": "",
+          "item": [
+            {
+              "name": "List locations",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/locations?search=grill&sort_by=name&sort_dir=asc&per_page=15&page=1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "locations"
+                  ],
+                  "query": [
+                    {
+                      "key": "search",
+                      "value": "grill",
+                      "description": ""
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "name",
+                      "description": ""
+                    },
+                    {
+                      "key": "sort_dir",
+                      "value": "asc",
+                      "description": ""
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "15",
+                      "description": ""
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": ""
+                    }
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Create location",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/manage/locations",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "locations"
+                  ]
+                },
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"country\": \"Syria\",\n  \"region\": \"Damascus\",\n  \"state\": \"Damascus\",\n  \"city\": \"Damascus\",\n  \"street\": \"Al Mazzeh\",\n  \"delivery_time\": \"00:30\"\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update location",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/manage/locations/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "locations",
+                    "1"
+                  ]
+                },
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"country\": \"Syria\",\n  \"region\": \"Damascus\",\n  \"state\": \"Damascus\",\n  \"city\": \"Damascus\",\n  \"street\": \"Al Mazzeh\",\n  \"delivery_time\": \"00:35\"\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete location",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/locations/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "locations",
+                    "1"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Maintenance",
+          "description": "",
+          "item": [
+            {
+              "name": "List maintenance records",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/maintenances?search=grill&sort_by=name&sort_dir=asc&per_page=15&page=1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "maintenances"
+                  ],
+                  "query": [
+                    {
+                      "key": "search",
+                      "value": "grill",
+                      "description": ""
+                    },
+                    {
+                      "key": "sort_by",
+                      "value": "name",
+                      "description": ""
+                    },
+                    {
+                      "key": "sort_dir",
+                      "value": "asc",
+                      "description": ""
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "15",
+                      "description": ""
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": ""
+                    }
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Maintenance totals",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/maintenances/totals",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "maintenances",
+                    "totals"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Create maintenance record",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/manage/maintenances",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "maintenances"
+                  ]
+                },
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"maintenance_item\": \"Walk-in fridge repair\",\n  \"price\": 150000,\n  \"discount\": 0,\n  \"notes\": \"Compressor replaced\",\n  \"employee_id\": 1\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Show maintenance record",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/maintenances/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "maintenances",
+                    "1"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            },
+            {
+              "name": "Update maintenance record",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/manage/maintenances/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "maintenances",
+                    "1"
+                  ]
+                },
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"maintenance_item\": \"Walk-in fridge repair\",\n  \"price\": 150000,\n  \"discount\": 10000,\n  \"notes\": \"Compressor replaced\",\n  \"employee_id\": 1\n}"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete maintenance record",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/manage/maintenances/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "manage",
+                    "maintenances",
+                    "1"
+                  ]
+                },
+                "description": ""
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

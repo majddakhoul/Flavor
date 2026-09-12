@@ -1,0 +1,11 @@
+stateDiagram-v2
+    direction LR
+    [*] --> PendingVerification: POST /api/register (user_type=Customer)
+    PendingVerification --> Active: email_verified_at set
+    Active --> Banned: manager sets ban=true, ban_date recorded
+    Banned --> Active: manager sets ban=false, ban_date cleared
+    Active --> [*]
+    note right of Banned
+        security checks ban status at the door;
+        banned customers cannot open new orders
+    end note

@@ -1,0 +1,23 @@
+sequenceDiagram
+    autonumber
+    actor CU as customer
+    actor C as chef
+    actor M as manager
+    participant API as Laravel API
+    participant DB as Database
+
+    Note over CU,API: order already status=Completed
+    CU->>API: POST /api/meals/:id/ratings (number_stars)
+    API->>DB: insert meals_ratings (unique per meal + customer)
+    CU->>API: POST /api/offers/:id/ratings (number_stars)
+    API->>DB: insert offers_ratings
+    API-->>CU: 201 ratings recorded
+    M->>API: GET /api/reports/ratings?type=meal&sort=asc
+    API-->>M: 200 lowest rated meals first
+    alt meal consistently rated low
+        M->>C: ask kitchen to review the recipe
+        C->>API: PATCH /api/meals/:id (description, ingredients updated)
+    else meal performing well
+        M->>API: GET /api/reports/ratings?type=offer
+        API-->>M: 200 best performing offers
+    end

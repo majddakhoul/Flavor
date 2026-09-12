@@ -3,10 +3,9 @@
 namespace App\Listeners;
 
 use App\Events\OrderPlaced;
-use App\Mail\OrderConfirmationMail;
+use App\Notifications\Sales\OrderConfirmed;
 use App\Support\Money;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Mail;
 
 class SendOrderConfirmation implements ShouldQueue
 {
@@ -19,7 +18,7 @@ class SendOrderConfirmation implements ShouldQueue
             return;
         }
 
-        Mail::to($recipient->email)->send(new OrderConfirmationMail([
+        $recipient->notify(new OrderConfirmed([
             'subject_data' => ['reference' => $order->reference],
             'highlight' => $order->reference,
             'rows' => [
@@ -29,6 +28,6 @@ class SendOrderConfirmation implements ShouldQueue
                 ['label' => __('domain.placed_on'), 'value' => $order->created_at->translatedFormat('d M Y H:i')],
             ],
             'action' => ['label' => __('domain.view_order'), 'url' => route('account.orders.show', $order)],
-        ], app()->getLocale()));
+        ]));
     }
 }

@@ -1,7 +1,7 @@
 @props(['meal'])
 <article class="dish reveal">
     <a class="dish__media" href="{{ route('menu.show', $meal) }}">
-        <img src="{{ $meal->image_url }}" alt="{{ $meal->t('name') }}" loading="lazy">
+        <img src="{{ $meal->image_url }}" alt="{{ $meal->t('name') }}" loading="lazy" data-lightbox="{{ $meal->t('name') }}">
         <div class="dish__flags">
             @if ($meal->is_vegetarian)<x-badge tone="success" plain><x-icon name="leaf" />{{ __('app.vegetarian') }}</x-badge>@endif
             @unless ($meal->is_orderable)<x-badge tone="danger">{{ __('app.sold_out') }}</x-badge>@endunless

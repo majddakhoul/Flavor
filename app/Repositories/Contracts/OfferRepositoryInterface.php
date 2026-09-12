@@ -8,4 +8,6 @@ use App\Support\QueryOptions;
 interface OfferRepositoryInterface extends RepositoryInterface
 {
     public function running(int $limit = 4): \Illuminate\Database\Eloquent\Collection;
+
+    public function topSelling(int $limit = 5): \Illuminate\Support\Collection;
 }

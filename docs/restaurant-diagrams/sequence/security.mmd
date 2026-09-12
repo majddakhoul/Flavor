@@ -1,0 +1,27 @@
+sequenceDiagram
+    autonumber
+    actor S as security
+    participant API as Laravel API
+    participant DB as Database
+
+    S->>API: POST /api/auth/login
+    API-->>S: 200 token (position=Security)
+    S->>API: GET /api/reservations?reservation_code=...
+    API-->>S: 200 reservation with customer and party_size
+    S->>API: GET /api/customers/:id (ban, ban_date)
+    alt customer banned
+        API-->>S: 200 ban=true
+        S->>API: POST /api/incidents (note: entry denied, escalate to manager)
+        API-->>S: 201 logged
+    else customer in good standing
+        API-->>S: 200 ban=false
+        S->>API: GET /api/tables/:id (capacity)
+        alt party_size within capacity
+            API-->>S: 200 capacity ok
+            S-->>S: allow entry
+        else party_size exceeds capacity
+            API-->>S: 200 capacity insufficient
+            S->>API: GET /api/tables?location=&capacity_gte=party_size
+            API-->>S: 200 alternative tables
+        end
+    end

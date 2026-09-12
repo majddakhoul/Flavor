@@ -1,0 +1,51 @@
+flowchart LR
+    classDef actor fill:#2563eb,stroke:#1d4ed8,color:#ffffff,stroke-width:2px
+    classDef uc fill:#eff6ff,stroke:#2563eb,color:#0f172a,stroke-width:1.5px
+    classDef sub fill:#f0fdfa,stroke:#0d9488,color:#0f172a,stroke-width:1px
+
+    ACTOR["Customer"]:::actor
+
+    UC1(["Discover menu"]):::uc
+    ACTOR --- UC1
+    S1_1(["Browse categories and meals"]):::sub
+    UC1 -.->|includes| S1_1
+    S1_2(["Browse active offers"]):::sub
+    UC1 -.->|includes| S1_2
+    S1_3(["Filter vegetarian meals"]):::sub
+    UC1 -.->|includes| S1_3
+
+    UC2(["Manage account"]):::uc
+    ACTOR --- UC2
+    S2_1(["Register"]):::sub
+    UC2 -.->|includes| S2_1
+    S2_2(["Set allergies and favorite_categories"]):::sub
+    UC2 -.->|includes| S2_2
+    S2_3(["Choose preferred_locale"]):::sub
+    UC2 -.->|includes| S2_3
+
+    UC3(["Book a table"]):::uc
+    ACTOR --- UC3
+    S3_1(["Check table availability"]):::sub
+    UC3 -.->|includes| S3_1
+    S3_2(["Create reservation (type=Application)"]):::sub
+    UC3 -.->|includes| S3_2
+    S3_3(["Cancel reservation"]):::sub
+    UC3 -.->|includes| S3_3
+
+    UC4(["Order food"]):::uc
+    ACTOR --- UC4
+    S4_1(["Place delivery order"]):::sub
+    UC4 -.->|includes| S4_1
+    S4_2(["Place takeaway order"]):::sub
+    UC4 -.->|includes| S4_2
+    S4_3(["Add offer bundle to order"]):::sub
+    UC4 -.->|includes| S4_3
+
+    UC5(["Track and review"]):::uc
+    ACTOR --- UC5
+    S5_1(["Track order status"]):::sub
+    UC5 -.->|includes| S5_1
+    S5_2(["Rate a meal"]):::sub
+    UC5 -.->|includes| S5_2
+    S5_3(["Rate an offer"]):::sub
+    UC5 -.->|includes| S5_3

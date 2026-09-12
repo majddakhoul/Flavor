@@ -29,9 +29,12 @@
                 <tbody>
                 @forelse ($offers as $offer)
                     <tr>
-                        <td>
-                            <b>{{ $offer->t('title') }}</b><br>
-                            <x-badge :tone="$offer->is_running ? 'success' : 'muted'" plain>{{ $offer->is_running ? __('app.running') : __('app.paused') }}</x-badge>
+                        <td class="cell-media">
+                            <img src="{{ $offer->image_url }}" alt="" data-lightbox="{{ $offer->t('title') }}">
+                            <span>
+                                <b>{{ $offer->t('title') }}</b><br>
+                                <x-badge :tone="$offer->is_running ? 'success' : 'muted'" plain>{{ $offer->is_running ? __('app.running') : __('app.paused') }}</x-badge>
+                            </span>
                         </td>
                         <td class="mono">{{ $offer->meals->sum('pivot.quantity') }}</td>
                         <td class="mono">@money($offer->price)</td>

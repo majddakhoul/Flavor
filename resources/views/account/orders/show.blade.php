@@ -30,7 +30,7 @@
                 <tbody>
                 @foreach ($order->meals as $meal)
                     <tr>
-                        <td class="cell-media"><img src="{{ $meal->image_url }}" alt=""><span>{{ $meal->t('name') }}</span></td>
+                        <td class="cell-media"><img src="{{ $meal->image_url }}" alt="" data-lightbox="{{ $meal->t('name') }}"><span>{{ $meal->t('name') }}</span></td>
                         <td class="mono">{{ $meal->pivot->quantity }}</td>
                         <td>@money($meal->price)</td>
                         <td class="price">@money($meal->price * $meal->pivot->quantity)</td>

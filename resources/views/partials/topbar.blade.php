@@ -12,6 +12,7 @@
     <div class="topbar__tools">
         <x-locale-switcher />
         <x-theme-toggle />
+        <x-notification-bell />
 
         <div class="menu-pop">
             <button type="button" class="btn btn--ghost btn--sm" data-toggle-target="#workspace-user" aria-expanded="false">

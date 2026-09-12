@@ -13,6 +13,7 @@ use App\Repositories\Contracts\UserRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class AuthService
 {
@@ -29,6 +30,7 @@ class AuthService
                 'password' => $data->password,
                 'user_type' => UserType::Customer->value,
                 'status' => true,
+                'preferred_locale' => app()->getLocale(),
             ]);
 
             Customer::create(['user_id' => $user->id]);
@@ -54,6 +56,21 @@ class AuthService
         if (! $user->status) {
             Auth::logout();
 
+            throw new DomainException(__('errors.account_disabled'), 403);
+        }
+
+        return $user;
+    }
+
+    public function verifyCredentials(string $email, string $password): User
+    {
+        $user = $this->users->findByEmail($email);
+
+        if ($user === null || ! Hash::check($password, $user->password)) {
+            throw new DomainException(__('auth.failed'), 422);
+        }
+
+        if (! $user->status) {
             throw new DomainException(__('errors.account_disabled'), 403);
         }
 
@@ -111,7 +128,7 @@ class AuthService
     public function deactivate(User $user): void
     {
         $user->update(['status' => false]);
-        Auth::logout();
+        $user->tokens()->delete();
     }
 
     protected function codeKey(User $user): string

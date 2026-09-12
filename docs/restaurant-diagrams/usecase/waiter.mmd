@@ -1,0 +1,38 @@
+flowchart LR
+    classDef actor fill:#2563eb,stroke:#1d4ed8,color:#ffffff,stroke-width:2px
+    classDef uc fill:#eff6ff,stroke:#2563eb,color:#0f172a,stroke-width:1.5px
+    classDef sub fill:#f0fdfa,stroke:#0d9488,color:#0f172a,stroke-width:1px
+
+    ACTOR["Waiter"]:::actor
+
+    UC1(["Manage reservations"]):::uc
+    ACTOR --- UC1
+    S1_1(["Take walk-in reservation (type=Locally)"]):::sub
+    UC1 -.->|includes| S1_1
+    S1_2(["Confirm app reservation (type=Application)"]):::sub
+    UC1 -.->|includes| S1_2
+    S1_3(["Assign a table"]):::sub
+    UC1 -.->|includes| S1_3
+
+    UC2(["Seat and open orders"]):::uc
+    ACTOR --- UC2
+    S2_1(["Convert reservation into an order"]):::sub
+    UC2 -.->|includes| S2_1
+    S2_2(["Open a dine-in order"]):::sub
+    UC2 -.->|includes| S2_2
+
+    UC3(["Take orders"]):::uc
+    ACTOR --- UC3
+    S3_1(["Add meal to order"]):::sub
+    UC3 -.->|includes| S3_1
+    S3_2(["Add offer to order"]):::sub
+    UC3 -.->|includes| S3_2
+    S3_3(["Record special requests"]):::sub
+    UC3 -.->|includes| S3_3
+
+    UC4(["Serve and close"]):::uc
+    ACTOR --- UC4
+    S4_1(["Send order to kitchen"]):::sub
+    UC4 -.->|includes| S4_1
+    S4_2(["Mark order completed"]):::sub
+    UC4 -.->|includes| S4_2

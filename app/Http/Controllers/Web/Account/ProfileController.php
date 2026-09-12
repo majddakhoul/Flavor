@@ -12,6 +12,7 @@ use App\Services\Catalog\LocationService;
 use App\Services\People\AuthService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -49,6 +50,7 @@ class ProfileController extends Controller
     public function deactivate(Request $request): RedirectResponse
     {
         $this->auth->deactivate($request->user());
+        Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -24,6 +25,7 @@ class Offer extends Model
         'is_active',
         'start_date',
         'end_date',
+        'picture_id',
     ];
 
     protected $casts = [
@@ -106,6 +108,18 @@ class Offer extends Model
         return Attribute::make(
             get: fn () => round((float) $this->ratings()->avg('number_stars'), 1),
         )->shouldCache();
+    }
+
+    protected function imageUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->picture?->url ?? asset('assets/img/offers/placeholder.svg'),
+        )->shouldCache();
+    }
+
+    public function picture(): BelongsTo
+    {
+        return $this->belongsTo(Picture::class);
     }
 
     public function meals(): BelongsToMany

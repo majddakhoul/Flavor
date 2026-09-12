@@ -1,0 +1,27 @@
+flowchart LR
+    classDef actor fill:#2563eb,stroke:#1d4ed8,color:#ffffff,stroke-width:2px
+    classDef uc fill:#eff6ff,stroke:#2563eb,color:#0f172a,stroke-width:1.5px
+    classDef sub fill:#f0fdfa,stroke:#0d9488,color:#0f172a,stroke-width:1px
+
+    ACTOR["Delivery"]:::actor
+
+    UC1(["View assigned deliveries"]):::uc
+    ACTOR --- UC1
+    S1_1(["Filter orders by employee_id = self"]):::sub
+    UC1 -.->|includes| S1_1
+    S1_2(["View customer location and delivery_time"]):::sub
+    UC1 -.->|includes| S1_2
+
+    UC2(["Fulfill delivery"]):::uc
+    ACTOR --- UC2
+    S2_1(["Mark order en route (Confirmed)"]):::sub
+    UC2 -.->|includes| S2_1
+    S2_2(["Mark order delivered (Completed)"]):::sub
+    UC2 -.->|includes| S2_2
+
+    UC3(["Handle problems"]):::uc
+    ACTOR --- UC3
+    S3_1(["Report failed delivery"]):::sub
+    UC3 -.->|includes| S3_1
+    S3_2(["Cancel order with notes"]):::sub
+    UC3 -.->|includes| S3_2

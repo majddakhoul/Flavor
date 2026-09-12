@@ -1,0 +1,89 @@
+erDiagram
+    locations {
+        bigint id PK
+        varchar country
+        varchar region
+        varchar state
+        varchar city
+        time delivery_time
+        varchar street
+    }
+    users {
+        bigint id PK
+        varchar first_name
+        varchar last_name
+        varchar email
+        varchar password
+        varchar phone
+        enum gender
+        boolean status
+        enum user_type
+        varchar preferred_locale
+        timestamp email_verified_at
+        bigint location_id FK
+    }
+    customers {
+        bigint id PK
+        enum allergies
+        varchar favorite_categories
+        boolean ban
+        date ban_date
+        bigint user_id FK
+    }
+    employees {
+        bigint id PK
+        varchar national_id
+        enum position
+        bigint salary
+        int bonus
+        varchar notes
+        date hire_date
+        date birth_date
+        bigint user_id FK
+    }
+    tables {
+        bigint id PK
+        varchar table_number
+        tinyint capacity
+        enum location
+        boolean is_active
+        int price_per_hour
+        varchar description
+    }
+    reservations {
+        bigint id PK
+        varchar reservation_code
+        enum status
+        tinyint party_size
+        enum type
+        text special_requests
+        date date
+        bigint customer_id FK
+        bigint employee_id FK
+        bigint order_id FK
+    }
+    reservation_table {
+        bigint id PK
+        datetime start_time
+        datetime end_time
+        bigint table_id FK
+        bigint reservation_id FK
+    }
+    maintenances {
+        bigint id PK
+        varchar maintenance_item
+        bigint total_price
+        bigint price
+        int discount
+        varchar notes
+        bigint employee_id FK
+    }
+
+    locations ||--o{ users : "location"
+    users ||--o{ customers : "user"
+    users ||--o{ employees : "user"
+    customers ||--o{ reservations : "customer"
+    employees ||--o{ reservations : "employee"
+    reservations ||--o{ reservation_table : "reservation"
+    tables ||--o{ reservation_table : "table"
+    employees ||--o{ maintenances : "employee"

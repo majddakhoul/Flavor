@@ -1,0 +1,32 @@
+sequenceDiagram
+    autonumber
+    actor W as waiter
+    participant API as Laravel API
+    participant DB as Database
+
+    W->>API: POST /api/auth/login
+    API-->>W: 200 token (position=Waiter)
+    W->>API: GET /api/reservations?date=today
+    API-->>W: 200 today's reservations
+    alt app reservation (type=Application)
+        W->>API: PATCH /api/reservations/:id (status=Confirmed)
+    else walk-in guest
+        W->>API: POST /api/reservations (type=Locally, party_size, employee_id=self)
+        API-->>W: 201 reservation Pending
+        W->>API: PATCH /api/reservations/:id (status=Confirmed)
+    end
+    W->>API: POST /api/reservations/:id/tables (table_id, start_time, end_time)
+    API->>DB: create reservation_table row
+    API-->>W: 200 table assigned
+    W->>API: POST /api/orders (order_type=Reservation, reservation_id, customer_id)
+    API-->>W: 201 order Pending
+    loop guest keeps ordering
+        W->>API: POST /api/orders/:id/meals (meal_id, quantity, notes)
+        W->>API: POST /api/orders/:id/offers (offer_id, quantity)
+    end
+    API->>DB: sync meal_order and offer_order lines
+    W->>API: PATCH /api/orders/:id (status=Confirmed)
+    Note over W,API: chef prepares in the kitchen
+    W->>API: PATCH /api/orders/:id (status=Completed)
+    API->>DB: order + reservation status=Completed
+    API-->>W: 200 table freed

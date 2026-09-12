@@ -1,0 +1,24 @@
+sequenceDiagram
+    autonumber
+    actor CU as customer
+    participant API as Laravel API
+    participant DB as Database
+
+    CU->>API: GET /api/offers?is_active=true
+    API->>DB: filter is_active=true and today between start_date/end_date
+    API-->>CU: 200 active offers with bundled meals (meal_offer)
+    CU->>API: GET /api/offers/:id
+    API-->>CU: 200 offer detail, bundlePrice computed from meal sellingPrice minus discount_amount%
+    CU->>API: POST /api/orders (order_type=Takeaway)
+    CU->>API: POST /api/orders/:id/offers (offer_id, quantity)
+    API->>DB: create offer_order line
+    alt offer expired between browse and checkout
+        API-->>CU: 422 offer is no longer active
+    else still active
+        API->>DB: order total recomputed with the discount
+        API-->>CU: 201 order confirmed with offer applied
+    end
+    Note over CU,API: after pickup, order marked Completed
+    CU->>API: POST /api/offers/:id/ratings (number_stars)
+    API->>DB: insert offers_ratings
+    API-->>CU: 201 thanks for rating the offer

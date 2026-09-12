@@ -27,6 +27,12 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\PreferredTheme::class,
             \App\Http\Middleware\EnsureUserIsActive::class,
         ],
+
+        'api' => [
+            \Illuminate\Routing\Middleware\ThrottleRequests::class . ':api',
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \App\Http\Middleware\Api\SetApiLocale::class,
+        ],
     ];
 
     protected $middlewareAliases = [

@@ -46,13 +46,15 @@ Four defects in the original models were corrected without touching the schema: 
 
 ---
 
-## 3. Web only
+## 3. Web only, then a versioned API restored alongside it
 
 **Requirement.** Convert everything from API to web, for every kind of user.
 
 **Interpretation.** No JSON endpoints, no token authentication. Every action is a form submission or a link, authenticated by session, protected by CSRF.
 
-**Result.** `routes/api.php` and `routes/channels.php` were deleted. `routes/web.php` defines 173 lines covering public pages, guest routes, the customer area under `/account` and the staff workspace under `/manage`. Laravel Sanctum was removed from the dependency list. Roughly one hundred single action API controllers were consolidated into 29 resource controllers.
+**Result at the `2.0.0` web-only rebuild.** `routes/api.php` and `routes/channels.php` were deleted. `routes/web.php` defined public pages, guest routes, the customer area under `/account` and the staff workspace under `/manage`. Laravel Sanctum was removed from the dependency list. Roughly one hundred single action API controllers were consolidated into resource controllers.
+
+**What changed in `2.1.0`.** The original project's own scope always paired this Laravel backend with a Flutter mobile client (see [ANALYSIS.md](ANALYSIS.md)), which needs a JSON API to talk to. A versioned API was rebuilt from scratch at `/api/v1` — organised into `Auth`, `Catalog`, `Account` and `Manage`, mirroring the web controller layout — authenticated by reinstated Sanctum personal access tokens, entirely independent of the web session guard. No business rule was duplicated: every API controller is a thin adapter over the same `Service`/`Repository`/`Policy` classes the web controllers already called. See [API.md](API.md) for the full endpoint reference and the `2.1.0` entry in [CHANGELOG.md](CHANGELOG.md) for the complete list of additions.
 
 ---
 
@@ -93,7 +95,7 @@ Four defects in the original models were corrected without touching the schema: 
 
 | Layer | Mechanism | Location |
 | --- | --- | --- |
-| Interface | Six namespaced language files per locale | `lang/{en,ar,fr}/{app,flash,errors,domain,enums,mail}.php` |
+| Interface | Seven namespaced language files per locale | `lang/{en,ar,fr}/{app,flash,errors,domain,enums,mail,notifications}.php` |
 | Framework strings | Laravel defaults per locale | `lang/{en,ar,fr}/{auth,passwords,pagination,validation}.php` |
 | Database content | Polymorphic `translations` table plus the `HasTranslations` trait | `app/Support/Traits/HasTranslations.php` |
 | Editing | Tabbed control writing every locale in one submission | `resources/views/components/translations-tabs.blade.php` |
@@ -126,7 +128,9 @@ Locking prevents the two race conditions that matter in this domain: two checkou
 
 **Requirement.** Cache with Redis.
 
-**Result.** `CacheService` wraps tagged Redis cache with named profiles declared in `config/flavor.php`. A write to a meal flushes the catalog tag only. Translation lookups are cached for twelve hours under their own tag. If Redis is unreachable the service falls through to the live query rather than raising an error, so a cache outage degrades performance instead of breaking the site.
+**Result.** `CacheService` wraps tagged cache access behind named profiles declared in `config/flavor.php`. A write to a meal flushes the catalog tag only. Translation lookups are cached for twelve hours under their own tag. If the cache is unreachable the service falls through to the live query rather than raising an error, so a cache outage degrades performance instead of breaking the site.
+
+Redis is fully supported and was the original driver, but `.env.example` now defaults `CACHE_DRIVER` and `QUEUE_CONNECTION` to `file` and `sync` respectively (see `2.2.2` in [CHANGELOG.md](CHANGELOG.md)), so a fresh checkout runs with no extra service to install. Setting `CACHE_DRIVER=redis` and `QUEUE_CONNECTION=redis` restores the original Redis-backed behaviour for production. This fallback is specific to `CacheService`: framework-level features that talk to the cache directly, such as the `throttle:auth` rate limiter on sign in, always use whatever `CACHE_DRIVER` is configured and fail loudly if it points at a Redis server that is not running — the correct behaviour for a security control.
 
 ---
 
@@ -202,12 +206,18 @@ Permissions are enforced at three levels: route groups guarded by `ability:<name
 
 | Document | Contents |
 | --- | --- |
-| `README.md` | Architecture, layout, modules, roles, cookies, localisation, theming, integrity, installation |
+| `README.md` | Architecture, layout, modules, roles, cookies, the API, notifications, diagrams, localisation, theming, integrity, installation |
 | `README.ar.md` | The same document in Arabic |
+| `docs/screenshots/README.md` / `README.ar.md` | Interface gallery — every screen in the application, captured and captioned by area and by staff position, in English and Arabic |
+| `docs/API.md` | Full API reference: every endpoint, the response envelope, search/filter/sort/pagination, auth flow, error catalogue |
+| `docs/NOTIFICATIONS.md` | How the mail and database notification system is built, and how to add a new notification type |
+| `docs/ANALYSIS.md` | The original requirements analysis, translated and mapped onto this codebase |
 | `docs/PACKAGES.md` | Every dependency with its justification, and every command needed to run the project |
 | `docs/REQUIREMENTS.md` | This document |
-| `docs/CHANGELOG.md` | Every change made during the rebuild |
-| `docs/flavor.postman_collection.json` | Postman collection covering the web routes |
+| `docs/CHANGELOG.md` | Every change made during both rebuilds |
+| `docs/diagrams/`, `docs/restaurant-diagrams/`, `docs/Draw io/` | Hand-authored UML diagrams, a second schema-derived Mermaid set, and their editable `.drawio` sources |
+| `docs/flavor-api.postman_collection.json` | Postman collection covering the JSON API |
+| `docs/flavor.postman_collection.json` | Postman collection covering the web routes, kept from the `2.0.0` web-only rebuild |
 
 ---
 
@@ -215,6 +225,11 @@ Permissions are enforced at three levels: route groups guarded by `ability:<name
 
 **Requirement.** Provide a Postman collection.
 
-**Interpretation.** Since the application is web only, the collection exercises form submissions rather than JSON endpoints.
+**Interpretation at the `2.0.0` web-only stage.** Since the application was web only at that point, the collection exercised form submissions rather than JSON endpoints.
 
-**Result.** The collection at `docs/flavor.postman_collection.json` uses a cookie jar for the session, extracts the CSRF token from the sign in page into a collection variable, and sends every mutation as `x-www-form-urlencoded` with the `_token` field and the correct `_method` override. Requests are grouped by area: public, authentication, customer account and staff workspace.
+**Result.** Two collections now ship, kept for their different purposes:
+
+| Collection | Exercises | Notes |
+| --- | --- | --- |
+| `docs/flavor-api.postman_collection.json` | The versioned JSON API (`/api/v1`) | 117 requests, added in `2.1.0`; uses a bearer token obtained from **Auth > Login**, set as the collection's `token` variable. This is the primary collection referenced from the root README. |
+| `docs/flavor.postman_collection.json` | The session-authenticated web routes | Kept from the `2.0.0` rebuild; uses a cookie jar for the session, extracts the CSRF token from the sign in page into a collection variable, and sends every mutation as `x-www-form-urlencoded` with the `_token` field and the correct `_method` override. |

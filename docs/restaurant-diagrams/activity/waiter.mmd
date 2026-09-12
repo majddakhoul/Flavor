@@ -1,0 +1,23 @@
+flowchart TD
+    classDef start fill:#0d9488,stroke:#0d9488,color:#ffffff
+    classDef act fill:#eff6ff,stroke:#2563eb,color:#0f172a
+    classDef dec fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef sys fill:#f0fdfa,stroke:#0d9488,color:#0f172a
+    classDef stop fill:#64748b,stroke:#475569,color:#ffffff
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+
+    A([Start]):::start --> B["Guest arrives or app reservation comes in"]:::act
+    B --> C{Booked via the app already?}:::dec
+    C -->|Yes| D["Confirm reservation"]:::act
+    C -->|No| E["Create walk-in reservation (type=Locally)"]:::act
+    D --> F["Assign a table (reservation_table)"]:::act
+    E --> F
+    F --> G["Seat the guests"]:::act
+    G --> H["Open order (order_type=Reservation)"]:::act
+    H --> I["Add meal and offer lines"]:::act
+    I --> J["Send order to kitchen"]:::sys
+    J --> K{Guests want more?}:::dec
+    K -->|Yes| I
+    K -->|No| L["Bring the bill, close the table"]:::act
+    L --> M["Mark order and reservation Completed"]:::act
+    M --> N([End]):::stop

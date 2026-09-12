@@ -1,7 +1,7 @@
 <header class="site-header">
     <div class="shell site-header__inner">
         <a class="brand" href="{{ route('home') }}">
-            <img src="{{ asset('assets/img/brand/logo-192.png') }}" alt="">
+            <img src="{{ asset('assets/img/brand/mark.svg') }}" alt="">
             <span>{{ config('flavor.brand.name') }}<small>{{ __('app.tagline_short') }}</small></span>
         </a>
 
@@ -27,6 +27,7 @@
 
             <x-locale-switcher />
             <x-theme-toggle />
+            <x-notification-bell />
 
             @auth
                 <div class="menu-pop">

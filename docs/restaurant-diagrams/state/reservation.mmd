@@ -1,0 +1,17 @@
+stateDiagram-v2
+    direction LR
+    [*] --> Pending: POST /api/reservations (type=Application or Locally)
+    Pending --> Confirmed: waiter/manager confirms + attaches table via reservation_table
+    Pending --> Cancelled: customer or staff cancels before the date
+    Confirmed --> Completed: converted into an order at check-in
+    Confirmed --> Cancelled: cancelled before arrival
+    Completed --> [*]
+    Cancelled --> [*]
+    note right of Confirmed
+        type=Locally is confirmed immediately
+        by the employee who took the booking
+    end note
+    note right of Completed
+        order_id is set on the reservation
+        once the dine-in order is opened
+    end note

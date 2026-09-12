@@ -52,6 +52,9 @@ return [
         'recipe_updated' => 'Recipe saved.',
         'updated' => 'Meal updated.',
     ],
+    'notifications' => [
+        'deleted' => 'Notification removed.',
+    ],
     'offers' => [
         'activated' => 'Offer is now live.',
         'created' => 'Offer created.',

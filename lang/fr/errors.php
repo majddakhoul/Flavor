@@ -18,6 +18,7 @@ return [
     'customer_profile_missing' => 'Aucun profil client lié à ce compte.',
     'customers_only' => 'Cet espace est réservé aux clients.',
     'delivery_location_required' => 'Choisissez d\'abord une zone de livraison.',
+    'email_not_verified' => 'Merci de vérifier votre adresse e-mail avant de continuer.',
     'employee_profile_missing' => 'Aucun profil employé lié à ce compte.',
     'ingredient_in_use' => 'Cet ingrédient est utilisé dans une recette.',
     'insufficient_stock' => 'Stock insuffisant de :ingredient pour :item. Requis :required, disponible :available.',

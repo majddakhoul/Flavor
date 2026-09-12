@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Login — Token Issuance — Flavor Diagrams</title>
+<link rel="stylesheet" href="assets/diagrams.css">
+
+</head>
+<body>
+<header class="topbar">
+  <div>
+    <p class="topbar__crumbs"><a href="index.html">Diagrams</a> / Behaviour — Sequence Diagram</p>
+    <h1 class="topbar__title">Login — Token Issuance</h1>
+  </div>
+  <a href="../../README.md">&larr; Back to README</a>
+</header>
+<main class="shell">
+  <div class="diagram-head">
+    <p>How a mobile or Postman client exchanges credentials for a Sanctum bearer token. The API never touches the session guard used by the web app.</p>
+  </div>
+  <div class="legend"><span><i style="background:var(--color-primary)"></i>Component</span>
+<span><i style="background:var(--color-primary-light)"></i>Active call (activation bar)</span></div>
+  <div class="diagram-card">
+    <svg viewBox="0 0 1300 520" xmlns="http://www.w3.org/2000/svg" class="diagram-svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" class="arrowhead"/>
+  </marker>
+  <marker id="arrow-open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+    <path d="M1,1 L9,5 L1,9" fill="none" class="arrowhead-open"/>
+  </marker>
+  <marker id="diamond-start" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0,5 L5,0 L10,5 L5,10 z" class="diamond-marker"/>
+  </marker>
+</defs>
+
+<rect x="6.0" y="20" width="168.0" height="38" rx="8" class="participant"/><text x="90" y="44" class="title-lbl" text-anchor="middle" font-weight="700">Flutter / API client</text>
+<line x1="90" y1="58" x2="90" y2="500" class="lifeline"/>
+<rect x="251.2" y="20" width="197.60000000000002" height="38" rx="8" class="participant"/><text x="350" y="44" class="title-lbl" text-anchor="middle" font-weight="700">Api\Auth\LoginController</text>
+<line x1="350" y1="58" x2="350" y2="500" class="lifeline"/>
+<rect x="580.0" y="20" width="140" height="38" rx="8" class="participant"/><text x="650" y="44" class="title-lbl" text-anchor="middle" font-weight="700">AuthService</text>
+<line x1="650" y1="58" x2="650" y2="500" class="lifeline"/>
+<rect x="830.0" y="20" width="140" height="38" rx="8" class="participant alt"/><text x="900" y="44" class="title-lbl" text-anchor="middle" font-weight="700">Sanctum</text>
+<line x1="900" y1="58" x2="900" y2="500" class="lifeline"/>
+<rect x="1080.0" y="20" width="140" height="38" rx="8" class="participant alt"/><text x="1150" y="44" class="title-lbl" text-anchor="middle" font-weight="700">users table</text>
+<line x1="1150" y1="58" x2="1150" y2="500" class="lifeline"/>
+<line x1="90" y1="90" x2="350" y2="90" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="110.6" y="74" width="218.8" height="14" class="edge-lbl-bg"/>
+<text x="220.0" y="85" class="edge-lbl" text-anchor="middle">POST /auth/login {email, password}</text>
+<rect x="345.0" y="124" width="10" height="230" rx="2" class="activation"/>
+<line x1="350" y1="130" x2="650" y2="130" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="390.6" y="114" width="218.8" height="14" class="edge-lbl-bg"/>
+<text x="500.0" y="125" class="edge-lbl" text-anchor="middle">verifyCredentials(email, password)</text>
+<rect x="645.0" y="164" width="10" height="90" rx="2" class="activation"/>
+<line x1="650" y1="170" x2="1150" y2="170" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="806.1" y="154" width="187.8" height="14" class="edge-lbl-bg"/>
+<text x="900.0" y="165" class="edge-lbl" text-anchor="middle">findByEmail() + Hash::check()</text>
+<line x1="1150" y1="210" x2="650" y2="210" class="edge strong dashed" marker-end="url(#arrow-open)"/>
+<rect x="852.6" y="194" width="94.8" height="14" class="edge-lbl-bg"/>
+<text x="900.0" y="205" class="edge-lbl" text-anchor="middle">User (or none)</text>
+<line x1="650" y1="250" x2="350" y2="250" class="edge strong dashed" marker-end="url(#arrow-open)"/>
+<rect x="387.5" y="234" width="225.0" height="14" class="edge-lbl-bg"/>
+<text x="500.0" y="245" class="edge-lbl" text-anchor="middle">User, or throw DomainException(422)</text>
+<line x1="350" y1="290" x2="900" y2="290" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="543.5" y="274" width="163.0" height="14" class="edge-lbl-bg"/>
+<text x="625.0" y="285" class="edge-lbl" text-anchor="middle">user-&gt;createToken(device)</text>
+<rect x="895.0" y="318" width="10" height="34" rx="2" class="activation"/>
+<line x1="900" y1="354" x2="350" y2="354" class="edge strong dashed" marker-end="url(#arrow-open)"/>
+<rect x="577.6" y="338" width="94.8" height="14" class="edge-lbl-bg"/>
+<text x="625.0" y="349" class="edge-lbl" text-anchor="middle">plainTextToken</text>
+<line x1="350" y1="390" x2="90" y2="390" class="edge strong dashed" marker-end="url(#arrow-open)"/>
+<rect x="126.1" y="374" width="187.8" height="14" class="edge-lbl-bg"/>
+<text x="220.0" y="385" class="edge-lbl" text-anchor="middle">200 { data: { user, token } }</text>
+</svg>
+  </div>
+  <div class="diagram-card" style="margin-top:16px;box-shadow:none"><strong>Maps to</strong><ul style="margin:8px 0 0;padding-inline-start:20px;color:#4b5563"><li><code>Api\Auth\LoginController::store()</code>, <code>AuthService::verifyCredentials()</code> (added in this rebuild specifically so the API never calls the session-bound <code>Auth::attempt()</code>).</li>
+<li>The token is a Sanctum personal access token, stored hashed in <code>personal_access_tokens</code>; the client keeps the plain-text value and sends it as <code>Authorization: Bearer &lt;token&gt;</code> from then on.</li>
+<li>A disabled account (<code>status = false</code>) is rejected here with 403 before a token is ever issued.</li></ul></div>
+</main>
+<footer class="page-foot">Part of the <a href="../../README.md">Flavor</a> documentation set. Generated as plain SVG/HTML/CSS &mdash; no external diagram tooling required to view or edit.</footer>
+</body>
+</html>

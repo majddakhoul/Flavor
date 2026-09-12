@@ -1,7 +1,7 @@
 @props(['offer'])
 <article class="dish reveal">
     <a class="dish__media" href="{{ route('offers.show', $offer) }}">
-        <img src="{{ $offer->meals->first()?->image_url ?? asset('assets/img/meals/placeholder.svg') }}" alt="{{ $offer->t('title') }}" loading="lazy">
+        <img src="{{ $offer->image_url }}" alt="{{ $offer->t('title') }}" loading="lazy" data-lightbox="{{ $offer->t('title') }}">
         <div class="dish__flags">
             <x-badge tone="brand">-{{ $offer->discount_amount }}%</x-badge>
             @unless ($offer->is_orderable)<x-badge tone="danger">{{ __('app.unavailable') }}</x-badge>@endunless

@@ -18,6 +18,7 @@ return [
     'customer_profile_missing' => 'No customer profile is linked to this account.',
     'customers_only' => 'This area is for customers.',
     'delivery_location_required' => 'Choose a delivery area first.',
+    'email_not_verified' => 'Verify your email address before continuing.',
     'employee_profile_missing' => 'No employee profile is linked to this account.',
     'ingredient_in_use' => 'This ingredient is used in a recipe.',
     'insufficient_stock' => 'Not enough :ingredient for :item. Needed :required, available :available.',

@@ -1,0 +1,28 @@
+sequenceDiagram
+    autonumber
+    actor M as manager
+    actor NE as new employee
+    participant API as Laravel API
+    participant DB as Database
+
+    M->>API: POST /api/employees (first_name, last_name, email, phone, gender, position)
+    API->>DB: create user (user_type=Employee, status=false)
+    API->>DB: create employee (national_id, position, salary, bonus, hire_date, birth_date)
+    API-->>M: 201 employee created, temporary password issued
+    M->>API: PATCH /api/users/:id (location_id)
+    API-->>M: 200 assigned to a location
+    NE->>API: POST /api/auth/login (temporary password)
+    API-->>NE: 200 token
+    NE->>API: PATCH /api/auth/password (new password)
+    API->>DB: update password, password hashed
+    M->>API: PATCH /api/users/:id (status=true)
+    API-->>M: 200 account Active
+    alt position=Chef
+        NE->>API: GET /api/orders?status=Confirmed
+    else position=Waiter
+        NE->>API: GET /api/reservations?date=today
+    else position=Delivery
+        NE->>API: GET /api/orders?order_type=Delivery&employee_id=self
+    else position=Security
+        NE->>API: GET /api/reservations?reservation_code=
+    end

@@ -52,6 +52,9 @@ return [
         'recipe_updated' => 'Recette enregistrée.',
         'updated' => 'Plat mis à jour.',
     ],
+    'notifications' => [
+        'deleted' => 'Notification supprimée.',
+    ],
     'offers' => [
         'activated' => 'Offre activée.',
         'created' => 'Offre créée.',

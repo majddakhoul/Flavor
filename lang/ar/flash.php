@@ -52,6 +52,9 @@ return [
         'recipe_updated' => 'تم حفظ الوصفة.',
         'updated' => 'تم تحديث الوجبة.',
     ],
+    'notifications' => [
+        'deleted' => 'تم حذف الإشعار.',
+    ],
     'offers' => [
         'activated' => 'العرض فعّال الآن.',
         'created' => 'تم إنشاء العرض.',

@@ -1,0 +1,19 @@
+sequenceDiagram
+    autonumber
+    actor G as guest
+    participant API as Laravel API
+    participant DB as Database
+
+    G->>API: GET /api/categories
+    G->>API: GET /api/meals?category_id=
+    G->>API: GET /api/offers?is_active=true
+    API-->>G: 200 public menu and active offers
+    G->>API: GET /api/meals/:id/ratings/average
+    G->>API: GET /api/offers/:id/ratings/average
+    API-->>G: 200 average number_stars
+    G->>API: POST /api/register (first_name, last_name, email, password, phone, gender)
+    API->>DB: create user (user_type=Customer) + customer record
+    API-->>G: 201 verification email sent
+    G->>API: GET /api/email/verify/:id/:hash
+    API->>DB: set email_verified_at
+    API-->>G: 200 account Active, now a customer

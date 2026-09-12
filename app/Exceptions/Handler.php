@@ -32,6 +32,14 @@ class Handler extends ExceptionHandler
 
     protected function renderDomainException(Request $request, DomainException $exception)
     {
+        if ($request->is('api/*') || $request->expectsJson()) {
+            return response()->json([
+                'success' => false,
+                'message' => $exception->userMessage(),
+                'errors' => $exception->context() ?: null,
+            ], $exception->status());
+        }
+
         return redirect()
             ->back()
             ->withInput()

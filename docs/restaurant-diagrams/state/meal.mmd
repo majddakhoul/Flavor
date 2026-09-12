@@ -1,0 +1,10 @@
+stateDiagram-v2
+    direction LR
+    [*] --> Available: meal created with availability=available
+    Available --> Unavailable: chef marks it out (ingredient stock_quantity too low)
+    Unavailable --> Available: ingredients.stock_quantity restocked, chef re-enables
+    Available --> [*]: meal removed from the menu
+    note right of Unavailable
+        hidden from the customer menu and from
+        new meal_order / meal_offer lines
+    end note

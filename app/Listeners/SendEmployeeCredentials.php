@@ -3,9 +3,8 @@
 namespace App\Listeners;
 
 use App\Events\EmployeeHired;
-use App\Mail\EmployeeCredentialsMail;
+use App\Notifications\People\EmployeeCredentialsIssued;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Mail;
 
 class SendEmployeeCredentials implements ShouldQueue
 {
@@ -13,7 +12,7 @@ class SendEmployeeCredentials implements ShouldQueue
     {
         $user = $event->employee->user;
 
-        Mail::to($user->email)->send(new EmployeeCredentialsMail([
+        $user->notify(new EmployeeCredentialsIssued([
             'subject_data' => ['name' => $user->full_name],
             'highlight' => $event->password,
             'rows' => [
@@ -23,6 +22,6 @@ class SendEmployeeCredentials implements ShouldQueue
             ],
             'action' => ['label' => __('domain.sign_in'), 'url' => route('login')],
             'footnote' => __('mail.people.credentials.footnote'),
-        ], app()->getLocale()));
+        ]));
     }
 }

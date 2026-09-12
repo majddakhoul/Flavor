@@ -10,7 +10,7 @@
 
         <x-toolbar :action="route('offers.index')" :sorts="['discount_amount' => __('app.discount'), 'end_date' => __('app.ends')]" />
 
-        <div class="grid grid-3">
+        <div class="grid grid-cards">
             @forelse ($offers as $offer)
                 <x-offer-card :offer="$offer" />
             @empty

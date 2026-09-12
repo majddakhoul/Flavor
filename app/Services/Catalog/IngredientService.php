@@ -79,4 +79,14 @@ class IngredientService
             'watchlist' => $this->ingredients->lowStock(8),
         ], self::TAGS);
     }
+
+    public function mostConsumed(int $limit = 10): \Illuminate\Support\Collection
+    {
+        return $this->cache->remember(
+            'statistics',
+            'ingredients:most-consumed:' . $limit,
+            fn () => $this->ingredients->mostConsumed($limit),
+            self::TAGS
+        );
+    }
 }

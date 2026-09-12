@@ -49,6 +49,16 @@ class MealService
         return $this->meals->findOrFail($id, ['category', 'picture', 'ingredients', 'ratings', 'translations', 'offers']);
     }
 
+    public function topSelling(int $limit = 5): \Illuminate\Support\Collection
+    {
+        return $this->cache->remember(
+            'statistics',
+            'meals:top-selling:' . $limit,
+            fn () => $this->meals->topSelling($limit),
+            self::TAGS
+        );
+    }
+
     public function create(MealData $data, ?UploadedFile $image = null): Meal
     {
         $meal = DB::transaction(function () use ($data, $image) {

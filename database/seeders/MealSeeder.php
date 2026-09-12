@@ -6,17 +6,31 @@ use App\Enums\MealAvailability;
 use App\Models\Category;
 use App\Models\Ingredient;
 use App\Models\Meal;
+use App\Models\Picture;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 
 class MealSeeder extends Seeder
 {
+    /**
+     * Disk and folder where meal photos live, e.g. storage/app/public/meals/<slug>.jpg
+     * Accepts jpg, jpeg, png or webp — drop in whichever you have.
+     */
+    protected string $disk = 'public';
+    protected string $folder = 'meals';
+    protected array $extensions = ['jpg', 'jpeg', 'png', 'webp'];
+
     public function run(): void
     {
         $categories = Category::query()->pluck('id', 'name');
         $ingredients = Ingredient::query()->pluck('id', 'name');
 
+        $missing = [];
+
         foreach ($this->meals() as $data) {
-            $meal = Meal::query()->firstOrCreate(
+            $pictureId = $this->resolvePicture($data['image'], $missing, $data['name']);
+
+            $meal = Meal::query()->updateOrCreate(
                 ['name' => $data['name']],
                 [
                     'prep_time' => $data['prep_time'],
@@ -25,7 +39,7 @@ class MealSeeder extends Seeder
                     'description' => $data['description'],
                     'availability' => MealAvailability::Available->value,
                     'category_id' => $categories[$data['category']] ?? $categories->first(),
-                    'picture_id' => null,
+                    'picture_id' => $pictureId,
                 ]
             );
 
@@ -44,6 +58,38 @@ class MealSeeder extends Seeder
 
             $meal->ingredients()->sync($recipe);
         }
+
+        if ($missing && $this->command) {
+            $this->command->newLine();
+            $this->command->warn(count($missing).' meal photo(s) not found in storage/app/public/'.$this->folder.'/:');
+            foreach ($missing as $name => $slug) {
+                $this->command->line("  - {$name}  →  {$this->folder}/{$slug}.(jpg|jpeg|png|webp)");
+            }
+        }
+    }
+
+    /**
+     * Look for <slug>.<ext> on disk, create/refresh its pictures row, return the picture id.
+     * Returns null (and records it as missing) when no matching file exists yet.
+     */
+    protected function resolvePicture(string $slug, array &$missing, string $mealName): ?int
+    {
+        foreach ($this->extensions as $ext) {
+            $path = "{$this->folder}/{$slug}.{$ext}";
+
+            if (Storage::disk($this->disk)->exists($path)) {
+                $picture = Picture::query()->updateOrCreate(
+                    ['path' => $path],
+                    ['name' => "{$slug}.{$ext}"]
+                );
+
+                return $picture->id;
+            }
+        }
+
+        $missing[$mealName] = $slug;
+
+        return null;
     }
 
     protected function meals(): array
@@ -51,6 +97,7 @@ class MealSeeder extends Seeder
         return [
             [
                 'name' => 'Hummus with pine nuts',
+                'image' => 'hummus-with-pine-nuts',
                 'ar' => ['حمص بالصنوبر', 'حمص مخفوق بالطحينة والليمون مع صنوبر محمّر بالزبدة.'],
                 'fr' => ['Houmous aux pignons', 'Houmous au tahini et citron, pignons dorés au beurre.'],
                 'description' => 'Chickpeas whipped with tahini and lemon, topped with butter toasted pine nuts.',
@@ -62,6 +109,7 @@ class MealSeeder extends Seeder
             ],
             [
                 'name' => 'Moutabal',
+                'image' => 'moutabal',
                 'ar' => ['متبل باذنجان', 'باذنجان مشوي على الفحم مع لبن وطحينة وليمون.'],
                 'fr' => ['Moutabal', 'Aubergine grillée au charbon, yaourt, tahini et citron.'],
                 'description' => 'Charcoal roasted aubergine folded with yoghurt, tahini and lemon.',
@@ -73,6 +121,7 @@ class MealSeeder extends Seeder
             ],
             [
                 'name' => 'Tabbouleh',
+                'image' => 'tabbouleh',
                 'ar' => ['تبولة', 'بقدونس وبندورة وبرغل ناعم مع ليمون وزيت زيتون.'],
                 'fr' => ['Taboulé', 'Persil, tomate et boulgour fin, citron et huile d\'olive.'],
                 'description' => 'Parsley, tomato and fine bulgur tossed with lemon and olive oil.',
@@ -84,6 +133,7 @@ class MealSeeder extends Seeder
             ],
             [
                 'name' => 'Fattoush',
+                'image' => 'fattoush',
                 'ar' => ['فتوش', 'خضار مقرمشة مع خبز محمّص ودبس رمان وسمّاق.'],
                 'fr' => ['Fattouche', 'Légumes croquants, pain grillé, mélasse de grenade et sumac.'],
                 'description' => 'Crisp vegetables with toasted bread, pomegranate molasses and sumac.',
@@ -95,6 +145,7 @@ class MealSeeder extends Seeder
             ],
             [
                 'name' => 'Mixed grill platter',
+                'image' => 'mixed-grill-platter',
                 'ar' => ['مشاوي مشكلة', 'شيش طاووق وكباب وريش غنم مع خبز وخضار مشوية.'],
                 'fr' => ['Assiette de grillades', 'Chich taouk, kebab et côtelettes d\'agneau, pain et légumes grillés.'],
                 'description' => 'Shish taouk, kebab and lamb chops with bread and grilled vegetables.',
@@ -106,6 +157,7 @@ class MealSeeder extends Seeder
             ],
             [
                 'name' => 'Shish taouk',
+                'image' => 'shish-taouk',
                 'ar' => ['شيش طاووق', 'مكعبات دجاج متبّلة باللبن والثوم مشوية على الفحم.'],
                 'fr' => ['Chich taouk', 'Cubes de poulet marinés au yaourt et à l\'ail, grillés au charbon.'],
                 'description' => 'Chicken cubes marinated in yoghurt and garlic, grilled over charcoal.',
@@ -117,6 +169,7 @@ class MealSeeder extends Seeder
             ],
             [
                 'name' => 'Lamb kebab',
+                'image' => 'lamb-kebab',
                 'ar' => ['كباب لحم', 'لحم مفروم مع بقدونس وبصل مشوي على السيخ.'],
                 'fr' => ['Kebab d\'agneau', 'Viande hachée au persil et oignon, grillée en brochette.'],
                 'description' => 'Minced meat with parsley and onion, shaped on skewers and grilled.',
@@ -128,6 +181,7 @@ class MealSeeder extends Seeder
             ],
             [
                 'name' => 'Kabsa with chicken',
+                'image' => 'kabsa-with-chicken',
                 'ar' => ['كبسة دجاج', 'أرز بسمتي مع دجاج وبهارات وصنوبر.'],
                 'fr' => ['Kabsa au poulet', 'Riz basmati, poulet, épices et pignons.'],
                 'description' => 'Basmati rice cooked with chicken, warm spices and pine nuts.',
@@ -139,6 +193,7 @@ class MealSeeder extends Seeder
             ],
             [
                 'name' => 'Freekeh with lamb',
+                'image' => 'freekeh-with-lamb',
                 'ar' => ['فريكة باللحم', 'فريكة مطبوخة بمرق اللحم مع قطع غنم طرية.'],
                 'fr' => ['Freekeh à l\'agneau', 'Freekeh mijoté au bouillon avec agneau fondant.'],
                 'description' => 'Smoked green wheat simmered in lamb stock with tender shoulder.',
@@ -150,6 +205,7 @@ class MealSeeder extends Seeder
             ],
             [
                 'name' => 'Stuffed vine leaves',
+                'image' => 'stuffed-vine-leaves',
                 'ar' => ['ورق عنب', 'ورق عنب محشو بالأرز والخضار ومطهو بالليمون.'],
                 'fr' => ['Feuilles de vigne farcies', 'Feuilles farcies au riz et légumes, mijotées au citron.'],
                 'description' => 'Vine leaves rolled with rice and vegetables, simmered in lemon.',
@@ -161,6 +217,7 @@ class MealSeeder extends Seeder
             ],
             [
                 'name' => 'Cheese fatayer',
+                'image' => 'cheese-fatayer',
                 'ar' => ['فطاير بالجبنة', 'عجينة طرية محشوة بجبنة الحلوم والنعناع.'],
                 'fr' => ['Fatayer au fromage', 'Pâte moelleuse garnie de halloumi et de menthe.'],
                 'description' => 'Soft dough parcels filled with halloumi and mint.',
@@ -172,6 +229,7 @@ class MealSeeder extends Seeder
             ],
             [
                 'name' => 'Meat sambousek',
+                'image' => 'meat-sambousek',
                 'ar' => ['سمبوسك باللحمة', 'معجنات مقلية محشوة باللحم المفروم والصنوبر.'],
                 'fr' => ['Sambousek à la viande', 'Chaussons frits farcis de viande hachée et pignons.'],
                 'description' => 'Fried pastry pockets filled with minced meat and pine nuts.',
@@ -183,6 +241,7 @@ class MealSeeder extends Seeder
             ],
             [
                 'name' => 'Muhalabia',
+                'image' => 'muhalabia',
                 'ar' => ['مهلبية', 'مهلبية حليب بماء الورد مع فستق مطحون.'],
                 'fr' => ['Mouhalabia', 'Crème de lait à l\'eau de rose et pistache concassée.'],
                 'description' => 'Milk pudding scented with rose water and crushed nuts.',
@@ -194,6 +253,7 @@ class MealSeeder extends Seeder
             ],
             [
                 'name' => 'Namoura',
+                'image' => 'namoura',
                 'ar' => ['نمورة', 'حلوى السميد بالقطر مع لوز محمّص.'],
                 'fr' => ['Namoura', 'Gâteau de semoule au sirop et amandes grillées.'],
                 'description' => 'Semolina cake soaked in syrup with toasted almonds.',
@@ -205,6 +265,7 @@ class MealSeeder extends Seeder
             ],
             [
                 'name' => 'House lemonade',
+                'image' => 'house-lemonade',
                 'ar' => ['ليموناضة البيت', 'ليمون طازج مع نعناع وثلج مجروش.'],
                 'fr' => ['Limonade maison', 'Citron pressé, menthe fraîche et glace pilée.'],
                 'description' => 'Fresh lemon shaken with mint and crushed ice.',
@@ -216,6 +277,7 @@ class MealSeeder extends Seeder
             ],
             [
                 'name' => 'Arabic coffee',
+                'image' => 'arabic-coffee',
                 'ar' => ['قهوة عربية', 'بن محمّص مع الهيل يُقدَّم في فنجان صغير.'],
                 'fr' => ['Café arabe', 'Café torréfié à la cardamome servi en petite tasse.'],
                 'description' => 'Roasted beans brewed with cardamom, served in a small cup.',
@@ -227,6 +289,7 @@ class MealSeeder extends Seeder
             ],
             [
                 'name' => 'Mint tea',
+                'image' => 'mint-tea',
                 'ar' => ['شاي بالنعناع', 'شاي أسود مع أوراق نعناع طازجة.'],
                 'fr' => ['Thé à la menthe', 'Thé noir aux feuilles de menthe fraîche.'],
                 'description' => 'Black tea steeped with fresh mint leaves.',
@@ -238,6 +301,7 @@ class MealSeeder extends Seeder
             ],
             [
                 'name' => 'Batata harra',
+                'image' => 'batata-harra',
                 'ar' => ['بطاطا حارة', 'بطاطا مقلية مع ثوم وكزبرة وفلفل حار.'],
                 'fr' => ['Batata harra', 'Pommes de terre sautées à l\'ail, coriandre et piment.'],
                 'description' => 'Fried potato cubes tossed with garlic, coriander and chilli.',

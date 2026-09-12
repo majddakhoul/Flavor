@@ -1,0 +1,90 @@
+classDiagram
+    direction LR
+
+    class Category {
+        +int id
+        +string name
+        +string description
+        +int parent_id
+        +parent() belongsTo
+        +children() hasMany
+        +meals() hasMany
+    }
+
+    class Picture {
+        +int id
+        +string path
+        +string name
+        +meal() hasOne
+    }
+
+    class Ingredient {
+        +int id
+        +string name
+        +string unit
+        +int stock_quantity
+        +int unit_cost
+        +bool is_active
+        +meals() belongsToMany
+        +isLowStock() bool
+    }
+
+    class Meal {
+        +int id
+        +string name
+        +string prep_time
+        +bool is_vegetarian
+        +int percentage
+        +string description
+        +string availability
+        +int picture_id
+        +int category_id
+        +category() belongsTo
+        +picture() belongsTo
+        +ingredients() belongsToMany
+        +ratings() hasMany
+        +offers() belongsToMany
+        +costPrice() float
+        +sellingPrice() float
+        +averageRating() float
+    }
+
+    class Offer {
+        +int id
+        +string title
+        +string description
+        +int discount_amount
+        +bool is_active
+        +date start_date
+        +date end_date
+        +meals() belongsToMany
+        +ratings() hasMany
+        +bundlePrice() float
+        +isCurrentlyActive() bool
+    }
+
+    class MealRating {
+        +int id
+        +int number_stars
+        +int meal_id
+        +int customer_id
+        +meal() belongsTo
+        +customer() belongsTo
+    }
+
+    class OfferRating {
+        +int id
+        +int number_stars
+        +int offer_id
+        +int customer_id
+        +offer() belongsTo
+        +customer() belongsTo
+    }
+
+    Category "1" --> "0..*" Category : children
+    Category "1" --> "0..*" Meal : meals
+    Picture "1" --> "0..1" Meal : meal
+    Meal "0..*" --> "0..*" Ingredient : ingredients
+    Meal "0..*" --> "0..*" Offer : offers
+    Meal "1" --> "0..*" MealRating : ratings
+    Offer "1" --> "0..*" OfferRating : ratings

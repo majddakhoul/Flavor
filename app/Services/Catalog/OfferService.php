@@ -41,6 +41,16 @@ class OfferService
         return $this->offers->findOrFail($id, ['meals.ingredients', 'meals.picture', 'ratings', 'translations']);
     }
 
+    public function topSelling(int $limit = 5): Collection|\Illuminate\Support\Collection
+    {
+        return $this->cache->remember(
+            'statistics',
+            'offers:top-selling:' . $limit,
+            fn () => $this->offers->topSelling($limit),
+            self::TAGS
+        );
+    }
+
     public function create(OfferData $data): Offer
     {
         $offer = DB::transaction(function () use ($data) {

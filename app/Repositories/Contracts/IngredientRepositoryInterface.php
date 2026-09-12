@@ -12,4 +12,6 @@ interface IngredientRepositoryInterface extends RepositoryInterface
     public function stockValue(): int;
 
     public function lockMany(array $ids): \Illuminate\Database\Eloquent\Collection;
+
+    public function mostConsumed(int $limit = 10): \Illuminate\Support\Collection;
 }

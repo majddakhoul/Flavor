@@ -1,0 +1,29 @@
+sequenceDiagram
+    autonumber
+    actor CU as customer
+    actor C as chef
+    actor D as delivery
+    participant API as Laravel API
+    participant DB as Database
+
+    CU->>API: POST /api/orders (order_type=Delivery, location_id)
+    API->>DB: order status=Pending
+    API-->>CU: 201 order Pending
+    CU->>API: POST /api/orders/:id/meals (meal_id, quantity)[]
+    API->>DB: sync meal_order lines
+    C->>API: GET /api/orders?status=Pending&order_type=Delivery
+    API-->>C: 200 new delivery order
+    C->>API: PATCH /api/orders/:id (status=Confirmed)
+    API->>DB: assign employee_id (position=Delivery)
+    D->>API: GET /api/orders?order_type=Delivery&employee_id=self
+    API-->>D: 200 order with location.delivery_time
+    D->>API: GET /api/orders/:id (pickup from kitchen)
+    alt delivered on time
+        D->>API: PATCH /api/orders/:id (status=Completed)
+        API-->>D: 200 delivery closed
+    else customer unreachable
+        D->>API: PATCH /api/orders/:id (status=Cancelled, notes)
+        API-->>D: 200 delivery cancelled
+    end
+    CU->>API: GET /api/orders/:id
+    API-->>CU: 200 final status

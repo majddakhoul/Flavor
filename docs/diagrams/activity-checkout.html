@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkout — from Cart to Confirmed Order — Flavor Diagrams</title>
+<link rel="stylesheet" href="assets/diagrams.css">
+
+</head>
+<body>
+<header class="topbar">
+  <div>
+    <p class="topbar__crumbs"><a href="index.html">Diagrams</a> / Behaviour — Activity Diagram</p>
+    <h1 class="topbar__title">Checkout — from Cart to Confirmed Order</h1>
+  </div>
+  <a href="../../README.md">&larr; Back to README</a>
+</header>
+<main class="shell">
+  <div class="diagram-head">
+    <p>The most business-critical path in the system: turning a cart into a paid order without ever overselling stock, even under concurrent checkouts.</p>
+  </div>
+  <div class="legend"><span><i style="background:var(--color-surface-2)"></i>Swimlane (actor / layer)</span>
+<span><i style="background:var(--color-primary-light)"></i>Decision</span>
+<span><i style="background:var(--color-warning-light)"></i>Note</span></div>
+  <div class="diagram-card">
+    <svg viewBox="0 0 1180 1000" xmlns="http://www.w3.org/2000/svg" class="diagram-svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" class="arrowhead"/>
+  </marker>
+  <marker id="arrow-open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+    <path d="M1,1 L9,5 L1,9" fill="none" class="arrowhead-open"/>
+  </marker>
+  <marker id="diamond-start" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0,5 L5,0 L10,5 L5,10 z" class="diamond-marker"/>
+  </marker>
+</defs>
+
+<rect x="0.0" y="0" width="295.0" height="1000" class="swimlane-bg"/>
+<text x="147.5" y="22" class="swimlane-lbl" text-anchor="middle">Customer</text>
+<rect x="295.0" y="0" width="295.0" height="1000" class="swimlane-bg alt"/>
+<text x="442.5" y="22" class="swimlane-lbl" text-anchor="middle">CartService / CheckoutService</text>
+<line x1="295.0" y1="0" x2="295.0" y2="1000" class="swimlane-divider"/>
+<rect x="590.0" y="0" width="295.0" height="1000" class="swimlane-bg"/>
+<text x="737.5" y="22" class="swimlane-lbl" text-anchor="middle">OrderService &amp; Inventory</text>
+<line x1="590.0" y1="0" x2="590.0" y2="1000" class="swimlane-divider"/>
+<rect x="885.0" y="0" width="295.0" height="1000" class="swimlane-bg alt"/>
+<text x="1032.5" y="22" class="swimlane-lbl" text-anchor="middle">Notifications</text>
+<line x1="885.0" y1="0" x2="885.0" y2="1000" class="swimlane-divider"/>
+<circle cx="147.5" cy="40" r="9" class="init-state"/>
+<rect x="32.5" y="80" width="230" height="50" rx="10" class="box"/><text x="147.5" y="109.0" class="lbl" text-anchor="middle">Add meals / offers to cart</text>
+<line x1="147.5" y1="130" x2="147.5" y2="165" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="32.5" y="175" width="230" height="50" rx="10" class="box"/><text x="147.5" y="197.0" class="lbl" text-anchor="middle">Submit checkout (notes, location,</text>
+<text x="147.5" y="211.0" class="lbl" text-anchor="middle">reservation)</text>
+<line x1="147.5" y1="135" x2="147.5" y2="175" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="322.5" y="255" width="240" height="50" rx="10" class="box"/><text x="442.5" y="277.0" class="lbl" text-anchor="middle">CheckoutService::place() opens a DB</text>
+<text x="442.5" y="291.0" class="lbl" text-anchor="middle">transaction</text>
+<line x1="147.5" y1="225" x2="442.5" y2="255" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="612.5" y="330" width="250" height="55" rx="10" class="box"/><text x="737.5" y="347.5" class="lbl" text-anchor="middle">Lock ingredient rows (lockForUpdate)</text>
+<text x="737.5" y="361.5" class="lbl" text-anchor="middle">and merge stock requirements across</text>
+<text x="737.5" y="375.5" class="lbl" text-anchor="middle">every line</text>
+<line x1="442.5" y1="305" x2="737.5" y2="330" class="edge strong" marker-end="url(#arrow)"/>
+<polygon points="737.5,420 847.5,457.5 737.5,495 627.5,457.5" class="decision"/><text x="737.5" y="461.5" class="lbl" text-anchor="middle">Enough stock for every line?</text>
+<line x1="737.5" y1="385" x2="737.5" y2="420" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="322.5" y="525" width="240" height="55" rx="10" class="box"/><text x="442.5" y="549.5" class="lbl" text-anchor="middle">Rollback transaction; raise</text>
+<text x="442.5" y="563.5" class="lbl" text-anchor="middle">InsufficientStockException (422)</text>
+<line x1="642.5" y1="460" x2="542.5" y2="540" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="551.9" y="491.0" width="21.2" height="14" class="edge-lbl-bg"/>
+<text x="562.5" y="502.0" class="edge-lbl" text-anchor="middle">no</text>
+<circle cx="442.5" cy="620" r="11" class="final-state-outer"/><circle cx="442.5" cy="620" r="7" class="final-state-inner"/>
+<line x1="442.5" y1="580" x2="442.5" y2="619" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="612.5" y="525" width="250" height="55" rx="10" class="box"/><text x="737.5" y="549.5" class="lbl" text-anchor="middle">Consume stock, create Order + lines,</text>
+<text x="737.5" y="563.5" class="lbl" text-anchor="middle">attach reservation if any</text>
+<line x1="832.5" y1="460" x2="842.5" y2="535" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="848.6" y="488.5" width="27.799999999999997" height="14" class="edge-lbl-bg"/>
+<text x="862.5" y="499.5" class="edge-lbl" text-anchor="middle">yes</text>
+<rect x="612.5" y="615" width="250" height="50" rx="10" class="box"/><text x="737.5" y="644.0" class="lbl" text-anchor="middle">Commit transaction; fire OrderPlaced</text>
+<line x1="737.5" y1="580" x2="737.5" y2="615" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="917.5" y="700" width="230" height="55" rx="10" class="box"/><text x="1032.5" y="717.5" class="lbl" text-anchor="middle">Notify customer (mail + in-app)</text>
+<text x="1032.5" y="731.5" class="lbl" text-anchor="middle">and every staff member with the</text>
+<text x="1032.5" y="745.5" class="lbl" text-anchor="middle">sales ability (in-app)</text>
+<line x1="737.5" y1="665" x2="1032.5" y2="700" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="32.5" y="795" width="230" height="50" rx="10" class="box"/><text x="147.5" y="817.0" class="lbl" text-anchor="middle">Order confirmation shown; cart</text>
+<text x="147.5" y="831.0" class="lbl" text-anchor="middle">cleared</text>
+<line x1="1032.5" y1="755" x2="147.5" y2="795" class="edge strong" marker-end="url(#arrow)"/>
+<circle cx="147.5" cy="875" r="11" class="final-state-outer"/><circle cx="147.5" cy="875" r="7" class="final-state-inner"/>
+<line x1="147.5" y1="845" x2="147.5" y2="874" class="edge strong" marker-end="url(#arrow)"/>
+</svg>
+  </div>
+  <div class="diagram-card" style="margin-top:16px;box-shadow:none"><strong>Maps to</strong><ul style="margin:8px 0 0;padding-inline-start:20px;color:#4b5563"><li><code>App\Services\Sales\CartService</code>, <code>CheckoutService::place()</code>, <code>OrderService</code>.</li>
+<li>Stock locking: <code>IngredientRepository::lockMany()</code> with <code>lockForUpdate()</code> inside the transaction, so two simultaneous checkouts for the last portion cannot both succeed.</li>
+<li><code>App\Events\OrderPlaced</code> &rarr; <code>SendOrderConfirmation</code> (customer, mail+database) and <code>NotifyStaffOfNewOrder</code> (staff with the <code>sales</code> ability, database only).</li>
+<li>API: <code>POST /account/checkout</code>. Cancelling later (see the Order state chart) restores exactly the stock this flow consumed.</li></ul></div>
+</main>
+<footer class="page-foot">Part of the <a href="../../README.md">Flavor</a> documentation set. Generated as plain SVG/HTML/CSS &mdash; no external diagram tooling required to view or edit.</footer>
+</body>
+</html>

@@ -1,0 +1,17 @@
+flowchart TD
+    classDef start fill:#0d9488,stroke:#0d9488,color:#ffffff
+    classDef act fill:#eff6ff,stroke:#2563eb,color:#0f172a
+    classDef dec fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef sys fill:#f0fdfa,stroke:#0d9488,color:#0f172a
+    classDef stop fill:#64748b,stroke:#475569,color:#ffffff
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+
+    A([Start]):::start --> B["Open the public menu"]:::act
+    B --> C["Browse categories, meals and active offers"]:::act
+    C --> D["View aggregate meal and offer ratings"]:::sys
+    D --> E{Ready to order or reserve?}:::dec
+    E -->|No| C
+    E -->|Yes| F["Register account"]:::act
+    F --> G["Verify email"]:::sys
+    G --> H["Now a customer, continue to ordering"]:::act
+    H --> I([End]):::stop

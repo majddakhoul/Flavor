@@ -1,0 +1,41 @@
+flowchart TD
+    classDef start fill:#0d9488,stroke:#0d9488,color:#ffffff
+    classDef act fill:#eff6ff,stroke:#2563eb,color:#0f172a
+    classDef dec fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef sys fill:#f0fdfa,stroke:#0d9488,color:#0f172a
+    classDef stop fill:#64748b,stroke:#475569,color:#ffffff
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+
+    A([Start]):::start --> B["Guest browses public menu and offers"]:::act
+    B --> C{Wants to order or book?}:::dec
+    C -->|No| B
+    C -->|Yes| D["Register, becomes Customer"]:::act
+    D --> E{Dine in or delivery / takeaway?}:::dec
+
+    E -->|Dine in| F["Customer books reservation (Application)"]:::act
+    F --> G["Waiter confirms and assigns table"]:::act
+    G --> H["Security verifies reservation_code at entrance"]:::sys
+    H --> I{Banned or over capacity?}:::dec
+    I -->|Yes| J["Deny entry, escalate to manager"]:::bad
+    I -->|No| K["Waiter seats guests, opens order"]:::act
+
+    E -->|Delivery / takeaway| L["Customer places order directly"]:::act
+    L --> M["Delivery employee assigned if order_type=Delivery"]:::act
+
+    K --> N["Meal and offer lines added to the order"]:::act
+    M --> N
+    N --> O["Chef checks ingredient stock and prepares"]:::act
+    O --> P{Ingredients short?}:::dec
+    P -->|Yes| Q["Meal marked unavailable, manager notified"]:::bad
+    P -->|No| R["Order marked Confirmed"]:::act
+    Q --> R
+
+    R --> S{Delivery order?}:::dec
+    S -->|Yes| T["Delivery employee delivers, marks Completed"]:::act
+    S -->|No| U["Waiter serves, marks order Completed"]:::act
+
+    T --> V["Customer rates meals and offers"]:::act
+    U --> V
+    J --> W([End]):::stop
+    V --> X["Manager reviews sales and ratings report"]:::sys
+    X --> W

@@ -8,7 +8,9 @@
 
         <div class="split" style="margin-top:var(--space-3)">
             <div class="stack">
-                <img src="{{ $meal->image_url }}" alt="{{ $meal->t('name') }}" style="border-radius:var(--radius-lg);width:100%;max-height:420px;object-fit:cover">
+                <div class="media-hero">
+                    <img src="{{ $meal->image_url }}" alt="{{ $meal->t('name') }}" data-lightbox="{{ $meal->t('name') }}">
+                </div>
 
                 <div>
                     <p class="eyebrow">{{ $meal->category?->t('name') }}</p>
@@ -81,7 +83,9 @@
                     <div class="stack">
                         @foreach ($related->where('id', '!=', $meal->id)->take(3) as $item)
                             <a class="cluster" href="{{ route('menu.show', $item) }}">
-                                <img src="{{ $item->image_url }}" alt="" style="width:56px;height:56px;border-radius:var(--radius-sm);object-fit:cover">
+                                <span class="media-square" style="width:56px;height:56px;flex:none">
+                                    <img src="{{ $item->image_url }}" alt="">
+                                </span>
                                 <span><b>{{ $item->t('name') }}</b><br><span class="price small">@money($item->price)</span></span>
                             </a>
                         @endforeach

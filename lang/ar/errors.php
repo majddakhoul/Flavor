@@ -18,6 +18,7 @@ return [
     'customer_profile_missing' => 'لا يوجد ملف زبون مرتبط بهذا الحساب.',
     'customers_only' => 'هذه الصفحة للزبائن فقط.',
     'delivery_location_required' => 'اختر منطقة التوصيل أولاً.',
+    'email_not_verified' => 'يرجى تأكيد بريدك الإلكتروني قبل المتابعة.',
     'employee_profile_missing' => 'لا يوجد ملف موظف مرتبط بهذا الحساب.',
     'ingredient_in_use' => 'هذه المادة مستخدمة في وصفة.',
     'insufficient_stock' => 'الكمية غير كافية من :ingredient لـ :item. المطلوب :required والمتوفر :available.',

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagrams — Flavor</title>
+<link rel="stylesheet" href="assets/diagrams.css">
+</head>
+<body>
+<header class="topbar">
+  <div>
+    <p class="topbar__crumbs">Documentation / Diagrams</p>
+    <h1 class="topbar__title">Flavor — Architecture &amp; Behaviour Diagrams</h1>
+  </div>
+  <a href="../../README.md">&larr; Back to README</a>
+</header>
+<main class="shell">
+  <div class="diagram-head">
+    <p>
+      Twelve diagrams covering every UML view named in the project brief — class, object, state chart, use case,
+      activity and sequence — for the system's core scenarios: registration, checkout, reservations, order status,
+      and authentication. Every diagram is plain, hand-authored SVG in a static HTML page, styled with the same
+      colour tokens as the application itself, so nothing here needs a diagramming tool to open, edit or keep in
+      sync with the code — open any page in a browser or a text editor.
+    </p>
+  </div>
+  <h2 class="group-title">Structure diagrams</h2><div class="gallery">
+        <a class="gallery-card" href="class-diagram.html">
+          <span class="gallery-kind">Structure</span>
+          <h3>Class Diagram</h3>
+          <p>All fifteen entities in the schema and how they relate — the single structural reference for the whole domain model.</p>
+        </a>
+        <a class="gallery-card" href="object-diagram.html">
+          <span class="gallery-kind">Structure</span>
+          <h3>Object Diagram</h3>
+          <p>A concrete snapshot: the real object graph behind one confirmed delivery order.</p>
+        </a></div><h2 class="group-title">Behaviour diagrams</h2><div class="gallery">
+        <a class="gallery-card" href="state-chart-order.html">
+          <span class="gallery-kind">State Chart</span>
+          <h3>State Chart — Order</h3>
+          <p>The full Order status lifecycle and every legal transition between states.</p>
+        </a>
+        <a class="gallery-card" href="state-chart-reservation.html">
+          <span class="gallery-kind">State Chart</span>
+          <h3>State Chart — Reservation</h3>
+          <p>The Reservation status lifecycle, identical in shape to Order and just as strictly enforced.</p>
+        </a>
+        <a class="gallery-card" href="use-case-customer.html">
+          <span class="gallery-kind">Use Cases</span>
+          <h3>Use Cases — Guest & Customer</h3>
+          <p>Everything a visitor and a signed-in customer can do, from browsing to a completed order.</p>
+        </a>
+        <a class="gallery-card" href="use-case-staff.html">
+          <span class="gallery-kind">Use Cases</span>
+          <h3>Use Cases — Staff Workspace</h3>
+          <p>The staff workspace by position — manager, chef, waiter, delivery and security.</p>
+        </a>
+        <a class="gallery-card" href="activity-registration.html">
+          <span class="gallery-kind">Activity</span>
+          <h3>Activity — Registration & Verification</h3>
+          <p>Sign-up through email verification, across the customer, AuthService and mail.</p>
+        </a>
+        <a class="gallery-card" href="activity-checkout.html">
+          <span class="gallery-kind">Activity</span>
+          <h3>Activity — Checkout</h3>
+          <p>Cart to confirmed order, including the stock lock that prevents overselling.</p>
+        </a>
+        <a class="gallery-card" href="activity-reservation.html">
+          <span class="gallery-kind">Activity</span>
+          <h3>Activity — Reservation Booking</h3>
+          <p>Availability search through a confirmed table booking, with the double-booking guard.</p>
+        </a>
+        <a class="gallery-card" href="sequence-login.html">
+          <span class="gallery-kind">Sequence</span>
+          <h3>Sequence — Login (API Token)</h3>
+          <p>How a mobile client exchanges credentials for a Sanctum bearer token.</p>
+        </a>
+        <a class="gallery-card" href="sequence-checkout-notification.html">
+          <span class="gallery-kind">Sequence</span>
+          <h3>Sequence — Checkout → Notification Fan-out</h3>
+          <p>One event, two listeners, two different channel choices — the shape every domain event follows.</p>
+        </a>
+        <a class="gallery-card" href="sequence-order-status.html">
+          <span class="gallery-kind">Sequence</span>
+          <h3>Sequence — Order Status Update</h3>
+          <p>A staff-triggered status change, validated against the enum, then relayed to the customer.</p>
+        </a></div>
+</main>
+<footer class="page-foot">Part of the <a href="../../README.md">Flavor</a> documentation set. See also <a href="../ANALYSIS.md">Requirements Analysis</a> and <a href="../API.md">API Reference</a>.</footer>
+</body>
+</html>

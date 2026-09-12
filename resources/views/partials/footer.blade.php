@@ -2,7 +2,7 @@
     <div class="shell grid grid-3">
         <div>
             <a class="brand" href="{{ route('home') }}">
-                <img src="{{ asset('assets/img/brand/logo-192.png') }}" alt="">
+                <img src="{{ asset('assets/img/brand/mark.svg') }}" alt="">
                 <span>{{ config('flavor.brand.name') }}<small>{{ __('app.tagline_short') }}</small></span>
             </a>
             <p class="small" style="margin-top:var(--space-2)">{{ __('app.footer_blurb') }}</p>

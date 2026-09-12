@@ -1,0 +1,74 @@
+flowchart LR
+    classDef actor fill:#2563eb,stroke:#1d4ed8,color:#ffffff,stroke-width:2px
+    classDef uc fill:#eff6ff,stroke:#2563eb,color:#0f172a,stroke-width:1.5px
+
+    MGR["manager"]:::actor
+    CHF["chef"]:::actor
+    WTR["waiter"]:::actor
+    DLV["delivery"]:::actor
+    SEC["security"]:::actor
+    CUS["customer"]:::actor
+    GST["guest"]:::actor
+
+    subgraph FRONT["Front of house"]
+      A1(["Take or confirm reservation"]):::uc
+      A2(["Assign table"]):::uc
+      A3(["Open dine-in order"]):::uc
+    end
+    subgraph KITCHEN["Kitchen"]
+      B1(["View kitchen queue"]):::uc
+      B2(["Check ingredient stock"]):::uc
+      B3(["Toggle meal availability"]):::uc
+    end
+    subgraph LOGISTICS["Delivery and logistics"]
+      C1(["View assigned delivery orders"]):::uc
+      C2(["Update delivery status"]):::uc
+    end
+    subgraph ENTRY["Entrance control"]
+      D1(["Verify reservation code"]):::uc
+      D2(["Check customer ban status"]):::uc
+    end
+    subgraph MENU["Menu and offers"]
+      E1(["Browse menu and offers"]):::uc
+      E2(["Manage menu and offers"]):::uc
+    end
+    subgraph ORDERING["Ordering"]
+      F1(["Place order"]):::uc
+      F2(["Rate meal or offer"]):::uc
+    end
+    subgraph BACKOFFICE["Back office"]
+      G1(["Manage staff"]):::uc
+      G2(["Log maintenance"]):::uc
+      G3(["View reports"]):::uc
+    end
+
+    WTR --- A1
+    WTR --- A2
+    WTR --- A3
+    CUS --- A1
+
+    CHF --- B1
+    CHF --- B2
+    CHF --- B3
+
+    DLV --- C1
+    DLV --- C2
+    A3 -.->|feeds| B1
+    B3 -.->|restricts| F1
+
+    SEC --- D1
+    SEC --- D2
+
+    GST --- E1
+    CUS --- E1
+    MGR --- E2
+
+    CUS --- F1
+    CUS --- F2
+    F1 -.->|includes| A3
+    F1 -.->|includes| C1
+
+    MGR --- G1
+    MGR --- G2
+    MGR --- G3
+    G3 -.->|reads| F2

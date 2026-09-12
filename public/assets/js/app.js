@@ -202,6 +202,55 @@
     Chart.defaults.maintainAspectRatio = false;
   }
 
+  function initLightbox() {
+    let overlay = null;
+
+    function build() {
+      overlay = document.createElement('div');
+      overlay.className = 'lightbox';
+      overlay.setAttribute('role', 'dialog');
+      overlay.setAttribute('aria-modal', 'true');
+      overlay.innerHTML =
+        '<button type="button" class="lightbox__close" aria-label="Close">&times;</button>' +
+        '<figure class="lightbox__frame">' +
+        '<img class="lightbox__img" alt="">' +
+        '<figcaption class="lightbox__caption"></figcaption>' +
+        '</figure>';
+      document.body.appendChild(overlay);
+
+      overlay.addEventListener('click', (event) => {
+        if (event.target === overlay || event.target.closest('.lightbox__close')) {
+          close();
+        }
+      });
+    }
+
+    function open(src, caption) {
+      if (!overlay) build();
+      overlay.querySelector('.lightbox__img').src = src;
+      overlay.querySelector('.lightbox__caption').textContent = caption || '';
+      overlay.classList.add('is-open');
+      document.body.classList.add('no-scroll');
+    }
+
+    function close() {
+      if (!overlay) return;
+      overlay.classList.remove('is-open');
+      document.body.classList.remove('no-scroll');
+    }
+
+    document.addEventListener('click', (event) => {
+      const trigger = event.target.closest('[data-lightbox]');
+      if (!trigger) return;
+      event.preventDefault();
+      open(trigger.currentSrc || trigger.src, trigger.dataset.lightbox);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') close();
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     initTheme();
     initToggles();
@@ -213,5 +262,6 @@
     initAutoSubmit();
     initCookieBar();
     initChartDefaults();
+    initLightbox();
   });
 })();

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Use Cases — Staff Workspace — Flavor Diagrams</title>
+<link rel="stylesheet" href="assets/diagrams.css">
+
+</head>
+<body>
+<header class="topbar">
+  <div>
+    <p class="topbar__crumbs"><a href="index.html">Diagrams</a> / Behaviour — Use Case Diagram</p>
+    <h1 class="topbar__title">Use Cases — Staff Workspace</h1>
+  </div>
+  <a href="../../README.md">&larr; Back to README</a>
+</header>
+<main class="shell">
+  <div class="diagram-head">
+    <p>The staff workspace, split by position. A Manager can reach every use case on this page; other positions see only what their ability set unlocks, in both the web sidebar and the API.</p>
+  </div>
+  <div class="legend"><span><i style="background:var(--color-primary-light)"></i>Actor</span>
+<span><i style="background:var(--color-surface)"></i>Use case (Flavor capability)</span></div>
+  <div class="diagram-card">
+    <svg viewBox="0 0 1300 760" xmlns="http://www.w3.org/2000/svg" class="diagram-svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" class="arrowhead"/>
+  </marker>
+  <marker id="arrow-open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+    <path d="M1,1 L9,5 L1,9" fill="none" class="arrowhead-open"/>
+  </marker>
+  <marker id="diamond-start" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0,5 L5,0 L10,5 L5,10 z" class="diamond-marker"/>
+  </marker>
+</defs>
+
+<rect x="60" y="40" width="980" height="670" rx="16" fill="none" stroke="#d1d5db" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text x="1080" y="65" class="section-lbl" text-anchor="start">Flavor — Staff workspace (/manage)</text>
+<circle cx="50" cy="40" r="9" class="actor"/>
+<line x1="50" y1="49" x2="50" y2="82" class="actor"/>
+<line x1="34" y1="60" x2="66" y2="60" class="actor"/>
+<line x1="50" y1="82" x2="36" y2="102" class="actor"/>
+<line x1="50" y1="82" x2="64" y2="102" class="actor"/>
+<text x="50" y="118" class="actor-lbl" text-anchor="middle" font-weight="700">Manager</text>
+<circle cx="50" cy="200" r="9" class="actor"/>
+<line x1="50" y1="209" x2="50" y2="242" class="actor"/>
+<line x1="34" y1="220" x2="66" y2="220" class="actor"/>
+<line x1="50" y1="242" x2="36" y2="262" class="actor"/>
+<line x1="50" y1="242" x2="64" y2="262" class="actor"/>
+<text x="50" y="278" class="actor-lbl" text-anchor="middle" font-weight="700">Chef</text>
+<circle cx="50" cy="360" r="9" class="actor"/>
+<line x1="50" y1="369" x2="50" y2="402" class="actor"/>
+<line x1="34" y1="380" x2="66" y2="380" class="actor"/>
+<line x1="50" y1="402" x2="36" y2="422" class="actor"/>
+<line x1="50" y1="402" x2="64" y2="422" class="actor"/>
+<text x="50" y="438" class="actor-lbl" text-anchor="middle" font-weight="700">Waiter</text>
+<circle cx="50" cy="500" r="9" class="actor"/>
+<line x1="50" y1="509" x2="50" y2="542" class="actor"/>
+<line x1="34" y1="520" x2="66" y2="520" class="actor"/>
+<line x1="50" y1="542" x2="36" y2="562" class="actor"/>
+<line x1="50" y1="542" x2="64" y2="562" class="actor"/>
+<text x="50" y="578" class="actor-lbl" text-anchor="middle" font-weight="700">Delivery</text>
+<circle cx="50" cy="620" r="9" class="actor"/>
+<line x1="50" y1="629" x2="50" y2="662" class="actor"/>
+<line x1="34" y1="640" x2="66" y2="640" class="actor"/>
+<line x1="50" y1="662" x2="36" y2="682" class="actor"/>
+<line x1="50" y1="662" x2="64" y2="682" class="actor"/>
+<text x="50" y="698" class="actor-lbl" text-anchor="middle" font-weight="700">Security</text>
+<ellipse cx="280" cy="40" rx="110.0" ry="30.0" class="usecase"/><text x="280" y="44.0" class="uc-lbl" text-anchor="middle">View dashboard &amp; KPIs</text>
+<ellipse cx="280" cy="140" rx="110.0" ry="30.0" class="usecase"/><text x="280" y="137.0" class="uc-lbl" text-anchor="middle">Run finance / inventory / menu</text>
+<text x="280" y="151.0" class="uc-lbl" text-anchor="middle">reports</text>
+<ellipse cx="620" cy="40" rx="110.0" ry="30.0" class="usecase"/><text x="620" y="37.0" class="uc-lbl" text-anchor="middle">Manage meals, offers &amp;</text>
+<text x="620" y="51.0" class="uc-lbl" text-anchor="middle">categories</text>
+<ellipse cx="620" cy="140" rx="110.0" ry="30.0" class="usecase"/><text x="620" y="144.0" class="uc-lbl" text-anchor="middle">Manage ingredients &amp; stock</text>
+<ellipse cx="960" cy="140" rx="110.0" ry="30.0" class="usecase"/><text x="960" y="144.0" class="uc-lbl" text-anchor="middle">Review most-consumed ingredients</text>
+<ellipse cx="620" cy="260" rx="110.0" ry="30.0" class="usecase"/><text x="620" y="264.0" class="uc-lbl" text-anchor="middle">Manage tables</text>
+<ellipse cx="960" cy="260" rx="120.0" ry="35.0" class="usecase"/><text x="960" y="257.0" class="uc-lbl" text-anchor="middle">Take, confirm &amp; reassign</text>
+<text x="960" y="271.0" class="uc-lbl" text-anchor="middle">reservations</text>
+<ellipse cx="620" cy="380" rx="110.0" ry="30.0" class="usecase"/><text x="620" y="384.0" class="uc-lbl" text-anchor="middle">Track &amp; update order status</text>
+<ellipse cx="960" cy="380" rx="110.0" ry="30.0" class="usecase"/><text x="960" y="384.0" class="uc-lbl" text-anchor="middle">Fulfil delivery orders</text>
+<ellipse cx="280" cy="500" rx="110.0" ry="30.0" class="usecase"/><text x="280" y="504.0" class="uc-lbl" text-anchor="middle">Manage employees &amp; customers</text>
+<ellipse cx="620" cy="500" rx="110.0" ry="30.0" class="usecase"/><text x="620" y="504.0" class="uc-lbl" text-anchor="middle">Ban / unban a customer</text>
+<ellipse cx="280" cy="610" rx="110.0" ry="30.0" class="usecase"/><text x="280" y="614.0" class="uc-lbl" text-anchor="middle">Log maintenance work</text>
+<ellipse cx="960" cy="500" rx="110.0" ry="30.0" class="usecase"/><text x="960" y="504.0" class="uc-lbl" text-anchor="middle">Read staff notifications</text>
+<line x1="72" y1="55" x2="176.0" y2="40" class="edge assoc"/>
+<line x1="72" y1="55" x2="176.0" y2="140" class="edge assoc"/>
+<line x1="72" y1="55" x2="516.0" y2="40" class="edge assoc"/>
+<line x1="72" y1="55" x2="516.0" y2="140" class="edge assoc"/>
+<line x1="72" y1="55" x2="516.0" y2="260" class="edge assoc"/>
+<line x1="72" y1="55" x2="846.0" y2="260" class="edge assoc"/>
+<line x1="72" y1="55" x2="516.0" y2="380" class="edge assoc"/>
+<line x1="72" y1="55" x2="176.0" y2="500" class="edge assoc"/>
+<line x1="72" y1="55" x2="516.0" y2="500" class="edge assoc"/>
+<line x1="72" y1="55" x2="176.0" y2="610" class="edge assoc"/>
+<line x1="72" y1="55" x2="856.0" y2="140" class="edge assoc"/>
+<line x1="72" y1="55" x2="856.0" y2="500" class="edge assoc"/>
+<line x1="72" y1="215" x2="516.0" y2="40" class="edge assoc"/>
+<line x1="72" y1="215" x2="516.0" y2="140" class="edge assoc"/>
+<line x1="72" y1="215" x2="856.0" y2="140" class="edge assoc"/>
+<line x1="72" y1="375" x2="516.0" y2="260" class="edge assoc"/>
+<line x1="72" y1="375" x2="846.0" y2="260" class="edge assoc"/>
+<line x1="72" y1="375" x2="516.0" y2="380" class="edge assoc"/>
+<line x1="72" y1="375" x2="856.0" y2="500" class="edge assoc"/>
+<line x1="72" y1="515" x2="516.0" y2="380" class="edge assoc"/>
+<line x1="72" y1="515" x2="856.0" y2="380" class="edge assoc"/>
+<line x1="72" y1="635" x2="516.0" y2="260" class="edge assoc"/>
+<line x1="72" y1="635" x2="846.0" y2="260" class="edge assoc"/>
+</svg>
+  </div>
+  <div class="diagram-card" style="margin-top:16px;box-shadow:none"><strong>Where each use case lives in the code</strong><ul style="margin:8px 0 0;padding-inline-start:20px;color:#4b5563"><li>Every box here is gated by an <strong>ability</strong> (<code>catalog</code>, <code>inventory</code>, <code>floor</code>, <code>sales</code>, <code>people</code>, <code>reports</code>) checked by the <code>ability:*</code> middleware on both the web and API route groups &mdash; see the Roles &amp; Abilities table in the main README.</li>
+<li>A Manager holds every ability by definition (<code>EmployeePosition::Manager-&gt;abilities()</code>); the other rows show exactly the subset each position holds today.</li>
+<li><strong>Review most-consumed ingredients</strong> and <strong>most-consumed / top-selling</strong> figures are new reporting endpoints added in this rebuild (<code>IngredientRepository::mostConsumed()</code>, <code>MealRepository::topSelling()</code>, <code>OfferRepository::topSelling()</code>).</li>
+<li><strong>Read staff notifications</strong> covers the two staff-only alerts this rebuild introduced: a new order and a new reservation, both pushed the moment they are created.</li></ul></div>
+</main>
+<footer class="page-foot">Part of the <a href="../../README.md">Flavor</a> documentation set. Generated as plain SVG/HTML/CSS &mdash; no external diagram tooling required to view or edit.</footer>
+</body>
+</html>

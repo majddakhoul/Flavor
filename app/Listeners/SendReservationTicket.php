@@ -3,9 +3,8 @@
 namespace App\Listeners;
 
 use App\Events\ReservationCreated;
-use App\Mail\ReservationTicketMail;
+use App\Notifications\Reservations\ReservationConfirmed;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Mail;
 
 class SendReservationTicket implements ShouldQueue
 {
@@ -18,7 +17,7 @@ class SendReservationTicket implements ShouldQueue
             return;
         }
 
-        Mail::to($recipient->email)->send(new ReservationTicketMail([
+        $recipient->notify(new ReservationConfirmed([
             'subject_data' => ['code' => $reservation->reservation_code],
             'highlight' => $reservation->reservation_code,
             'rows' => [
@@ -28,6 +27,6 @@ class SendReservationTicket implements ShouldQueue
                 ['label' => __('domain.to'), 'value' => $reservation->ends_at?->translatedFormat('H:i') ?? '-'],
             ],
             'action' => ['label' => __('domain.view_reservation'), 'url' => route('account.reservations.show', $reservation)],
-        ], app()->getLocale()));
+        ]));
     }
 }

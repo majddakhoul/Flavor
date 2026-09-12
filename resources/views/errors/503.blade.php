@@ -2,7 +2,7 @@
 
 @section('body')
     <main id="main" class="shell center" style="min-height:100vh;display:grid;place-content:center;gap:var(--space-3)">
-        <img src="{{ asset('assets/img/brand/logo-192.png') }}" alt="" style="margin-inline:auto;width:72px">
+        <img src="{{ asset('assets/img/brand/mark.svg') }}" alt="" style="margin-inline:auto;width:72px">
         <p class="eyebrow">{{ __('errors.code', ['code' => '503']) }}</p>
         <h1>{{ __('errors.title_503') }}</h1>
         <p class="lede" style="margin-inline:auto">{{ ($exception ?? null)?->getMessage() ?: __('errors.body_503') }}</p>

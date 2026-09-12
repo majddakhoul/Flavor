@@ -3,9 +3,8 @@
 namespace App\Listeners;
 
 use App\Events\ReservationStatusChanged;
-use App\Mail\ReservationStatusMail;
+use App\Notifications\Reservations\ReservationStatusUpdated;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Mail;
 
 class SendReservationStatusUpdate implements ShouldQueue
 {
@@ -17,15 +16,16 @@ class SendReservationStatusUpdate implements ShouldQueue
             return;
         }
 
-        Mail::to($recipient->email)->send(new ReservationStatusMail([
+        $recipient->notify(new ReservationStatusUpdated([
             'subject_data' => ['code' => $event->reservation->reservation_code, 'status' => $event->to->label()],
             'highlight' => $event->to->label(),
+            'tone' => $event->to->tone(),
             'rows' => [
                 ['label' => __('domain.reservation_code'), 'value' => $event->reservation->reservation_code],
                 ['label' => __('domain.previous_status'), 'value' => $event->from->label()],
                 ['label' => __('domain.current_status'), 'value' => $event->to->label()],
             ],
             'action' => ['label' => __('domain.view_reservation'), 'url' => route('account.reservations.show', $event->reservation)],
-        ], app()->getLocale()));
+        ]));
     }
 }

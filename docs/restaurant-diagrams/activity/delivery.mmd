@@ -1,0 +1,19 @@
+flowchart TD
+    classDef start fill:#0d9488,stroke:#0d9488,color:#ffffff
+    classDef act fill:#eff6ff,stroke:#2563eb,color:#0f172a
+    classDef dec fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef sys fill:#f0fdfa,stroke:#0d9488,color:#0f172a
+    classDef stop fill:#64748b,stroke:#475569,color:#ffffff
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+
+    A([Start]):::start --> B["Open assigned delivery orders (employee_id=self)"]:::act
+    B --> C{Order ready from kitchen?}:::dec
+    C -->|Not yet| B
+    C -->|Yes| D["Pick up the order"]:::act
+    D --> E["Mark order Confirmed (en route)"]:::act
+    E --> F["Travel to customer location"]:::act
+    F --> G{Delivered successfully?}:::dec
+    G -->|Yes| H["Mark order Completed"]:::act
+    G -->|No| I["Cancel order with notes"]:::bad
+    H --> J([End]):::stop
+    I --> J

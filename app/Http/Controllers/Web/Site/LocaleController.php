@@ -15,6 +15,7 @@ class LocaleController extends Controller
         abort_unless(in_array($locale, Locale::codes(), true), 404);
 
         $request->session()->put('locale', $locale);
+        $request->user()?->update(['preferred_locale' => $locale]);
 
         return redirect()
             ->back()

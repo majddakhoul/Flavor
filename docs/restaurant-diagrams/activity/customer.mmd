@@ -1,0 +1,21 @@
+flowchart TD
+    classDef start fill:#0d9488,stroke:#0d9488,color:#ffffff
+    classDef act fill:#eff6ff,stroke:#2563eb,color:#0f172a
+    classDef dec fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef sys fill:#f0fdfa,stroke:#0d9488,color:#0f172a
+    classDef stop fill:#64748b,stroke:#475569,color:#ffffff
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+
+    A([Start]):::start --> B["Browse menu and active offers"]:::act
+    B --> C{Dine in or delivery / takeaway?}:::dec
+    C -->|Dine in| D["Check table availability, book reservation"]:::act
+    C -->|Delivery / takeaway| E["Add meals and offers to the order"]:::act
+    D --> F["Arrive, get seated by waiter"]:::act
+    E --> G["Submit order (order_type set)"]:::act
+    F --> H["Order opened at the table"]:::act
+    G --> I["Track order status"]:::sys
+    H --> I
+    I --> J{Order Completed?}:::dec
+    J -->|Not yet| I
+    J -->|Yes| K["Rate the meal and the offer"]:::act
+    K --> L([End]):::stop

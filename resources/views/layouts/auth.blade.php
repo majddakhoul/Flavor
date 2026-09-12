@@ -4,8 +4,8 @@
     <main id="main" class="shell" style="min-height:100vh;display:grid;place-items:center;padding:var(--space-5) 0">
         <div style="width:min(460px,100%)">
             <div class="center" style="margin-bottom:var(--space-4)">
-                <a class="brand" href="{{ route('home') }}" style="justify-content:center">
-                    <img src="{{ asset('assets/img/brand/logo-192.png') }}" alt="">
+                <a class="brand brand--lg" href="{{ route('home') }}" style="justify-content:center">
+                    <img src="{{ asset('assets/img/brand/mark.svg') }}" alt="">
                     <span>{{ config('flavor.brand.name') }}<small>{{ __('app.tagline_short') }}</small></span>
                 </a>
             </div>

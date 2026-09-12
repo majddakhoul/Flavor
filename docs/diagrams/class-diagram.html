@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Class Diagram — Full Domain Model — Flavor Diagrams</title>
+<link rel="stylesheet" href="assets/diagrams.css">
+
+</head>
+<body>
+<header class="topbar">
+  <div>
+    <p class="topbar__crumbs"><a href="index.html">Diagrams</a> / Structure</p>
+    <h1 class="topbar__title">Class Diagram — Full Domain Model</h1>
+  </div>
+  <a href="../../README.md">&larr; Back to README</a>
+</header>
+<main class="shell">
+  <div class="diagram-head">
+    <p>All fifteen persisted entities in the Flavor schema and how they relate. Colour marks the entity's role: catalog data staff maintain, transactions the business runs on, and supporting/reference data.</p>
+  </div>
+  <div class="legend"><span><i style="background:var(--color-primary)"></i>Core / catalog entity</span>
+<span><i style="background:var(--color-secondary)"></i>Transactional entity</span>
+<span><i style="background:var(--color-surface)"></i>Supporting entity</span></div>
+  <div class="diagram-card">
+    <svg viewBox="0 0 2020 1030" xmlns="http://www.w3.org/2000/svg" class="diagram-svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" class="arrowhead"/>
+  </marker>
+  <marker id="arrow-open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+    <path d="M1,1 L9,5 L1,9" fill="none" class="arrowhead-open"/>
+  </marker>
+  <marker id="diamond-start" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0,5 L5,0 L10,5 L5,10 z" class="diamond-marker"/>
+  </marker>
+</defs>
+
+<rect x="90" y="40" width="230" height="162" rx="8" class="box"/>
+<rect x="90" y="40" width="230" height="26" rx="8" class="box-header"/>
+<rect x="90" y="58" width="230" height="8" class="box-header"/>
+<text x="205.0" y="57" class="title-lbl" text-anchor="middle" font-weight="700">User</text>
+<line x1="90" y1="66" x2="320" y2="66" class="compartment-line"/>
+<text x="100" y="84" class="attr-lbl" text-anchor="start">first_name, last_name : string</text>
+<text x="100" y="99" class="attr-lbl" text-anchor="start">email : string (unique)</text>
+<text x="100" y="114" class="attr-lbl" text-anchor="start">phone : string</text>
+<text x="100" y="129" class="attr-lbl" text-anchor="start">gender : Gender</text>
+<text x="100" y="144" class="attr-lbl" text-anchor="start">status : bool</text>
+<text x="100" y="159" class="attr-lbl" text-anchor="start">user_type : UserType</text>
+<text x="100" y="174" class="attr-lbl" text-anchor="start">preferred_locale : string</text>
+<text x="100" y="189" class="attr-lbl" text-anchor="start">email_verified_at : datetime</text>
+<rect x="40" y="260" width="210" height="102" rx="8" class="box"/>
+<rect x="40" y="260" width="210" height="26" rx="8" class="box-header-alt"/>
+<rect x="40" y="278" width="210" height="8" class="box-header-alt"/>
+<text x="145.0" y="277" class="title-lbl" text-anchor="middle" font-weight="700">Customer</text>
+<line x1="40" y1="286" x2="250" y2="286" class="compartment-line"/>
+<text x="50" y="304" class="attr-lbl" text-anchor="start">allergies : Allergy</text>
+<text x="50" y="319" class="attr-lbl" text-anchor="start">favorite_categories : string</text>
+<text x="50" y="334" class="attr-lbl" text-anchor="start">ban : bool</text>
+<text x="50" y="349" class="attr-lbl" text-anchor="start">ban_date : date</text>
+<rect x="320" y="260" width="220" height="147" rx="8" class="box"/>
+<rect x="320" y="260" width="220" height="26" rx="8" class="box-header-alt"/>
+<rect x="320" y="278" width="220" height="8" class="box-header-alt"/>
+<text x="430.0" y="277" class="title-lbl" text-anchor="middle" font-weight="700">Employee</text>
+<line x1="320" y1="286" x2="540" y2="286" class="compartment-line"/>
+<text x="330" y="304" class="attr-lbl" text-anchor="start">national_id : string</text>
+<text x="330" y="319" class="attr-lbl" text-anchor="start">position : EmployeePosition</text>
+<text x="330" y="334" class="attr-lbl" text-anchor="start">salary : int</text>
+<text x="330" y="349" class="attr-lbl" text-anchor="start">bonus : int</text>
+<text x="330" y="364" class="attr-lbl" text-anchor="start">hire_date : date</text>
+<text x="330" y="379" class="attr-lbl" text-anchor="start">birth_date : date</text>
+<text x="330" y="394" class="attr-lbl" text-anchor="start">notes : string</text>
+<rect x="620" y="40" width="220" height="87" rx="8" class="box"/>
+<rect x="620" y="40" width="220" height="26" rx="8" class="box-header"/>
+<rect x="620" y="58" width="220" height="8" class="box-header"/>
+<text x="730.0" y="57" class="title-lbl" text-anchor="middle" font-weight="700">Location</text>
+<line x1="620" y1="66" x2="840" y2="66" class="compartment-line"/>
+<text x="630" y="84" class="attr-lbl" text-anchor="start">country, state, city : string</text>
+<text x="630" y="99" class="attr-lbl" text-anchor="start">region, street : string</text>
+<text x="630" y="114" class="attr-lbl" text-anchor="start">delivery_time : time</text>
+<rect x="320" y="470" width="220" height="102" rx="8" class="box"/>
+<rect x="320" y="470" width="220" height="26" rx="8" class="box-header-alt"/>
+<rect x="320" y="488" width="220" height="8" class="box-header-alt"/>
+<text x="430.0" y="487" class="title-lbl" text-anchor="middle" font-weight="700">Maintenance</text>
+<line x1="320" y1="496" x2="540" y2="496" class="compartment-line"/>
+<text x="330" y="514" class="attr-lbl" text-anchor="start">maintenance_item : string</text>
+<text x="330" y="529" class="attr-lbl" text-anchor="start">price, discount : int</text>
+<text x="330" y="544" class="attr-lbl" text-anchor="start">total_price : int</text>
+<text x="330" y="559" class="attr-lbl" text-anchor="start">notes : string</text>
+<rect x="900" y="40" width="210" height="72" rx="8" class="box"/>
+<rect x="900" y="40" width="210" height="26" rx="8" class="box-header"/>
+<rect x="900" y="58" width="210" height="8" class="box-header"/>
+<text x="1005.0" y="57" class="title-lbl" text-anchor="middle" font-weight="700">Category</text>
+<line x1="900" y1="66" x2="1110" y2="66" class="compartment-line"/>
+<text x="910" y="84" class="attr-lbl" text-anchor="start">name, description : string</text>
+<text x="910" y="99" class="attr-lbl" text-anchor="start">parent_id : int (self FK)</text>
+<rect x="900" y="220" width="200" height="72" rx="8" class="box"/>
+<rect x="900" y="220" width="200" height="26" rx="8" class="box-header"/>
+<rect x="900" y="238" width="200" height="8" class="box-header"/>
+<text x="1000.0" y="237" class="title-lbl" text-anchor="middle" font-weight="700">Picture</text>
+<line x1="900" y1="246" x2="1100" y2="246" class="compartment-line"/>
+<text x="910" y="264" class="attr-lbl" text-anchor="start">path : string</text>
+<text x="910" y="279" class="attr-lbl" text-anchor="start">name : string</text>
+<rect x="1150" y="100" width="230" height="117" rx="8" class="box"/>
+<rect x="1150" y="100" width="230" height="26" rx="8" class="box-header"/>
+<rect x="1150" y="118" width="230" height="8" class="box-header"/>
+<text x="1265.0" y="117" class="title-lbl" text-anchor="middle" font-weight="700">Meal</text>
+<line x1="1150" y1="126" x2="1380" y2="126" class="compartment-line"/>
+<text x="1160" y="144" class="attr-lbl" text-anchor="start">name, description : string</text>
+<text x="1160" y="159" class="attr-lbl" text-anchor="start">prep_time : time</text>
+<text x="1160" y="174" class="attr-lbl" text-anchor="start">is_vegetarian : bool</text>
+<text x="1160" y="189" class="attr-lbl" text-anchor="start">percentage : int</text>
+<text x="1160" y="204" class="attr-lbl" text-anchor="start">availability : MealAvailability</text>
+<rect x="1440" y="40" width="220" height="102" rx="8" class="box"/>
+<rect x="1440" y="40" width="220" height="26" rx="8" class="box-header"/>
+<rect x="1440" y="58" width="220" height="8" class="box-header"/>
+<text x="1550.0" y="57" class="title-lbl" text-anchor="middle" font-weight="700">Ingredient</text>
+<line x1="1440" y1="66" x2="1660" y2="66" class="compartment-line"/>
+<text x="1450" y="84" class="attr-lbl" text-anchor="start">name, unit : string</text>
+<text x="1450" y="99" class="attr-lbl" text-anchor="start">stock_quantity : int</text>
+<text x="1450" y="114" class="attr-lbl" text-anchor="start">unit_cost : int</text>
+<text x="1450" y="129" class="attr-lbl" text-anchor="start">is_active : bool</text>
+<rect x="1150" y="400" width="230" height="102" rx="8" class="box"/>
+<rect x="1150" y="400" width="230" height="26" rx="8" class="box-header"/>
+<rect x="1150" y="418" width="230" height="8" class="box-header"/>
+<text x="1265.0" y="417" class="title-lbl" text-anchor="middle" font-weight="700">Offer</text>
+<line x1="1150" y1="426" x2="1380" y2="426" class="compartment-line"/>
+<text x="1160" y="444" class="attr-lbl" text-anchor="start">title, description : string</text>
+<text x="1160" y="459" class="attr-lbl" text-anchor="start">discount_amount : int</text>
+<text x="1160" y="474" class="attr-lbl" text-anchor="start">is_active : bool</text>
+<text x="1160" y="489" class="attr-lbl" text-anchor="start">start_date, end_date : date</text>
+<rect x="40" y="700" width="210" height="117" rx="8" class="box"/>
+<rect x="40" y="700" width="210" height="26" rx="8" class="box-header"/>
+<rect x="40" y="718" width="210" height="8" class="box-header"/>
+<text x="145.0" y="717" class="title-lbl" text-anchor="middle" font-weight="700">Table</text>
+<line x1="40" y1="726" x2="250" y2="726" class="compartment-line"/>
+<text x="50" y="744" class="attr-lbl" text-anchor="start">table_number : string</text>
+<text x="50" y="759" class="attr-lbl" text-anchor="start">capacity : int</text>
+<text x="50" y="774" class="attr-lbl" text-anchor="start">location : TableLocation</text>
+<text x="50" y="789" class="attr-lbl" text-anchor="start">is_active : bool</text>
+<text x="50" y="804" class="attr-lbl" text-anchor="start">price_per_hour : int</text>
+<rect x="320" y="700" width="230" height="132" rx="8" class="box"/>
+<rect x="320" y="700" width="230" height="26" rx="8" class="box-header-alt"/>
+<rect x="320" y="718" width="230" height="8" class="box-header-alt"/>
+<text x="435.0" y="717" class="title-lbl" text-anchor="middle" font-weight="700">Reservation</text>
+<line x1="320" y1="726" x2="550" y2="726" class="compartment-line"/>
+<text x="330" y="744" class="attr-lbl" text-anchor="start">reservation_code : string</text>
+<text x="330" y="759" class="attr-lbl" text-anchor="start">party_size : int</text>
+<text x="330" y="774" class="attr-lbl" text-anchor="start">status : ReservationStatus</text>
+<text x="330" y="789" class="attr-lbl" text-anchor="start">type : ReservationType</text>
+<text x="330" y="804" class="attr-lbl" text-anchor="start">date : date</text>
+<text x="330" y="819" class="attr-lbl" text-anchor="start">special_requests : string</text>
+<rect x="640" y="700" width="230" height="117" rx="8" class="box"/>
+<rect x="640" y="700" width="230" height="26" rx="8" class="box-header-alt"/>
+<rect x="640" y="718" width="230" height="8" class="box-header-alt"/>
+<text x="755.0" y="717" class="title-lbl" text-anchor="middle" font-weight="700">Order</text>
+<line x1="640" y1="726" x2="870" y2="726" class="compartment-line"/>
+<text x="650" y="744" class="attr-lbl" text-anchor="start">notes : string</text>
+<text x="650" y="759" class="attr-lbl" text-anchor="start">status : OrderStatus</text>
+<text x="650" y="774" class="attr-lbl" text-anchor="start">order_type : OrderType</text>
+<text x="650" y="789" class="attr-lbl" text-anchor="start">dated_at : date</text>
+<text x="650" y="804" class="attr-lbl" text-anchor="start">deleted_at : datetime (soft delete)</text>
+<rect x="1150" y="700" width="210" height="57" rx="8" class="box"/>
+<rect x="1150" y="700" width="210" height="26" rx="8" class="box-header"/>
+<rect x="1150" y="718" width="210" height="8" class="box-header"/>
+<text x="1255.0" y="717" class="title-lbl" text-anchor="middle" font-weight="700">MealRating</text>
+<line x1="1150" y1="726" x2="1360" y2="726" class="compartment-line"/>
+<text x="1160" y="744" class="attr-lbl" text-anchor="start">number_stars : int (1-5)</text>
+<rect x="1440" y="700" width="210" height="57" rx="8" class="box"/>
+<rect x="1440" y="700" width="210" height="26" rx="8" class="box-header"/>
+<rect x="1440" y="718" width="210" height="8" class="box-header"/>
+<text x="1545.0" y="717" class="title-lbl" text-anchor="middle" font-weight="700">OfferRating</text>
+<line x1="1440" y1="726" x2="1650" y2="726" class="compartment-line"/>
+<text x="1450" y="744" class="attr-lbl" text-anchor="start">number_stars : int (1-5)</text>
+<rect x="900" y="950" width="260" height="117" rx="8" class="box"/>
+<rect x="900" y="950" width="260" height="26" rx="8" class="box-header"/>
+<rect x="900" y="968" width="260" height="8" class="box-header"/>
+<text x="1030.0" y="967" class="title-lbl" text-anchor="middle" font-weight="700">Translation (polymorphic)</text>
+<line x1="900" y1="976" x2="1160" y2="976" class="compartment-line"/>
+<text x="910" y="994" class="attr-lbl" text-anchor="start">translatable_type : string</text>
+<text x="910" y="1009" class="attr-lbl" text-anchor="start">translatable_id : int</text>
+<text x="910" y="1024" class="attr-lbl" text-anchor="start">locale : string</text>
+<text x="910" y="1039" class="attr-lbl" text-anchor="start">field : string</text>
+<text x="910" y="1054" class="attr-lbl" text-anchor="start">value : string</text>
+<line x1="205.0" y1="202" x2="145.0" y2="260" class="edge assoc"/>
+<rect x="143.8" y="222.0" width="62.4" height="14" class="edge-lbl-bg"/>
+<text x="175.0" y="233.0" class="edge-lbl" text-anchor="middle">1 — 0..1</text>
+<line x1="320" y1="121.0" x2="320" y2="333.5" class="edge assoc"/>
+<rect x="288.8" y="218.25" width="62.4" height="14" class="edge-lbl-bg"/>
+<text x="320.0" y="229.25" class="edge-lbl" text-anchor="middle">1 — 0..1</text>
+<line x1="320" y1="121.0" x2="620" y2="83.5" class="edge assoc"/>
+<rect x="438.8" y="93.25" width="62.4" height="14" class="edge-lbl-bg"/>
+<text x="470.0" y="104.25" class="edge-lbl" text-anchor="middle">* — 0..1</text>
+<line x1="430.0" y1="407" x2="430.0" y2="470" class="edge assoc"/>
+<rect x="409.0" y="429.5" width="42.0" height="14" class="edge-lbl-bg"/>
+<text x="430.0" y="440.5" class="edge-lbl" text-anchor="middle">1 — *</text>
+<line x1="145.0" y1="362" x2="435.0" y2="700" class="edge assoc"/>
+<rect x="269.0" y="522.0" width="42.0" height="14" class="edge-lbl-bg"/>
+<text x="290.0" y="533.0" class="edge-lbl" text-anchor="middle">1 — *</text>
+<line x1="430.0" y1="407" x2="435.0" y2="700" class="edge assoc"/>
+<rect x="401.3" y="544.5" width="62.4" height="14" class="edge-lbl-bg"/>
+<text x="432.5" y="555.5" class="edge-lbl" text-anchor="middle">1 — 0..1</text>
+<line x1="250" y1="311.0" x2="640" y2="758.5" class="edge assoc"/>
+<rect x="424.0" y="525.75" width="42.0" height="14" class="edge-lbl-bg"/>
+<text x="445.0" y="536.75" class="edge-lbl" text-anchor="middle">1 — *</text>
+<line x1="430.0" y1="407" x2="755.0" y2="700" class="edge assoc"/>
+<rect x="561.3" y="544.5" width="62.4" height="14" class="edge-lbl-bg"/>
+<text x="592.5" y="555.5" class="edge-lbl" text-anchor="middle">1 — 0..1</text>
+<line x1="640" y1="758.5" x2="550" y2="766.0" class="edge assoc"/>
+<rect x="553.6" y="753.25" width="82.8" height="14" class="edge-lbl-bg"/>
+<text x="595.0" y="764.25" class="edge-lbl" text-anchor="middle">0..1 — 0..1</text>
+<line x1="320" y1="766.0" x2="250" y2="758.5" class="edge assoc"/>
+<rect x="182.4" y="753.25" width="205.2" height="14" class="edge-lbl-bg"/>
+<text x="285.0" y="764.25" class="edge-lbl" text-anchor="middle">* — * (pivot: start/end time)</text>
+<line x1="1110" y1="76.0" x2="1150" y2="158.5" class="edge assoc"/>
+<rect x="1109.0" y="108.25" width="42.0" height="14" class="edge-lbl-bg"/>
+<text x="1130.0" y="119.25" class="edge-lbl" text-anchor="middle">1 — *</text>
+<line x1="1005.0" y1="40" x2="1005.0" y2="112" class="edge assoc dashed"/>
+<rect x="912.6" y="67.0" width="184.79999999999998" height="14" class="edge-lbl-bg"/>
+<text x="1005.0" y="78.0" class="edge-lbl" text-anchor="middle">0..1 — * (parent/children)</text>
+<line x1="1150" y1="158.5" x2="1100" y2="256.0" class="edge assoc"/>
+<rect x="1083.6" y="198.25" width="82.8" height="14" class="edge-lbl-bg"/>
+<text x="1125.0" y="209.25" class="edge-lbl" text-anchor="middle">0..1 — 0..1</text>
+<line x1="1380" y1="158.5" x2="1440" y2="91.0" class="edge assoc"/>
+<rect x="1327.8" y="115.75" width="164.4" height="14" class="edge-lbl-bg"/>
+<text x="1410.0" y="126.75" class="edge-lbl" text-anchor="middle">* — * (pivot: quantity)</text>
+<line x1="1265.0" y1="217" x2="1265.0" y2="400" class="edge assoc"/>
+<rect x="1182.8" y="299.5" width="164.4" height="14" class="edge-lbl-bg"/>
+<text x="1265.0" y="310.5" class="edge-lbl" text-anchor="middle">* — * (pivot: quantity)</text>
+<line x1="1265.0" y1="217" x2="755.0" y2="700" class="edge assoc"/>
+<rect x="904.0" y="449.5" width="212.0" height="14" class="edge-lbl-bg"/>
+<text x="1010.0" y="460.5" class="edge-lbl" text-anchor="middle">* — * (pivot: quantity, notes)</text>
+<line x1="1150" y1="451.0" x2="870" y2="758.5" class="edge assoc"/>
+<rect x="904.0" y="595.75" width="212.0" height="14" class="edge-lbl-bg"/>
+<text x="1010.0" y="606.75" class="edge-lbl" text-anchor="middle">* — * (pivot: quantity, notes)</text>
+<line x1="1265.0" y1="217" x2="1255.0" y2="700" class="edge assoc"/>
+<rect x="1239.0" y="449.5" width="42.0" height="14" class="edge-lbl-bg"/>
+<text x="1260.0" y="460.5" class="edge-lbl" text-anchor="middle">1 — *</text>
+<line x1="250" y1="311.0" x2="1150" y2="728.5" class="edge assoc"/>
+<rect x="679.0" y="510.75" width="42.0" height="14" class="edge-lbl-bg"/>
+<text x="700.0" y="521.75" class="edge-lbl" text-anchor="middle">1 — *</text>
+<line x1="1380" y1="451.0" x2="1440" y2="728.5" class="edge assoc"/>
+<rect x="1389.0" y="580.75" width="42.0" height="14" class="edge-lbl-bg"/>
+<text x="1410.0" y="591.75" class="edge-lbl" text-anchor="middle">1 — *</text>
+<line x1="250" y1="311.0" x2="1440" y2="728.5" class="edge assoc"/>
+<rect x="824.0" y="510.75" width="42.0" height="14" class="edge-lbl-bg"/>
+<text x="845.0" y="521.75" class="edge-lbl" text-anchor="middle">1 — *</text>
+<line x1="1005.0" y1="40" x2="950" y2="950" class="edge dashed" stroke-opacity="0.35" marker-end="none"/>
+<line x1="1265.0" y1="100" x2="950" y2="950" class="edge dashed" stroke-opacity="0.35" marker-end="none"/>
+<line x1="1265.0" y1="400" x2="950" y2="950" class="edge dashed" stroke-opacity="0.35" marker-end="none"/>
+<line x1="1550.0" y1="40" x2="950" y2="950" class="edge dashed" stroke-opacity="0.35" marker-end="none"/>
+<line x1="145.0" y1="700" x2="950" y2="950" class="edge dashed" stroke-opacity="0.35" marker-end="none"/>
+<text x="950" y="940" class="note-lbl" text-anchor="middle">translations()  morphMany — any of the five boxes above may carry localized fields</text>
+</svg>
+  </div>
+  <div class="diagram-card" style="margin-top:16px;box-shadow:none"><strong>Reading this diagram</strong><ul style="margin:8px 0 0;padding-inline-start:20px;color:#4b5563"><li>Every association shown here is implemented as an Eloquent relationship in <code>app/Models/*.php</code> — this diagram is generated to match the code, not the other way around.</li>
+<li>Pivot tables (<code>ingredient_meal</code>, <code>meal_order</code>, <code>offer_order</code>, <code>meal_offer</code>, <code>reservation_table</code>) carry their own columns (quantity, notes, start/end time) and are noted on the connecting edge rather than drawn as separate boxes, to keep the diagram legible.</li>
+<li><code>Translation</code> is a single polymorphic table (<code>translatable_type</code> / <code>translatable_id</code>) shared by every model using the <code>HasTranslations</code> trait — Category, Meal, Ingredient, Offer and Table — rather than one table per entity.</li>
+<li>Enum-typed attributes (<code>UserType</code>, <code>OrderStatus</code>, <code>ReservationStatus</code>, <code>EmployeePosition</code>, ...) are detailed on their own state charts where relevant — see the State Charts section.</li></ul></div>
+</main>
+<footer class="page-foot">Part of the <a href="../../README.md">Flavor</a> documentation set. Generated as plain SVG/HTML/CSS &mdash; no external diagram tooling required to view or edit.</footer>
+</body>
+</html>

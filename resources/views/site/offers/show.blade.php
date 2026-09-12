@@ -8,6 +8,10 @@
 
         <div class="split" style="margin-top:var(--space-3)">
             <div class="stack">
+                <div class="media-hero">
+                    <img src="{{ $offer->image_url }}" alt="{{ $offer->t('title') }}" data-lightbox="{{ $offer->t('title') }}">
+                </div>
+
                 <div>
                     <p class="eyebrow">-{{ $offer->discount_amount }}% · {{ $offer->start_date?->translatedFormat('d M') }} — {{ $offer->end_date?->translatedFormat('d M') }}</p>
                     <h1>{{ $offer->t('title') }}</h1>
@@ -15,10 +19,12 @@
                     <x-stars :value="$offer->rating_average" :count="$offer->ratings->count()" />
                 </div>
 
-                <div class="grid grid-3">
+                <div class="grid grid-cards">
                     @foreach ($offer->meals as $meal)
                         <article class="card">
-                            <img src="{{ $meal->image_url }}" alt="" style="border-radius:var(--radius-sm);height:120px;width:100%;object-fit:cover">
+                            <span class="media-square">
+                                <img src="{{ $meal->image_url }}" alt="{{ $meal->t('name') }}" data-lightbox="{{ $meal->t('name') }}">
+                            </span>
                             <h3 style="margin-top:var(--space-2);font-size:1rem">{{ $meal->t('name') }}</h3>
                             <p class="small muted">×{{ $meal->pivot->quantity }} · @money($meal->price)</p>
                         </article>

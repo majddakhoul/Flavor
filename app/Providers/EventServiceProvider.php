@@ -10,6 +10,9 @@ use App\Events\ReservationCreated;
 use App\Events\ReservationStatusChanged;
 use App\Events\VerificationCodeIssued;
 use App\Listeners\AlertManagersOnLowStock;
+use App\Listeners\NotifyManagersOfNewHire;
+use App\Listeners\NotifyStaffOfNewOrder;
+use App\Listeners\NotifyStaffOfNewReservation;
 use App\Listeners\SendEmployeeCredentials;
 use App\Listeners\SendOrderConfirmation;
 use App\Listeners\SendOrderStatusUpdate;
@@ -21,12 +24,12 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 class EventServiceProvider extends ServiceProvider
 {
     protected $listen = [
-        OrderPlaced::class => [SendOrderConfirmation::class],
+        OrderPlaced::class => [SendOrderConfirmation::class, NotifyStaffOfNewOrder::class],
         OrderStatusChanged::class => [SendOrderStatusUpdate::class],
-        ReservationCreated::class => [SendReservationTicket::class],
+        ReservationCreated::class => [SendReservationTicket::class, NotifyStaffOfNewReservation::class],
         ReservationStatusChanged::class => [SendReservationStatusUpdate::class],
         LowStockDetected::class => [AlertManagersOnLowStock::class],
-        EmployeeHired::class => [SendEmployeeCredentials::class],
+        EmployeeHired::class => [SendEmployeeCredentials::class, NotifyManagersOfNewHire::class],
         VerificationCodeIssued::class => [SendVerificationCode::class],
     ];
 

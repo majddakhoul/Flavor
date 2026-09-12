@@ -1,0 +1,26 @@
+flowchart TD
+    classDef start fill:#0d9488,stroke:#0d9488,color:#ffffff
+    classDef act fill:#eff6ff,stroke:#2563eb,color:#0f172a
+    classDef dec fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef sys fill:#f0fdfa,stroke:#0d9488,color:#0f172a
+    classDef stop fill:#64748b,stroke:#475569,color:#ffffff
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+
+    A([Start]):::start --> B["Open manager dashboard"]:::act
+    B --> C{Pending reservations or orders?}:::dec
+    C -->|Yes| D["Review and confirm or reject"]:::act
+    C -->|No| E["Check menu health"]:::act
+    D --> E
+    E --> F{Meal unavailable or low rated?}:::dec
+    F -->|Yes| G["Restock ingredient or edit recipe"]:::act
+    F -->|No| H["Review active offers"]:::act
+    G --> H
+    H --> I{Offer expiring soon?}:::dec
+    I -->|Yes| J["Extend dates or launch new offer"]:::act
+    I -->|No| K["Check staffing and maintenance"]:::act
+    J --> K
+    K --> L{Facility issue reported?}:::dec
+    L -->|Yes| M["Log maintenance item, price, discount"]:::act
+    L -->|No| N["Review sales and ratings report"]:::sys
+    M --> N
+    N --> O([End]):::stop

@@ -1,0 +1,13 @@
+stateDiagram-v2
+    direction LR
+    [*] --> Scheduled: created with start_date in the future
+    Scheduled --> Active: start_date reached and is_active=true
+    Active --> Expired: end_date passed
+    Active --> Disabled: manager sets is_active=false
+    Disabled --> Active: manager re-enables within the date range
+    Disabled --> Expired: end_date passes while disabled
+    Expired --> [*]
+    note right of Active
+        only Active offers are returned to customers
+        and can be attached to a new offer_order line
+    end note

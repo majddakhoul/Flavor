@@ -37,7 +37,7 @@
             <a class="btn btn--ghost btn--sm" href="{{ route('menu.index') }}">{{ __('app.see_all') }}<x-icon name="arrow" /></a>
         </div>
 
-        <div class="grid grid-3" style="margin-top:var(--space-3)">
+        <div class="grid grid-cards" style="margin-top:var(--space-3)">
             @forelse ($featured as $meal)
                 <x-dish-card :meal="$meal" />
             @empty
@@ -55,7 +55,7 @@
                 </div>
                 <a class="btn btn--ghost btn--sm" href="{{ route('offers.index') }}">{{ __('app.see_all') }}<x-icon name="arrow" /></a>
             </div>
-            <div class="grid grid-3" style="margin-top:var(--space-3)">
+            <div class="grid grid-cards" style="margin-top:var(--space-3)">
                 @foreach ($offers as $offer)
                     <x-offer-card :offer="$offer" />
                 @endforeach

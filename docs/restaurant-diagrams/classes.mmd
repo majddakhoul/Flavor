@@ -1,0 +1,242 @@
+classDiagram
+    direction LR
+
+    class Location {
+        +int id
+        +string country
+        +string region
+        +string state
+        +string city
+        +string delivery_time
+        +string street
+        +users() hasMany
+        +orders() hasMany
+    }
+
+    class User {
+        +int id
+        +string first_name
+        +string last_name
+        +string email
+        +hashed password
+        +string phone
+        +string gender
+        +bool status
+        +string user_type
+        +string preferred_locale
+        +Carbon email_verified_at
+        +int location_id
+        +location() belongsTo
+        +customer() hasOne
+        +employee() hasOne
+        +isManager() bool
+        +isEmployee() bool
+        +isCustomer() bool
+    }
+
+    class Customer {
+        +int id
+        +string allergies
+        +string favorite_categories
+        +bool ban
+        +Carbon ban_date
+        +int user_id
+        +user() belongsTo
+        +reservations() hasMany
+        +orders() hasMany
+        +mealRatings() hasMany
+        +offerRatings() hasMany
+        +isBanned() bool
+    }
+
+    class Employee {
+        +int id
+        +string national_id
+        +string position
+        +int salary
+        +int bonus
+        +string notes
+        +date hire_date
+        +date birth_date
+        +int user_id
+        +user() belongsTo
+        +reservations() hasMany
+        +orders() hasMany
+        +maintenances() hasMany
+        +isChef() bool
+        +isWaiter() bool
+        +isDelivery() bool
+        +isSecurity() bool
+    }
+
+    class Table {
+        +int id
+        +string table_number
+        +int capacity
+        +string location
+        +bool is_active
+        +int price_per_hour
+        +string description
+        +reservations() belongsToMany
+    }
+
+    class Reservation {
+        +int id
+        +string reservation_code
+        +string status
+        +int party_size
+        +string type
+        +string special_requests
+        +date date
+        +int customer_id
+        +int employee_id
+        +int order_id
+        +customer() belongsTo
+        +employee() belongsTo
+        +tables() belongsToMany
+        +order() belongsTo
+        +confirm()
+        +cancel(reason)
+    }
+
+    class Maintenance {
+        +int id
+        +string maintenance_item
+        +int total_price
+        +int price
+        +int discount
+        +string notes
+        +int employee_id
+        +employee() belongsTo
+        +calculateTotal() int
+    }
+
+    class Category {
+        +int id
+        +string name
+        +string description
+        +int parent_id
+        +parent() belongsTo
+        +children() hasMany
+        +meals() hasMany
+    }
+
+    class Picture {
+        +int id
+        +string path
+        +string name
+        +meal() hasOne
+    }
+
+    class Ingredient {
+        +int id
+        +string name
+        +string unit
+        +int stock_quantity
+        +int unit_cost
+        +bool is_active
+        +meals() belongsToMany
+        +isLowStock() bool
+    }
+
+    class Meal {
+        +int id
+        +string name
+        +string prep_time
+        +bool is_vegetarian
+        +int percentage
+        +string description
+        +string availability
+        +int picture_id
+        +int category_id
+        +category() belongsTo
+        +picture() belongsTo
+        +ingredients() belongsToMany
+        +ratings() hasMany
+        +offers() belongsToMany
+        +orders() belongsToMany
+        +costPrice() float
+        +sellingPrice() float
+        +averageRating() float
+    }
+
+    class Offer {
+        +int id
+        +string title
+        +string description
+        +int discount_amount
+        +bool is_active
+        +date start_date
+        +date end_date
+        +meals() belongsToMany
+        +ratings() hasMany
+        +orders() belongsToMany
+        +bundlePrice() float
+        +isCurrentlyActive() bool
+    }
+
+    class MealRating {
+        +int id
+        +int number_stars
+        +int meal_id
+        +int customer_id
+        +meal() belongsTo
+        +customer() belongsTo
+    }
+
+    class OfferRating {
+        +int id
+        +int number_stars
+        +int offer_id
+        +int customer_id
+        +offer() belongsTo
+        +customer() belongsTo
+    }
+
+    class Order {
+        +int id
+        +string notes
+        +string order_type
+        +string status
+        +date dated_at
+        +Carbon deleted_at
+        +int customer_id
+        +int employee_id
+        +int reservation_id
+        +int location_id
+        +customer() belongsTo
+        +employee() belongsTo
+        +reservation() hasOne
+        +location() belongsTo
+        +meals() belongsToMany
+        +offers() belongsToMany
+        +total() float
+        +isDelivery() bool
+        +complete()
+        +cancel()
+    }
+
+    Location "1" --> "0..*" User : users
+    Location "1" --> "0..*" Order : orders
+    User "1" --> "1" Customer : customer
+    User "1" --> "1" Employee : employee
+    Customer "1" --> "0..*" Reservation : reservations
+    Employee "1" --> "0..*" Reservation : reservations
+    Reservation "0..*" --> "0..*" Table : tables
+    Reservation "1" --> "0..1" Order : order
+    Employee "1" --> "0..*" Maintenance : maintenances
+
+    Category "1" --> "0..*" Category : children
+    Category "1" --> "0..*" Meal : meals
+    Picture "1" --> "0..1" Meal : meal
+    Meal "0..*" --> "0..*" Ingredient : ingredients
+    Meal "0..*" --> "0..*" Offer : offers
+    Meal "1" --> "0..*" MealRating : ratings
+    Offer "1" --> "0..*" OfferRating : ratings
+    Customer "1" --> "0..*" MealRating : mealRatings
+    Customer "1" --> "0..*" OfferRating : offerRatings
+
+    Customer "1" --> "0..*" Order : orders
+    Employee "1" --> "0..*" Order : orders
+    Order "0..*" --> "0..*" Meal : meals
+    Order "0..*" --> "0..*" Offer : offers

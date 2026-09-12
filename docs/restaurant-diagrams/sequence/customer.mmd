@@ -1,0 +1,30 @@
+sequenceDiagram
+    autonumber
+    actor CU as customer
+    participant API as Laravel API
+    participant DB as Database
+
+    CU->>API: POST /api/auth/login
+    API-->>CU: 200 token (user_type=Customer)
+    CU->>API: GET /api/categories
+    CU->>API: GET /api/meals?category_id=&is_vegetarian=
+    CU->>API: GET /api/offers?is_active=true
+    API-->>CU: 200 menu and active offers with computed prices
+    alt dine in
+        CU->>API: GET /api/tables/available?date=&party_size=
+        CU->>API: POST /api/reservations (type=Application, party_size, date)
+        API->>DB: create reservation status=Pending
+        API-->>CU: 201 reservation Pending
+    else delivery or takeaway
+        CU->>API: POST /api/orders (order_type=Delivery|Takeaway)
+        CU->>API: POST /api/orders/:id/meals (meal_id, quantity)
+        CU->>API: POST /api/orders/:id/offers (offer_id, quantity)
+        API->>DB: sync meal_order, offer_order
+        API-->>CU: 201 order Pending
+    end
+    CU->>API: GET /api/orders/:id (poll status)
+    API-->>CU: 200 status=Completed
+    CU->>API: POST /api/meals/:id/ratings (number_stars)
+    CU->>API: POST /api/offers/:id/ratings (number_stars)
+    API->>DB: insert meals_ratings / offers_ratings
+    API-->>CU: 201 thank you for rating

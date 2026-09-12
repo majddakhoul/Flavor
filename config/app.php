@@ -39,15 +39,11 @@ return [
         App\Providers\AppServiceProvider::class,
         App\Providers\RepositoryServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
-                App\Providers\EventServiceProvider::class,
+        App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        Ichtrojan\Otp\OtpServiceProvider::class,
 
     ])->toArray(),
 
-    'aliases' => Facade::defaultAliases()->merge([
-        // 'Example' => App\Facades\Example::class,
-        'Otp'=>Ichtrojan\Otp\Otp::class,
-    ])->toArray(),
+    'aliases' => Facade::defaultAliases()->toArray(),
 
 ];

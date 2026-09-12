@@ -2,7 +2,7 @@
 
 Flavor is a restaurant management system built on Laravel 10. It covers the public menu, customer ordering and table booking, and a staff workspace for the kitchen, the floor, inventory, people and reporting.
 
-The application is server rendered and web only. There is no public API surface: every capability is reached through session authenticated web routes and Blade views.
+The application ships two delivery mechanisms over one shared domain layer: a server-rendered, session-authenticated web application for the browser, and a versioned, token-authenticated JSON API (`/api/v1`) for mobile and third-party clients. Neither duplicates the other's business logic — both call the same `Service` classes underneath.
 
 ---
 
@@ -12,15 +12,18 @@ The application is server rendered and web only. There is no public API surface:
 2. [Directory layout](#directory-layout)
 3. [Domain modules](#domain-modules)
 4. [Roles and abilities](#roles-and-abilities)
-5. [Authentication and cookies](#authentication-and-cookies)
-6. [Localisation](#localisation)
-7. [Theming and design system](#theming-and-design-system)
-8. [Data integrity](#data-integrity)
-9. [Background work](#background-work)
-10. [Caching](#caching)
-11. [Installation](#installation)
-12. [Demo accounts](#demo-accounts)
-13. [Further reading](#further-reading)
+5. [Web authentication and cookies](#web-authentication-and-cookies)
+6. [The API](#the-api)
+7. [Notifications](#notifications)
+8. [Diagrams](#diagrams)
+9. [Localisation](#localisation)
+10. [Theming and design system](#theming-and-design-system)
+11. [Data integrity](#data-integrity)
+12. [Background work](#background-work)
+13. [Caching](#caching)
+14. [Installation](#installation)
+15. [Demo accounts](#demo-accounts)
+16. [Further reading](#further-reading)
 
 ---
 
@@ -82,17 +85,26 @@ app/
 ├── Events/                  Domain events raised by services
 ├── Exceptions/Domain/       Business rule exceptions rendered as user facing errors
 ├── Http/
-│   ├── Controllers/Web/
-│   │   ├── Account/         Customer area
-│   │   ├── Auth/            Sign in, registration, verification, password reset
-│   │   ├── Manage/          Staff workspace
-│   │   └── Site/            Public pages
-│   ├── Middleware/          Locale, theme, ability, account status
-│   └── Requests/            Form requests grouped by area
+│   ├── Controllers/
+│   │   ├── Api/
+│   │   │   ├── Auth/        Register, login/logout, verification, password reset
+│   │   │   ├── Catalog/     Public menu, offers, categories, tables, locations
+│   │   │   ├── Account/     Customer area: cart, checkout, orders, reservations, ratings
+│   │   │   └── Manage/      Staff workspace, one controller per resource
+│   │   └── Web/
+│   │       ├── Account/     Customer area
+│   │       ├── Auth/        Sign in, registration, verification, password reset
+│   │       ├── Manage/      Staff workspace
+│   │       └── Site/        Public pages
+│   ├── Middleware/          Locale, theme, ability, account status (web and API variants)
+│   ├── Requests/            Form requests grouped by area, shared between web and API
+│   ├── Resources/           API Resource classes — one per model, JSON shaping only
+│   └── Responses/           ApiResponse trait — the shared {success, message, data} envelope
 ├── Jobs/                    Queued work
 ├── Listeners/               Queued event handlers
 ├── Mail/                    Mailables built on a shared base
 ├── Models/                  Eloquent models
+├── Notifications/           Database + mail notifications, grouped by domain
 ├── Policies/                Per model authorisation
 ├── Providers/               Service, auth, event, route and repository bindings
 ├── Repositories/
@@ -106,17 +118,18 @@ app/
 │   ├── People/              Customers, employees, auth, ratings, maintenance
 │   ├── Reservations/        Availability and booking lifecycle
 │   ├── Sales/               Cart, checkout and order lifecycle
-│   └── Support/             Cache facade wrapper
+│   └── Support/             Cache facade wrapper, notification helpers
 └── Support/                 Value objects, query options and model traits
 
 resources/views/
 ├── layouts/                 base, site, auth, account, manage
-├── components/              23 reusable Blade components
+├── components/              24 reusable Blade components, including the notification bell
 ├── partials/                header, footer, sidebar, topbar, account navigation
 ├── site/                    Home, menu, offers
 ├── auth/                    Sign in, register, verify, password reset
 ├── account/                 Dashboard, cart, checkout, orders, reservations, profile
 ├── manage/                  Workspace dashboard, CRUD screens, reports
+├── notifications/           The full notification centre page
 ├── emails/                  Shared transactional email template
 └── errors/                  403, 404, 419, 429, 500, 503
 
@@ -125,12 +138,24 @@ public/assets/
 ├── js/app.js                Theme, menus, tabs, toasts, charts, cookie consent
 └── img/                     Brand, icon sprite, illustrations, patterns
 
-lang/{en,ar,fr}/             app, flash, errors, domain, enums, mail and Laravel defaults
+lang/{en,ar,fr}/             app, flash, errors, domain, enums, mail, notifications and Laravel defaults
 database/
-├── migrations/              Original schema plus translations, jobs and sessions
+├── migrations/              Original schema plus translations, jobs, sessions, tokens and notifications
 ├── factories/               12 model factories
 └── seeders/                 13 seeders producing a complete demo restaurant
-docs/                        Packages, requirements, changelog, Postman collection
+docs/
+├── diagrams/                 Class, object, state chart, use case, activity and sequence diagrams (hand-authored SVG, no tooling required)
+├── restaurant-diagrams/      A second, schema-derived set of 41 Mermaid diagrams (use case, activity, sequence, state) covering every role
+├── Draw io/                  Editable .drawio sources for the ERD and class diagrams
+├── reports/                   The original project report (Word, PDF and the presentation slides)
+├── screenshots/               Interface gallery — every screen in the application, captured and captioned by role
+├── ANALYSIS.md                The original requirements, translated and mapped onto this codebase
+├── API.md                     Full API reference
+├── NOTIFICATIONS.md           How the notification system is built and how to extend it
+├── PACKAGES.md                 Dependencies and every command needed to run the project
+├── REQUIREMENTS.md            Each stated requirement and where it is satisfied in the codebase
+├── CHANGELOG.md                Every change made during both rebuilds
+└── flavor-api.postman_collection.json   117-request Postman collection for the API
 ```
 
 ---
@@ -139,11 +164,11 @@ docs/                        Packages, requirements, changelog, Postman collecti
 
 ### Catalog
 
-Meals carry a preparation cost derived from their recipe, a margin percentage and a computed selling price. A meal is orderable only when its availability flag is set and every ingredient in its recipe has enough stock for at least one portion. Offers bundle meals at a discount and inherit the same stock rules.
+Meals carry a preparation cost derived from their recipe, a margin percentage and a computed selling price. A meal is orderable only when its availability flag is set and every ingredient in its recipe has enough stock for at least one portion. Offers bundle meals at a discount and inherit the same stock rules. Every meal and offer photo renders through the same `.media-hero`/`.dish__media`/`.media-square` treatment — a fixed aspect ratio with `object-fit: cover` — so cards and detail pages stay visually consistent no matter what size photo was uploaded, and clicking any of them opens a full-size lightbox view.
 
 ### Sales
 
-The cart lives in the session, so a customer can build an order before deciding to sign in. Checkout runs inside a database transaction: it locks the ingredient rows, validates availability, writes the order and its lines, consumes stock and raises the confirmation event. Order status follows an explicit state machine defined on the `OrderStatus` enum. Cancellation restores the consumed stock.
+The cart is keyed by the authenticated user's id in the cache layer — deliberately not the PHP session, so it works identically whether the request comes from the browser or a stateless API token. Checkout runs inside a database transaction: it locks the ingredient rows, validates availability, writes the order and its lines, consumes stock and raises the confirmation event. Order status follows an explicit state machine defined on the `OrderStatus` enum. Cancellation restores the consumed stock.
 
 ### Reservations
 
@@ -179,7 +204,7 @@ Route groups under `/manage` are guarded by `ability:<name>`. The sidebar render
 
 ---
 
-## Authentication and cookies
+## Web authentication and cookies
 
 Authentication uses Laravel's session guard with a database session driver.
 
@@ -204,13 +229,55 @@ Additional account protections:
 
 ---
 
+## The API
+
+Everything under `/api/v1` is a thin JSON layer over the same `Service`/`Repository`/`Policy` classes the web application uses — no business rule exists twice. Full reference: **[docs/API.md](docs/API.md)**. Importable, fully documented collection (117 requests): **[docs/flavor-api.postman_collection.json](docs/flavor-api.postman_collection.json)**.
+
+- **Auth** — [Laravel Sanctum](https://laravel.com/docs/10.x/sanctum) personal access tokens (`Authorization: Bearer <token>`), completely independent of the web session guard. Register, log in, verify email and reset a password without ever touching a cookie.
+- **Response shape** — every endpoint returns `{ success, message, data }`, with a `meta` block on paginated lists. Errors carry a matching HTTP status and, for validation failures, a field-keyed `errors` object.
+- **Search, filter, sort, pagination** — every list endpoint accepts `search`, `filters[column]`, `sort_by`/`sort_dir` and `per_page`, handled centrally by `App\Support\QueryOptions` and the `Filterable` model trait — the same mechanism the web workspace's toolbars already used, now exposed over HTTP.
+- **Reporting** — the dashboard, finance/inventory/menu reports, and three analytics endpoints added in this pass: top-selling meals, top-selling offers, and most-consumed ingredients.
+- **Language-aware by default** — every user carries a `preferred_locale`; validation errors, notifications and email all render in it automatically, no header required for an authenticated request.
+
+---
+
+## Notifications
+
+Every domain event that matters to a person reaches them on two channels — email and an in-app notification feed — in their own language, not the acting user's. Full write-up: **[docs/NOTIFICATIONS.md](docs/NOTIFICATIONS.md)**.
+
+- A shared `App\Notifications\FlavorNotification` base class means a new notification type is a handful of lines: it reuses the existing `Mailable` for email and resolves its own short copy for the database record.
+- Recipients are resolved by **ability**, not a hard-coded role — a new order alert reaches everyone who currently holds the `sales` ability, automatically.
+- High-frequency staff alerts (new order, new reservation) are database-only by design; customer lifecycle events (order confirmed, status changed, reservation confirmed, low stock, new hire) send both mail and an in-app entry.
+- Reachable from the web (a bell in both the customer and staff headers, plus a full notification centre) and the API (`GET /notifications`, `.../unread-count`, `POST .../read`, `POST .../read-all`, `DELETE .../{id}`).
+
+---
+
+## Diagrams
+
+**[docs/diagrams/index.html](docs/diagrams/index.html)** is a gallery of twelve UML diagrams covering the system's core scenarios — open it in any browser, no diagramming tool required. Every diagram is hand-authored SVG in a static HTML page, styled with the same colour tokens as the application.
+
+| Type | Pages |
+| --- | --- |
+| Class diagram | All fifteen entities and how they relate |
+| Object diagram | A concrete snapshot: one confirmed delivery order and everything attached to it |
+| State charts | Order status, Reservation status |
+| Use case diagrams | Guest & Customer, Staff workspace (by position) |
+| Activity diagrams | Registration & verification, Checkout, Reservation booking |
+| Sequence diagrams | Login (API token issuance), Checkout → notification fan-out, Order status update |
+
+A second, wider set lives at **[docs/restaurant-diagrams/index.html](docs/restaurant-diagrams/index.html)**: 41 Mermaid diagrams generated directly from the migrations, seeders and enums, covering use case, activity, sequence and state diagrams for every role, including seven cross-role end-to-end scenarios. The `.mmd` source files can be pasted into any Mermaid-aware editor; editable `.drawio` sources for the ERD and class diagrams are kept in **[docs/Draw io/](docs/Draw%20io/)**.
+
+For the interface itself rather than its models, **[docs/screenshots/README.md](docs/screenshots/README.md)** is a captioned gallery of every screen, grouped by area and by staff position.
+
+---
+
 ## Localisation
 
 Three locales ship with the application: English, Arabic and French. Arabic renders right to left; the layout mirrors through logical CSS properties rather than a separate stylesheet.
 
 Two distinct kinds of text are translated.
 
-**Interface strings** live in `lang/{locale}/`, split by namespace: `app` for the interface, `flash` for confirmations, `errors` for failures, `domain` for email and document labels, `enums` for enumerated values and `mail` for transactional messages.
+**Interface strings** live in `lang/{locale}/`, split by namespace: `app` for the interface, `flash` for confirmations, `errors` for failures, `domain` for email and document labels, `enums` for enumerated values, `mail` for transactional messages and `notifications` for the in-app notification feed.
 
 **Database content** is translated through a polymorphic `translations` table. Any model using the `HasTranslations` trait declares its translatable fields and gains `t('field')`, which resolves the current locale and falls back to the base column. Management forms expose a tabbed control that writes all locales in one submission. Resolved translations are cached for twelve hours under a tag that is flushed on write.
 
@@ -268,7 +335,7 @@ Assets are plain CSS and vanilla JavaScript. There is no build step and no Node 
 | `LiftExpiredBans` | Daily | Clears customer booking bans that have run their course |
 | `BuildDailySnapshot` | Nightly | Caches the aggregates the dashboard reads |
 
-Mail and stock alerts are dispatched through queued listeners on dedicated queues so a slow mail server never delays a checkout.
+Mail and stock alerts are dispatched through queued listeners on dedicated queues so a slow mail server never delays a checkout. The default queue connection is `sync` (runs jobs immediately, inline, no worker or Redis needed); switch `QUEUE_CONNECTION` to `database` or `redis` for a production-style non-blocking queue, and run `php artisan queue:work`.
 
 Commands: `flavor:sync-availability`, `flavor:lift-bans`, `flavor:daily-snapshot`.
 
@@ -276,7 +343,7 @@ Commands: `flavor:sync-availability`, `flavor:lift-bans`, `flavor:daily-snapshot
 
 ## Caching
 
-Redis is the cache and queue driver. Cache entries are grouped by tag so a write to a meal flushes only the catalog group. Profiles and their durations in minutes are declared in `config/flavor.php`: menu 10, catalog 60, dashboard 5, statistics 5, reports 15, lookups 720. If Redis is unavailable the cache service falls through to the underlying query rather than failing the request.
+The `.env.example` default is the `file` cache driver, which needs no extra service. `App\Services\Support\CacheService`, used for the catalog/dashboard/statistics caching described below, catches any cache failure and falls through to the underlying query rather than failing the request — safe to point at Redis in production even if it hiccups. That fallback is specific to this wrapper, though: framework-level features that talk to the cache directly, like the `throttle:auth` rate limiter on login, always use whatever `CACHE_DRIVER` is configured and will fail loudly if it points at a Redis server that is not running — which is the correct behaviour for a security control, and the reason the default is `file` rather than `redis`. Cache entries are grouped by tag so a write to a meal flushes only the catalog group. Profiles and their durations in minutes are declared in `config/flavor.php`: menu 10, catalog 60, dashboard 5, statistics 5, reports 15, lookups 720.
 
 ---
 
@@ -303,13 +370,17 @@ For scheduled work, add the Laravel scheduler to cron:
 
 A full command reference is in [docs/PACKAGES.md](docs/PACKAGES.md).
 
+To exercise the API without the web UI, import [docs/flavor-api.postman_collection.json](docs/flavor-api.postman_collection.json) into Postman, call **Auth > Login** with any demo account below, and copy the returned token into the collection's `token` variable.
+
 ---
 
 ## Demo accounts
 
-Seeding creates a working restaurant: locations, categories, thirty ingredients, eighteen dishes with recipes, four offers, twenty four tables, staff covering every position, eight customers, reservations across past and future dates, forty two orders and maintenance records.
+Seeding creates a working restaurant: locations, categories, thirty ingredients, eighteen dishes with recipes and real photography, four photographed offers, twenty four tables, staff covering every position, eight customers, reservations across past and future dates, forty two orders and maintenance records.
 
-All demo accounts use the password `password`.
+Photos are wired in automatically — no manual step. `MealSeeder` and `OfferSeeder` look for `storage/app/public/{meals|offers}/<slug>.{jpg,jpeg,png,webp}` for each item and link whatever they find into the `pictures` table; every slug already has a matching photo bundled in this repository, so a fresh `php artisan migrate --seed` produces a fully photographed menu with nothing further to source. Anything still missing a photo prints a one-line warning at the end of the seed run instead of failing silently.
+
+All demo accounts use the password `password`, on both the web and the API.
 
 | Role | Email | Reaches |
 | --- | --- | --- |
@@ -327,7 +398,14 @@ All demo accounts use the password `password`.
 | Document | Contents |
 | --- | --- |
 | [README.ar.md](README.ar.md) | Arabic edition of this document |
+| [docs/screenshots/README.md](docs/screenshots/README.md) | Interface gallery — every screen in the application, captured and captioned by area and by staff position |
+| [docs/API.md](docs/API.md) | Full API reference: every endpoint, the response envelope, search/filter/sort/pagination, auth flow, error catalogue |
+| [docs/NOTIFICATIONS.md](docs/NOTIFICATIONS.md) | How the mail + database notification system is built, and how to add a new notification type |
+| [docs/diagrams/index.html](docs/diagrams/index.html) | Class, object, state chart, use case, activity and sequence diagrams for the system's core scenarios |
+| [docs/restaurant-diagrams/index.html](docs/restaurant-diagrams/index.html) | A second, schema-derived set of 41 Mermaid diagrams covering every role and seven end-to-end scenarios |
+| [docs/ANALYSIS.md](docs/ANALYSIS.md) | The original project's requirements analysis, translated to English and mapped onto this codebase |
 | [docs/PACKAGES.md](docs/PACKAGES.md) | Dependencies, why each is present, and every command needed to run the project |
 | [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md) | Each stated requirement and where it is satisfied in the codebase |
-| [docs/CHANGELOG.md](docs/CHANGELOG.md) | Every change made during the rebuild, including the identity update |
-| [docs/flavor.postman_collection.json](docs/flavor.postman_collection.json) | Postman collection for the web routes, including CSRF and session handling |
+| [docs/CHANGELOG.md](docs/CHANGELOG.md) | Every change made across both rebuilds — the clean web architecture, then the API and notification layer |
+| [docs/flavor-api.postman_collection.json](docs/flavor-api.postman_collection.json) | 117-request, fully documented Postman collection for the API |
+| [docs/reports/](docs/reports/) | The original project report this system was built from (Word, PDF and presentation slides) |

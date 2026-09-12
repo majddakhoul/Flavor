@@ -1,0 +1,61 @@
+flowchart LR
+    classDef actor fill:#2563eb,stroke:#1d4ed8,color:#ffffff,stroke-width:2px
+    classDef uc fill:#eff6ff,stroke:#2563eb,color:#0f172a,stroke-width:1.5px
+    classDef sub fill:#f0fdfa,stroke:#0d9488,color:#0f172a,stroke-width:1px
+
+    ACTOR["Manager"]:::actor
+
+    UC1(["Manage staff"]):::uc
+    ACTOR --- UC1
+    S1_1(["Hire employee (user + employee record)"]):::sub
+    UC1 -.->|includes| S1_1
+    S1_2(["Update salary and bonus"]):::sub
+    UC1 -.->|includes| S1_2
+    S1_3(["Deactivate employee account"]):::sub
+    UC1 -.->|includes| S1_3
+
+    UC2(["Manage menu"]):::uc
+    ACTOR --- UC2
+    S2_1(["Create or edit category"]):::sub
+    UC2 -.->|includes| S2_1
+    S2_2(["Create or edit meal and recipe"]):::sub
+    UC2 -.->|includes| S2_2
+    S2_3(["Set margin percentage per meal"]):::sub
+    UC2 -.->|includes| S2_3
+
+    UC3(["Manage offers"]):::uc
+    ACTOR --- UC3
+    S3_1(["Bundle meals into an offer"]):::sub
+    UC3 -.->|includes| S3_1
+    S3_2(["Set discount and date range"]):::sub
+    UC3 -.->|includes| S3_2
+    S3_3(["Activate or disable offer"]):::sub
+    UC3 -.->|includes| S3_3
+
+    UC4(["Manage tables and locations"]):::uc
+    ACTOR --- UC4
+    S4_1(["Add or edit table"]):::sub
+    UC4 -.->|includes| S4_1
+    S4_2(["Add delivery location"]):::sub
+    UC4 -.->|includes| S4_2
+
+    UC5(["Oversee reservations and orders"]):::uc
+    ACTOR --- UC5
+    S5_1(["Review all reservations"]):::sub
+    UC5 -.->|includes| S5_1
+    S5_2(["Override cancel an order"]):::sub
+    UC5 -.->|includes| S5_2
+
+    UC6(["Facilities"]):::uc
+    ACTOR --- UC6
+    S6_1(["Log maintenance item"]):::sub
+    UC6 -.->|includes| S6_1
+    S6_2(["Record cost and discount"]):::sub
+    UC6 -.->|includes| S6_2
+
+    UC7(["Reports"]):::uc
+    ACTOR --- UC7
+    S7_1(["View meal and offer ratings"]):::sub
+    UC7 -.->|includes| S7_1
+    S7_2(["View orders by type and status"]):::sub
+    UC7 -.->|includes| S7_2

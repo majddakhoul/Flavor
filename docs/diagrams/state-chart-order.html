@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Order Status — State Chart — Flavor Diagrams</title>
+<link rel="stylesheet" href="assets/diagrams.css">
+
+</head>
+<body>
+<header class="topbar">
+  <div>
+    <p class="topbar__crumbs"><a href="index.html">Diagrams</a> / Behaviour — State Chart</p>
+    <h1 class="topbar__title">Order Status — State Chart</h1>
+  </div>
+  <a href="../../README.md">&larr; Back to README</a>
+</header>
+<main class="shell">
+  <div class="diagram-head">
+    <p>Every Order carries an OrderStatus. App\Enums\OrderStatus::transitions() is the single source of truth for which moves are legal; OrderService::transition() checks it before writing, and an illegal move raises InvalidStateTransitionException instead of silently succeeding.</p>
+  </div>
+  <div class="legend"><span><i style="background:var(--color-primary)"></i>Open / in progress</span>
+<span><i style="background:var(--color-success)"></i>Terminal — success</span>
+<span><i style="background:var(--color-danger)"></i>Terminal — cancelled</span></div>
+  <div class="diagram-card">
+    <svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" class="diagram-svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" class="arrowhead"/>
+  </marker>
+  <marker id="arrow-open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+    <path d="M1,1 L9,5 L1,9" fill="none" class="arrowhead-open"/>
+  </marker>
+  <marker id="diamond-start" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0,5 L5,0 L10,5 L5,10 z" class="diamond-marker"/>
+  </marker>
+</defs>
+
+<circle cx="60" cy="210.0" r="9" class="init-state"/>
+<rect x="150" y="150" width="180" height="60" rx="30.0" class="state primary"/><text x="240.0" y="185.0" class="state-lbl" text-anchor="middle" font-weight="700">Pending</text>
+<rect x="470" y="150" width="180" height="60" rx="30.0" class="state primary"/><text x="560.0" y="185.0" class="state-lbl" text-anchor="middle" font-weight="700">Confirmed</text>
+<rect x="790" y="60" width="200" height="60" rx="30.0" class="state success"/><text x="890.0" y="95.0" class="state-lbl" text-anchor="middle" font-weight="700">Completed</text>
+<rect x="790" y="250" width="200" height="60" rx="30.0" class="state danger"/><text x="890.0" y="285.0" class="state-lbl" text-anchor="middle" font-weight="700">Cancelled</text>
+<line x1="76" y1="210.0" x2="146" y2="180.0" class="edge strong" marker-end="url(#arrow)"/>
+<path d="M330,180.0 L470,180.0" class="edge strong" fill="none" marker-end="url(#arrow)"/>
+<rect x="325.0" y="154.0" width="150" height="15" class="edge-lbl-bg"/>
+<text x="400.0" y="165.0" class="edge-lbl" text-anchor="middle">transition() confirm</text>
+<path d="M650,180.0 Q720.0,60.0 790,90.0" class="edge strong" fill="none" marker-end="url(#arrow)"/>
+<rect x="641.5" y="46.0" width="157" height="15" class="edge-lbl-bg"/>
+<text x="720.0" y="57.0" class="edge-lbl" text-anchor="middle">transition() complete</text>
+<path d="M330,180.0 Q560.0,140.0 790,280.0" class="edge strong" fill="none" marker-end="url(#arrow)"/>
+<rect x="488.5" y="126.0" width="143" height="15" class="edge-lbl-bg"/>
+<text x="560.0" y="137.0" class="edge-lbl" text-anchor="middle">transition() cancel</text>
+<path d="M650,180.0 L790,280.0" class="edge strong" fill="none" marker-end="url(#arrow)"/>
+<rect x="648.5" y="204.0" width="143" height="15" class="edge-lbl-bg"/>
+<text x="720.0" y="215.0" class="edge-lbl" text-anchor="middle">transition() cancel</text>
+</svg>
+  </div>
+  <div class="diagram-card" style="margin-top:16px;box-shadow:none"><strong>Rules encoded in the enum</strong><ul style="margin:8px 0 0;padding-inline-start:20px;color:#4b5563"><li>Pending &rarr; Confirmed / Cancelled, Confirmed &rarr; Completed / Cancelled. Completed and Cancelled are terminal &mdash; no further transition is allowed from either.</li>
+<li>Cancelling a Pending or Confirmed order restores the stock that checkout consumed (OrderService::cancel()).</li>
+<li>Every transition fires <code>OrderStatusChanged</code>, which notifies the customer by mail and in-app notification &mdash; see the Order Status Update sequence diagram.</li>
+<li>Cancelled orders are soft-deleted; a manager can restore one, which re-consumes stock if it is still available.</li></ul></div>
+</main>
+<footer class="page-foot">Part of the <a href="../../README.md">Flavor</a> documentation set. Generated as plain SVG/HTML/CSS &mdash; no external diagram tooling required to view or edit.</footer>
+</body>
+</html>

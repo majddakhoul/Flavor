@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Use Cases — Guest & Customer — Flavor Diagrams</title>
+<link rel="stylesheet" href="assets/diagrams.css">
+
+</head>
+<body>
+<header class="topbar">
+  <div>
+    <p class="topbar__crumbs"><a href="index.html">Diagrams</a> / Behaviour — Use Case Diagram</p>
+    <h1 class="topbar__title">Use Cases — Guest & Customer</h1>
+  </div>
+  <a href="../../README.md">&larr; Back to README</a>
+</header>
+<main class="shell">
+  <div class="diagram-head">
+    <p>Everything a visitor and a signed-in customer can do, end to end from browsing to a completed order or reservation.</p>
+  </div>
+  <div class="legend"><span><i style="background:var(--color-primary-light)"></i>Actor</span>
+<span><i style="background:var(--color-surface)"></i>Use case (Flavor capability)</span></div>
+  <div class="diagram-card">
+    <svg viewBox="0 0 1300 620" xmlns="http://www.w3.org/2000/svg" class="diagram-svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" class="arrowhead"/>
+  </marker>
+  <marker id="arrow-open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+    <path d="M1,1 L9,5 L1,9" fill="none" class="arrowhead-open"/>
+  </marker>
+  <marker id="diamond-start" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0,5 L5,0 L10,5 L5,10 z" class="diamond-marker"/>
+  </marker>
+</defs>
+
+<rect x="60" y="40" width="980" height="530" rx="16" fill="none" stroke="#d1d5db" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text x="1080" y="65" class="section-lbl" text-anchor="start">Flavor — Customer-facing system</text>
+<circle cx="60" cy="90" r="9" class="actor"/>
+<line x1="60" y1="99" x2="60" y2="132" class="actor"/>
+<line x1="44" y1="110" x2="76" y2="110" class="actor"/>
+<line x1="60" y1="132" x2="46" y2="152" class="actor"/>
+<line x1="60" y1="132" x2="74" y2="152" class="actor"/>
+<text x="60" y="168" class="actor-lbl" text-anchor="middle" font-weight="700">Guest</text>
+<circle cx="60" cy="380" r="9" class="actor"/>
+<line x1="60" y1="389" x2="60" y2="422" class="actor"/>
+<line x1="44" y1="400" x2="76" y2="400" class="actor"/>
+<line x1="60" y1="422" x2="46" y2="442" class="actor"/>
+<line x1="60" y1="422" x2="74" y2="442" class="actor"/>
+<text x="60" y="458" class="actor-lbl" text-anchor="middle" font-weight="700">Customer</text>
+<ellipse cx="260" cy="90" rx="100.0" ry="30.0" class="usecase"/><text x="260" y="94.0" class="uc-lbl" text-anchor="middle">Browse menu &amp; offers</text>
+<ellipse cx="260" cy="210" rx="100.0" ry="30.0" class="usecase"/><text x="260" y="214.0" class="uc-lbl" text-anchor="middle">Register &amp; verify email</text>
+<ellipse cx="620" cy="90" rx="100.0" ry="30.0" class="usecase"/><text x="620" y="94.0" class="uc-lbl" text-anchor="middle">Sign in / sign out</text>
+<ellipse cx="620" cy="210" rx="100.0" ry="30.0" class="usecase"/><text x="620" y="214.0" class="uc-lbl" text-anchor="middle">Manage cart</text>
+<ellipse cx="980" cy="90" rx="100.0" ry="30.0" class="usecase"/><text x="980" y="94.0" class="uc-lbl" text-anchor="middle">Checkout an order</text>
+<ellipse cx="260" cy="330" rx="100.0" ry="30.0" class="usecase"/><text x="260" y="334.0" class="uc-lbl" text-anchor="middle">Track &amp; cancel own orders</text>
+<ellipse cx="620" cy="330" rx="110.0" ry="35.0" class="usecase"/><text x="620" y="327.0" class="uc-lbl" text-anchor="middle">Check availability &amp; book a</text>
+<text x="620" y="341.0" class="uc-lbl" text-anchor="middle">table</text>
+<ellipse cx="980" cy="330" rx="100.0" ry="30.0" class="usecase"/><text x="980" y="334.0" class="uc-lbl" text-anchor="middle">View / cancel own reservation</text>
+<ellipse cx="260" cy="460" rx="100.0" ry="30.0" class="usecase"/><text x="260" y="464.0" class="uc-lbl" text-anchor="middle">Rate a meal or offer</text>
+<ellipse cx="620" cy="460" rx="100.0" ry="30.0" class="usecase"/><text x="620" y="464.0" class="uc-lbl" text-anchor="middle">Manage profile &amp; password</text>
+<ellipse cx="980" cy="460" rx="100.0" ry="30.0" class="usecase"/><text x="980" y="464.0" class="uc-lbl" text-anchor="middle">Read notifications</text>
+<line x1="82" y1="105" x2="166.0" y2="90" class="edge assoc"/>
+<line x1="82" y1="105" x2="166.0" y2="210" class="edge assoc"/>
+<line x1="82" y1="105" x2="526.0" y2="90" class="edge assoc"/>
+<line x1="82" y1="395" x2="526.0" y2="210" class="edge assoc"/>
+<line x1="82" y1="395" x2="886.0" y2="90" class="edge assoc"/>
+<line x1="82" y1="395" x2="166.0" y2="330" class="edge assoc"/>
+<line x1="82" y1="395" x2="516.0" y2="330" class="edge assoc"/>
+<line x1="82" y1="395" x2="886.0" y2="330" class="edge assoc"/>
+<line x1="82" y1="395" x2="166.0" y2="460" class="edge assoc"/>
+<line x1="82" y1="395" x2="526.0" y2="460" class="edge assoc"/>
+<line x1="82" y1="395" x2="886.0" y2="460" class="edge assoc"/>
+<line x1="82" y1="395" x2="166.0" y2="90" class="edge assoc"/>
+</svg>
+  </div>
+  <div class="diagram-card" style="margin-top:16px;box-shadow:none"><strong>Where each use case lives in the code</strong><ul style="margin:8px 0 0;padding-inline-start:20px;color:#4b5563"><li><strong>Browse menu &amp; offers</strong> &mdash; <code>Api\Catalog\MealController</code>, <code>OfferController</code> (no token required).</li>
+<li><strong>Register &amp; verify</strong> &mdash; <code>AuthService::register()</code> + <code>verify()</code>; a Customer profile is created in the same transaction as the User.</li>
+<li><strong>Manage cart / Checkout</strong> &mdash; <code>CartService</code>, <code>CheckoutService::place()</code>; checkout locks ingredient stock and writes the order atomically.</li>
+<li><strong>Check availability &amp; book</strong> &mdash; <code>TableAvailabilityService::availableBetween()</code>, then <code>ReservationService::create()</code>.</li>
+<li><strong>Read notifications</strong> &mdash; every use case above that changes state (checkout, order status, reservation status) feeds this one automatically through the event/notification system.</li></ul></div>
+</main>
+<footer class="page-foot">Part of the <a href="../../README.md">Flavor</a> documentation set. Generated as plain SVG/HTML/CSS &mdash; no external diagram tooling required to view or edit.</footer>
+</body>
+</html>

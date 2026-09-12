@@ -13,7 +13,7 @@
             <x-filter-select name="vegetarian" :label="__('app.diet')" :options="['1' => __('app.vegetarian')]" />
         </x-toolbar>
 
-        <div class="grid grid-3">
+        <div class="grid grid-cards">
             @forelse ($meals as $meal)
                 <x-dish-card :meal="$meal" />
             @empty

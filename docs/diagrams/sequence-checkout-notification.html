@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkout → Event → Notification Fan-out — Flavor Diagrams</title>
+<link rel="stylesheet" href="assets/diagrams.css">
+
+</head>
+<body>
+<header class="topbar">
+  <div>
+    <p class="topbar__crumbs"><a href="index.html">Diagrams</a> / Behaviour — Sequence Diagram</p>
+    <h1 class="topbar__title">Checkout → Event → Notification Fan-out</h1>
+  </div>
+  <a href="../../README.md">&larr; Back to README</a>
+</header>
+<main class="shell">
+  <div class="diagram-head">
+    <p>What happens after the database commit: one event, two independent listeners, two different channel choices — this is the shape every domain event in Flavor follows.</p>
+  </div>
+  <div class="legend"><span><i style="background:var(--color-primary)"></i>Component</span>
+<span><i style="background:var(--color-primary-light)"></i>Active call (activation bar)</span></div>
+  <div class="diagram-card">
+    <svg viewBox="0 0 1420 780" xmlns="http://www.w3.org/2000/svg" class="diagram-svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" class="arrowhead"/>
+  </marker>
+  <marker id="arrow-open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+    <path d="M1,1 L9,5 L1,9" fill="none" class="arrowhead-open"/>
+  </marker>
+  <marker id="diamond-start" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0,5 L5,0 L10,5 L5,10 z" class="diamond-marker"/>
+  </marker>
+</defs>
+
+<rect x="10.0" y="20" width="140" height="38" rx="8" class="participant"/><text x="80" y="44" class="title-lbl" text-anchor="middle" font-weight="700">Customer</text>
+<line x1="80" y1="58" x2="80" y2="760" class="lifeline"/>
+<rect x="199.0" y="20" width="242.0" height="38" rx="8" class="participant"/><text x="320" y="44" class="title-lbl" text-anchor="middle" font-weight="700">Api\Account\CheckoutController</text>
+<line x1="320" y1="58" x2="320" y2="760" class="lifeline"/>
+<rect x="530.0" y="20" width="140" height="38" rx="8" class="participant"/><text x="600" y="44" class="title-lbl" text-anchor="middle" font-weight="700">CheckoutService</text>
+<line x1="600" y1="58" x2="600" y2="760" class="lifeline"/>
+<rect x="757.1" y="20" width="145.8" height="38" rx="8" class="participant alt"/><text x="830" y="44" class="title-lbl" text-anchor="middle" font-weight="700">OrderService / DB</text>
+<line x1="830" y1="58" x2="830" y2="760" class="lifeline"/>
+<rect x="970.0" y="20" width="140" height="38" rx="8" class="participant alt"/><text x="1040" y="44" class="title-lbl" text-anchor="middle" font-weight="700">Event bus</text>
+<line x1="1040" y1="58" x2="1040" y2="760" class="lifeline"/>
+<rect x="1192.3" y="20" width="175.4" height="38" rx="8" class="participant"/><text x="1280" y="44" class="title-lbl" text-anchor="middle" font-weight="700">Notification channels</text>
+<line x1="1280" y1="58" x2="1280" y2="760" class="lifeline"/>
+<line x1="80" y1="90" x2="320" y2="90" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="127.80000000000001" y="74" width="144.4" height="14" class="edge-lbl-bg"/>
+<text x="200.0" y="85" class="edge-lbl" text-anchor="middle">POST /account/checkout</text>
+<rect x="315.0" y="120" width="10" height="470" rx="2" class="activation"/>
+<line x1="320" y1="126" x2="600" y2="126" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="378.5" y="110" width="163.0" height="14" class="edge-lbl-bg"/>
+<text x="460.0" y="121" class="edge-lbl" text-anchor="middle">place(user, CheckoutData)</text>
+<rect x="595.0" y="156" width="10" height="380" rx="2" class="activation"/>
+<line x1="600" y1="162" x2="830" y2="162" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="593.2" y="146" width="243.6" height="14" class="edge-lbl-bg"/>
+<text x="715.0" y="157" class="edge-lbl" text-anchor="middle">lock stock, create order (transaction)</text>
+<rect x="825.0" y="192" width="10" height="60" rx="2" class="activation"/>
+<line x1="830" y1="228" x2="600" y2="228" class="edge strong dashed" marker-end="url(#arrow-open)"/>
+<rect x="695.5" y="212" width="39.0" height="14" class="edge-lbl-bg"/>
+<text x="715.0" y="223" class="edge-lbl" text-anchor="middle">Order</text>
+<line x1="600" y1="268" x2="1040" y2="268" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="760.2" y="252" width="119.60000000000001" height="14" class="edge-lbl-bg"/>
+<text x="820.0" y="263" class="edge-lbl" text-anchor="middle">event(OrderPlaced)</text>
+<rect x="1035.0" y="298" width="10" height="250" rx="2" class="activation"/>
+<line x1="1040" y1="304" x2="1280" y2="304" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="1028.9" y="288" width="262.20000000000005" height="14" class="edge-lbl-bg"/>
+<text x="1160.0" y="299" class="edge-lbl" text-anchor="middle">SendOrderConfirmation -&gt; notify(customer)</text>
+<rect x="1275.0" y="338" width="10" height="40" rx="2" class="activation"/>
+<text x="1294" y="362" class="note-lbl" text-anchor="start">mail + database (customer locale)</text>
+<line x1="1040" y1="404" x2="1280" y2="404" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="1035.1" y="388" width="249.8" height="14" class="edge-lbl-bg"/>
+<text x="1160.0" y="399" class="edge-lbl" text-anchor="middle">NotifyStaffOfNewOrder -&gt; notify(staff*)</text>
+<rect x="1275.0" y="438" width="10" height="40" rx="2" class="activation"/>
+<text x="1294" y="462" class="note-lbl" text-anchor="start">database only, 'sales' ability holders</text>
+<line x1="600" y1="514" x2="320" y2="514" class="edge strong dashed" marker-end="url(#arrow-open)"/>
+<rect x="397.1" y="498" width="125.8" height="14" class="edge-lbl-bg"/>
+<text x="460.0" y="509" class="edge-lbl" text-anchor="middle">201 { data: order }</text>
+</svg>
+  </div>
+  <div class="diagram-card" style="margin-top:16px;box-shadow:none"><strong>Maps to</strong><ul style="margin:8px 0 0;padding-inline-start:20px;color:#4b5563"><li><code>App\Events\OrderPlaced</code>, registered listeners in <code>EventServiceProvider</code>: <code>SendOrderConfirmation</code>, <code>NotifyStaffOfNewOrder</code>.</li>
+<li>Both listeners implement <code>ShouldQueue</code> — they run on the <code>mail</code> queue after the HTTP response has already been sent, so a slow mail server never delays checkout.</li>
+<li>See docs/NOTIFICATIONS.md for why the customer gets mail+database and staff get database-only.</li></ul></div>
+</main>
+<footer class="page-foot">Part of the <a href="../../README.md">Flavor</a> documentation set. Generated as plain SVG/HTML/CSS &mdash; no external diagram tooling required to view or edit.</footer>
+</body>
+</html>

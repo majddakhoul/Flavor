@@ -1,0 +1,17 @@
+stateDiagram-v2
+    direction LR
+    [*] --> Pending: POST /api/orders (meals, offers, order_type)
+    Pending --> Confirmed: employee accepts / kitchen starts prep
+    Pending --> Cancelled: PATCH cancel before prep starts
+    Confirmed --> Completed: PATCH status=Completed (served or delivered)
+    Confirmed --> Cancelled: PATCH cancel + notes (kitchen issue, no stock)
+    Completed --> [*]
+    Cancelled --> [*]
+    note right of Confirmed
+        Delivery orders require employee_id
+        (position Delivery) before Confirmed
+    end note
+    note right of Completed
+        soft deleted afterwards is a
+        separate archival action, not a status
+    end note

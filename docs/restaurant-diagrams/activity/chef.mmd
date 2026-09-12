@@ -1,0 +1,20 @@
+flowchart TD
+    classDef start fill:#0d9488,stroke:#0d9488,color:#ffffff
+    classDef act fill:#eff6ff,stroke:#2563eb,color:#0f172a
+    classDef dec fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef sys fill:#f0fdfa,stroke:#0d9488,color:#0f172a
+    classDef stop fill:#64748b,stroke:#475569,color:#ffffff
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+
+    A([Start]):::start --> B["Open kitchen queue (Confirmed orders)"]:::act
+    B --> C["Pick next meal_order line"]:::act
+    C --> D{Ingredients in stock?}:::dec
+    D -->|Yes| E["Prepare the meal"]:::act
+    D -->|No| F["Mark meal availability=unavailable"]:::bad
+    F --> G["Notify manager to restock"]:::act
+    E --> H["Mark line prepared"]:::sys
+    G --> I{More lines waiting?}:::dec
+    H --> I
+    I -->|Yes| C
+    I -->|No| J["Hand order to waiter or delivery"]:::act
+    J --> K([End]):::stop

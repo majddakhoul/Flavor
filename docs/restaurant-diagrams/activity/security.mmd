@@ -1,0 +1,21 @@
+flowchart TD
+    classDef start fill:#0d9488,stroke:#0d9488,color:#ffffff
+    classDef act fill:#eff6ff,stroke:#2563eb,color:#0f172a
+    classDef dec fill:#fef3c7,stroke:#d97706,color:#0f172a
+    classDef sys fill:#f0fdfa,stroke:#0d9488,color:#0f172a
+    classDef stop fill:#64748b,stroke:#475569,color:#ffffff
+    classDef bad fill:#fee2e2,stroke:#dc2626,color:#0f172a
+
+    A([Start]):::start --> B["Guest arrives at entrance"]:::act
+    B --> C{Has a reservation code?}:::dec
+    C -->|Yes| D["Verify reservation_code"]:::sys
+    C -->|No| E["Check walk-in availability with waiter"]:::act
+    D --> F{Customer is banned?}:::dec
+    E --> F
+    F -->|Yes| G["Deny entry, escalate to manager"]:::bad
+    F -->|No| H{party_size fits table capacity?}:::dec
+    H -->|No| I["Ask waiter for a larger table"]:::act
+    H -->|Yes| J["Allow entry"]:::act
+    I --> J
+    G --> K([End]):::stop
+    J --> K

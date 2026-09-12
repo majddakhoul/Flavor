@@ -1,0 +1,19 @@
+sequenceDiagram
+    autonumber
+    actor E as employee
+    actor M as manager
+    participant API as Laravel API
+    participant DB as Database
+
+    E->>M: reports a facility issue (in person / phone)
+    M->>API: POST /api/maintenances (maintenance_item, price, discount, employee_id)
+    API->>DB: total_price = price - (price * discount / 100)
+    API-->>M: 201 maintenance logged
+    Note over M: table or equipment marked out of service if needed
+    M->>API: PATCH /api/tables/:id (is_active=false)
+    API->>DB: table removed from booking rotation
+    Note over M: repair completed
+    M->>API: PATCH /api/tables/:id (is_active=true)
+    API-->>M: 200 table back in rotation
+    M->>API: GET /api/reports/maintenance?range=month
+    API-->>M: 200 total maintenance cost for the period

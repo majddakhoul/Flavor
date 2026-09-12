@@ -1,0 +1,25 @@
+flowchart LR
+    classDef actor fill:#2563eb,stroke:#1d4ed8,color:#ffffff,stroke-width:2px
+    classDef uc fill:#eff6ff,stroke:#2563eb,color:#0f172a,stroke-width:1.5px
+    classDef sub fill:#f0fdfa,stroke:#0d9488,color:#0f172a,stroke-width:1px
+
+    ACTOR["Security"]:::actor
+
+    UC1(["Control entrance"]):::uc
+    ACTOR --- UC1
+    S1_1(["Verify reservation_code"]):::sub
+    UC1 -.->|includes| S1_1
+    S1_2(["Check party_size against table capacity"]):::sub
+    UC1 -.->|includes| S1_2
+
+    UC2(["Screen customers"]):::uc
+    ACTOR --- UC2
+    S2_1(["Check customer ban status"]):::sub
+    UC2 -.->|includes| S2_1
+    S2_2(["Deny entry when banned"]):::sub
+    UC2 -.->|includes| S2_2
+
+    UC3(["Escalate"]):::uc
+    ACTOR --- UC3
+    S3_1(["Report incident to manager"]):::sub
+    UC3 -.->|includes| S3_1

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Object Diagram — A Confirmed Delivery Order — Flavor Diagrams</title>
+<link rel="stylesheet" href="assets/diagrams.css">
+
+</head>
+<body>
+<header class="topbar">
+  <div>
+    <p class="topbar__crumbs"><a href="index.html">Diagrams</a> / Structure — Object Diagram</p>
+    <h1 class="topbar__title">Object Diagram — A Confirmed Delivery Order</h1>
+  </div>
+  <a href="../../README.md">&larr; Back to README</a>
+</header>
+<main class="shell">
+  <div class="diagram-head">
+    <p>A snapshot of real objects at one instant in time: what the database actually holds right after a specific customer places a specific order. Compare against the Class Diagram, which shows the general shape these objects all follow.</p>
+  </div>
+  <div class="legend"><span><i style="background:var(--color-primary)"></i>Person / catalog snapshot</span>
+<span><i style="background:var(--color-secondary)"></i>Transaction snapshot</span>
+<span><i style="background:var(--color-surface)"></i>Supporting snapshot</span></div>
+  <div class="diagram-card">
+    <svg viewBox="0 0 1300 660" xmlns="http://www.w3.org/2000/svg" class="diagram-svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" class="arrowhead"/>
+  </marker>
+  <marker id="arrow-open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+    <path d="M1,1 L9,5 L1,9" fill="none" class="arrowhead-open"/>
+  </marker>
+  <marker id="diamond-start" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0,5 L5,0 L10,5 L5,10 z" class="diamond-marker"/>
+  </marker>
+</defs>
+
+<rect x="40" y="40" width="230" height="100" rx="8" class="box"/>
+<rect x="40" y="40" width="230" height="30" rx="8" class="box-header"/>
+<rect x="40" y="62" width="230" height="8" class="box-header"/>
+<text x="155.0" y="59" class="title-lbl" text-anchor="middle" font-weight="700">amina : User</text>
+<line x1="40" y1="70" x2="270" y2="70" class="compartment-line"/>
+<text x="50" y="90" class="attr-lbl" text-anchor="start">first_name = "Amina"</text>
+<text x="50" y="105" class="attr-lbl" text-anchor="start">email = "amina@example.com"</text>
+<text x="50" y="120" class="attr-lbl" text-anchor="start">user_type = Customer</text>
+<text x="50" y="135" class="attr-lbl" text-anchor="start">preferred_locale = "ar"</text>
+<rect x="40" y="220" width="230" height="70" rx="8" class="box"/>
+<rect x="40" y="220" width="230" height="30" rx="8" class="box-header-alt"/>
+<rect x="40" y="242" width="230" height="8" class="box-header-alt"/>
+<text x="155.0" y="239" class="title-lbl" text-anchor="middle" font-weight="700">: Customer (#118)</text>
+<line x1="40" y1="250" x2="270" y2="250" class="compartment-line"/>
+<text x="50" y="270" class="attr-lbl" text-anchor="start">allergies = Nuts</text>
+<text x="50" y="285" class="attr-lbl" text-anchor="start">ban = false</text>
+<rect x="340" y="40" width="220" height="70" rx="8" class="box"/>
+<rect x="340" y="40" width="220" height="30" rx="8" class="box-header"/>
+<rect x="340" y="62" width="220" height="8" class="box-header"/>
+<text x="450.0" y="59" class="title-lbl" text-anchor="middle" font-weight="700">: Location (#3)</text>
+<line x1="340" y1="70" x2="560" y2="70" class="compartment-line"/>
+<text x="350" y="90" class="attr-lbl" text-anchor="start">city = "Damascus"</text>
+<text x="350" y="105" class="attr-lbl" text-anchor="start">delivery_time = "00:30"</text>
+<rect x="340" y="260" width="250" height="100" rx="8" class="box"/>
+<rect x="340" y="260" width="250" height="30" rx="8" class="box-header-alt"/>
+<rect x="340" y="282" width="250" height="8" class="box-header-alt"/>
+<text x="465.0" y="279" class="title-lbl" text-anchor="middle" font-weight="700">: Order (#4821)</text>
+<line x1="340" y1="290" x2="590" y2="290" class="compartment-line"/>
+<text x="350" y="310" class="attr-lbl" text-anchor="start">reference = "FLV-004821"</text>
+<text x="350" y="325" class="attr-lbl" text-anchor="start">status = Confirmed</text>
+<text x="350" y="340" class="attr-lbl" text-anchor="start">order_type = Delivery</text>
+<text x="350" y="355" class="attr-lbl" text-anchor="start">dated_at = "2026-08-21"</text>
+<rect x="660" y="40" width="250" height="70" rx="8" class="box"/>
+<rect x="660" y="40" width="250" height="30" rx="8" class="box-header"/>
+<rect x="660" y="62" width="250" height="8" class="box-header"/>
+<text x="785.0" y="59" class="title-lbl" text-anchor="middle" font-weight="700">: Meal "Mixed Grill" (#12)</text>
+<line x1="660" y1="70" x2="910" y2="70" class="compartment-line"/>
+<text x="670" y="90" class="attr-lbl" text-anchor="start">price = 285000</text>
+<text x="670" y="105" class="attr-lbl" text-anchor="start">is_orderable = true</text>
+<rect x="660" y="220" width="250" height="70" rx="8" class="box"/>
+<rect x="660" y="220" width="250" height="30" rx="8" class="box-header"/>
+<rect x="660" y="242" width="250" height="8" class="box-header"/>
+<text x="785.0" y="239" class="title-lbl" text-anchor="middle" font-weight="700">: meal_order (pivot)</text>
+<line x1="660" y1="250" x2="910" y2="250" class="compartment-line"/>
+<text x="670" y="270" class="attr-lbl" text-anchor="start">quantity = 2</text>
+<text x="670" y="285" class="attr-lbl" text-anchor="start">notes = "No onions"</text>
+<rect x="990" y="40" width="240" height="70" rx="8" class="box"/>
+<rect x="990" y="40" width="240" height="30" rx="8" class="box-header"/>
+<rect x="990" y="62" width="240" height="8" class="box-header"/>
+<text x="1110.0" y="59" class="title-lbl" text-anchor="middle" font-weight="700">: Offer "Family Bundle" (#5)</text>
+<line x1="990" y1="70" x2="1230" y2="70" class="compartment-line"/>
+<text x="1000" y="90" class="attr-lbl" text-anchor="start">final_price = 640000</text>
+<text x="1000" y="105" class="attr-lbl" text-anchor="start">is_running = true</text>
+<rect x="990" y="220" width="240" height="55" rx="8" class="box"/>
+<rect x="990" y="220" width="240" height="30" rx="8" class="box-header"/>
+<rect x="990" y="242" width="240" height="8" class="box-header"/>
+<text x="1110.0" y="239" class="title-lbl" text-anchor="middle" font-weight="700">: offer_order (pivot)</text>
+<line x1="990" y1="250" x2="1230" y2="250" class="compartment-line"/>
+<text x="1000" y="270" class="attr-lbl" text-anchor="start">quantity = 1</text>
+<rect x="340" y="460" width="260" height="70" rx="8" class="box"/>
+<rect x="340" y="460" width="260" height="30" rx="8" class="box-header-alt"/>
+<rect x="340" y="482" width="260" height="8" class="box-header-alt"/>
+<text x="470.0" y="479" class="title-lbl" text-anchor="middle" font-weight="700">: Reservation "R-2216" (#77)</text>
+<line x1="340" y1="490" x2="600" y2="490" class="compartment-line"/>
+<text x="350" y="510" class="attr-lbl" text-anchor="start">status = Confirmed</text>
+<text x="350" y="525" class="attr-lbl" text-anchor="start">party_size = 4</text>
+<rect x="660" y="460" width="220" height="55" rx="8" class="box"/>
+<rect x="660" y="460" width="220" height="30" rx="8" class="box-header"/>
+<rect x="660" y="482" width="220" height="8" class="box-header"/>
+<text x="770.0" y="479" class="title-lbl" text-anchor="middle" font-weight="700">: Table "T04" (#9)</text>
+<line x1="660" y1="490" x2="880" y2="490" class="compartment-line"/>
+<text x="670" y="510" class="attr-lbl" text-anchor="start">capacity = 4</text>
+<rect x="40" y="460" width="250" height="70" rx="8" class="box"/>
+<rect x="40" y="460" width="250" height="30" rx="8" class="box-header"/>
+<rect x="40" y="482" width="250" height="8" class="box-header"/>
+<text x="165.0" y="479" class="title-lbl" text-anchor="middle" font-weight="700">: DatabaseNotification</text>
+<line x1="40" y1="490" x2="290" y2="490" class="compartment-line"/>
+<text x="50" y="510" class="attr-lbl" text-anchor="start">title = "Order FLV-004821 received"</text>
+<text x="50" y="525" class="attr-lbl" text-anchor="start">read_at = null</text>
+<line x1="155.0" y1="140" x2="155.0" y2="220" class="edge assoc" marker-end="none"/>
+<rect x="147.8" y="171.0" width="14.4" height="14" class="edge-lbl-bg"/>
+<text x="155.0" y="182.0" class="edge-lbl" text-anchor="middle">1</text>
+<line x1="270" y1="255.0" x2="340" y2="310.0" class="edge assoc" marker-end="none"/>
+<rect x="281.8" y="273.5" width="46.400000000000006" height="14" class="edge-lbl-bg"/>
+<text x="305.0" y="284.5" class="edge-lbl" text-anchor="middle">places</text>
+<line x1="465.0" y1="260" x2="450.0" y2="110" class="edge assoc" marker-end="none"/>
+<rect x="427.9" y="176.0" width="59.2" height="14" class="edge-lbl-bg"/>
+<text x="457.5" y="187.0" class="edge-lbl" text-anchor="middle">ships to</text>
+<line x1="590" y1="310.0" x2="660" y2="255.0" class="edge assoc" marker-end="none"/>
+<line x1="785.0" y1="220" x2="785.0" y2="110" class="edge assoc" marker-end="none"/>
+<line x1="590" y1="310.0" x2="990" y2="247.5" class="edge assoc" marker-end="none"/>
+<line x1="1110.0" y1="220" x2="1110.0" y2="110" class="edge assoc" marker-end="none"/>
+<line x1="270" y1="255.0" x2="340" y2="495.0" class="edge assoc" marker-end="none"/>
+<rect x="281.8" y="366.0" width="46.400000000000006" height="14" class="edge-lbl-bg"/>
+<text x="305.0" y="377.0" class="edge-lbl" text-anchor="middle">booked</text>
+<line x1="465.0" y1="360" x2="470.0" y2="460" class="edge assoc" marker-end="none"/>
+<rect x="434.7" y="401.0" width="65.6" height="14" class="edge-lbl-bg"/>
+<text x="467.5" y="412.0" class="edge-lbl" text-anchor="middle">linked to</text>
+<line x1="600" y1="495.0" x2="660" y2="487.5" class="edge assoc" marker-end="none"/>
+<rect x="600.4" y="482.25" width="59.2" height="14" class="edge-lbl-bg"/>
+<text x="630.0" y="493.25" class="edge-lbl" text-anchor="middle">seats at</text>
+<line x1="155.0" y1="290" x2="165.0" y2="460" class="edge assoc" marker-end="none"/>
+<rect x="124.0" y="366.0" width="72.0" height="14" class="edge-lbl-bg"/>
+<text x="160.0" y="377.0" class="edge-lbl" text-anchor="middle">notifiable</text>
+</svg>
+  </div>
+  <div class="diagram-card" style="margin-top:16px;box-shadow:none"><strong>Reading this snapshot</strong><ul style="margin:8px 0 0;padding-inline-start:20px;color:#4b5563"><li>This is one concrete, valid instant of the class diagram &mdash; the exact object graph that exists after Amina orders two Mixed Grills and one Family Bundle offer for delivery, against a table she had already reserved for that evening.</li>
+<li>Every attribute value shown is realistic and internally consistent (a Confirmed order pointing at a Confirmed reservation, a delivery order carrying a Location, quantities matching the pivot rows) &mdash; it is meant to be read alongside the Checkout and Order Status sequence diagrams.</li>
+<li>The <code>DatabaseNotification</code> row is the one <code>NotifyStaffOfNewOrder</code> would have created for staff at the same instant; the customer's own copy (<code>OrderConfirmed</code>, mail + database) is omitted here to keep the diagram to one order's worth of state.</li></ul></div>
+</main>
+<footer class="page-foot">Part of the <a href="../../README.md">Flavor</a> documentation set. Generated as plain SVG/HTML/CSS &mdash; no external diagram tooling required to view or edit.</footer>
+</body>
+</html>

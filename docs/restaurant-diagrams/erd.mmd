@@ -1,0 +1,220 @@
+erDiagram
+    locations {
+        bigint id PK
+        varchar country
+        varchar region
+        varchar state
+        varchar city
+        time delivery_time
+        varchar street
+    }
+    users {
+        bigint id PK
+        varchar first_name
+        varchar last_name
+        varchar email
+        varchar password
+        varchar phone
+        enum gender
+        boolean status
+        varchar remember_token
+        enum user_type
+        varchar preferred_locale
+        timestamp email_verified_at
+        bigint location_id FK
+    }
+    customers {
+        bigint id PK
+        enum allergies
+        varchar favorite_categories
+        boolean ban
+        date ban_date
+        bigint user_id FK
+    }
+    employees {
+        bigint id PK
+        varchar national_id
+        enum position
+        bigint salary
+        int bonus
+        varchar notes
+        date hire_date
+        date birth_date
+        bigint user_id FK
+    }
+    tables {
+        bigint id PK
+        varchar table_number
+        tinyint capacity
+        enum location
+        boolean is_active
+        int price_per_hour
+        varchar description
+    }
+    reservations {
+        bigint id PK
+        varchar reservation_code
+        enum status
+        tinyint party_size
+        enum type
+        text special_requests
+        date date
+        bigint customer_id FK
+        bigint employee_id FK
+        bigint order_id FK
+    }
+    reservation_table {
+        bigint id PK
+        datetime start_time
+        datetime end_time
+        bigint table_id FK
+        bigint reservation_id FK
+    }
+    categories {
+        bigint id PK
+        varchar name
+        varchar description
+        bigint parent_id FK
+    }
+    ingredients {
+        bigint id PK
+        varchar name
+        varchar unit
+        int stock_quantity
+        int unit_cost
+        boolean is_active
+    }
+    pictures {
+        bigint id PK
+        varchar path
+        varchar name
+    }
+    meals {
+        bigint id PK
+        varchar name
+        time prep_time
+        boolean is_vegetarian
+        int percentage
+        varchar description
+        enum availability
+        bigint picture_id FK
+        bigint category_id FK
+    }
+    ingredient_meal {
+        bigint id PK
+        float quantity
+        bigint meal_id FK
+        bigint ingredient_id FK
+    }
+    offers {
+        bigint id PK
+        varchar title
+        varchar description
+        int discount_amount
+        boolean is_active
+        date start_date
+        date end_date
+    }
+    meal_offer {
+        bigint id PK
+        int quantity
+        bigint meal_id FK
+        bigint offer_id FK
+    }
+    orders {
+        bigint id PK
+        varchar notes
+        enum order_type
+        enum status
+        date dated_at
+        timestamp deleted_at
+        bigint customer_id FK
+        bigint employee_id FK
+        bigint reservation_id FK
+        bigint location_id FK
+    }
+    meal_order {
+        bigint id PK
+        tinyint quantity
+        text notes
+        bigint order_id FK
+        bigint meal_id FK
+    }
+    offer_order {
+        bigint id PK
+        tinyint quantity
+        text notes
+        bigint order_id FK
+        bigint offer_id FK
+    }
+    meals_ratings {
+        bigint id PK
+        tinyint number_stars
+        bigint meal_id FK
+        bigint customer_id FK
+    }
+    offers_ratings {
+        bigint id PK
+        tinyint number_stars
+        bigint offer_id FK
+        bigint customer_id FK
+    }
+    maintenances {
+        bigint id PK
+        varchar maintenance_item
+        bigint total_price
+        bigint price
+        int discount
+        varchar notes
+        bigint employee_id FK
+    }
+    translations {
+        bigint id PK
+        varchar translatable_type
+        bigint translatable_id
+        varchar locale
+        varchar field
+        text value
+    }
+    notifications {
+        uuid id PK
+        varchar type
+        varchar notifiable_type
+        bigint notifiable_id
+        json data
+        timestamp read_at
+    }
+
+    locations ||--o{ users : "location"
+    users ||--o{ customers : "user"
+    users ||--o{ employees : "user"
+    locations ||--o{ orders : "location"
+
+    customers ||--o{ reservations : "customer"
+    employees ||--o{ reservations : "employee"
+    reservations ||--o{ reservation_table : "reservation"
+    tables ||--o{ reservation_table : "table"
+    reservations ||--o{ orders : "reservation"
+
+    categories ||--o{ categories : "parent"
+    categories ||--o{ meals : "category"
+    pictures ||--o{ meals : "picture"
+    meals ||--o{ ingredient_meal : "meal"
+    ingredients ||--o{ ingredient_meal : "ingredient"
+
+    meals ||--o{ meal_offer : "meal"
+    offers ||--o{ meal_offer : "offer"
+
+    customers ||--o{ orders : "customer"
+    employees ||--o{ orders : "employee"
+    orders ||--o{ meal_order : "order"
+    meals ||--o{ meal_order : "meal"
+    orders ||--o{ offer_order : "order"
+    offers ||--o{ offer_order : "offer"
+
+    meals ||--o{ meals_ratings : "meal"
+    customers ||--o{ meals_ratings : "customer"
+    offers ||--o{ offers_ratings : "offer"
+    customers ||--o{ offers_ratings : "customer"
+
+    employees ||--o{ maintenances : "employee"

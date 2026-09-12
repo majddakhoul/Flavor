@@ -9,7 +9,7 @@ use App\Models\Meal;
 use App\Models\Offer;
 use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Cache;
 
 class CartService
 {
@@ -57,12 +57,12 @@ class CartService
 
     public function clear(): void
     {
-        Session::forget($this->key());
+        Cache::forget($this->key());
     }
 
     public function contents(): array
     {
-        return Session::get($this->key(), ['meals' => [], 'offers' => []]);
+        return Cache::get($this->key(), ['meals' => [], 'offers' => []]);
     }
 
     public function isEmpty(): bool
@@ -200,13 +200,13 @@ class CartService
 
     protected function persist(array $cart): array
     {
-        Session::put($this->key(), $cart);
+        Cache::put($this->key(), $cart, now()->addDays(7));
 
         return $cart;
     }
 
     protected function key(): string
     {
-        return config('flavor.orders.cart_session_prefix') . '.' . (Auth::id() ?? Session::getId());
+        return config('flavor.orders.cart_session_prefix') . '.' . Auth::id();
     }
 }

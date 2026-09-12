@@ -24,6 +24,7 @@ use App\Http\Controllers\Web\Manage\OrderController as ManageOrderController;
 use App\Http\Controllers\Web\Manage\ReportController;
 use App\Http\Controllers\Web\Manage\ReservationController as ManageReservationController;
 use App\Http\Controllers\Web\Manage\TableController;
+use App\Http\Controllers\Web\NotificationController;
 use App\Http\Controllers\Web\Site\HomeController;
 use App\Http\Controllers\Web\Site\LocaleController;
 use App\Http\Controllers\Web\Site\MenuController;
@@ -58,6 +59,16 @@ Route::middleware('auth')->group(function () {
         ->middleware('throttle:auth')
         ->name('verification.resend');
 });
+
+Route::middleware(['auth', 'verified'])
+    ->prefix('notifications')
+    ->name('notifications.')
+    ->group(function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('index');
+        Route::post('/read-all', [NotificationController::class, 'readAll'])->name('read-all');
+        Route::post('/{notification}/read', [NotificationController::class, 'read'])->name('read');
+        Route::delete('/{notification}', [NotificationController::class, 'destroy'])->name('destroy');
+    });
 
 Route::middleware(['auth', 'verified'])
     ->prefix('account')

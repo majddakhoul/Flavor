@@ -1,0 +1,17 @@
+stateDiagram-v2
+    direction LR
+    [*] --> Free
+    Free --> Reserved: reservation_table row created for a future slot
+    Reserved --> Occupied: start_time reached, guests seated
+    Occupied --> Cleaning: end_time reached / guests leave
+    Cleaning --> Free: cleared for the next booking
+    Free --> OutOfService: manager sets is_active=false
+    OutOfService --> Free: manager sets is_active=true
+    note right of Reserved
+        several reservation_table rows can queue
+        on the same table for different time slots
+    end note
+    note right of OutOfService
+        table removed from booking rotation,
+        logged separately in maintenances by item name
+    end note

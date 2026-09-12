@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Registration & Email Verification — Flavor Diagrams</title>
+<link rel="stylesheet" href="assets/diagrams.css">
+
+</head>
+<body>
+<header class="topbar">
+  <div>
+    <p class="topbar__crumbs"><a href="index.html">Diagrams</a> / Behaviour — Activity Diagram</p>
+    <h1 class="topbar__title">Registration & Email Verification</h1>
+  </div>
+  <a href="../../README.md">&larr; Back to README</a>
+</header>
+<main class="shell">
+  <div class="diagram-head">
+    <p>The full path from an anonymous visitor to a verified customer able to order and book, spanning the guest, AuthService and the notification system.</p>
+  </div>
+  <div class="legend"><span><i style="background:var(--color-surface-2)"></i>Swimlane (actor / layer)</span>
+<span><i style="background:var(--color-primary-light)"></i>Decision</span>
+<span><i style="background:var(--color-warning-light)"></i>Note</span></div>
+  <div class="diagram-card">
+    <svg viewBox="0 0 1180 900" xmlns="http://www.w3.org/2000/svg" class="diagram-svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" class="arrowhead"/>
+  </marker>
+  <marker id="arrow-open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+    <path d="M1,1 L9,5 L1,9" fill="none" class="arrowhead-open"/>
+  </marker>
+  <marker id="diamond-start" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0,5 L5,0 L10,5 L5,10 z" class="diamond-marker"/>
+  </marker>
+</defs>
+
+<rect x="0.0" y="0" width="393.3333333333333" height="900" class="swimlane-bg"/>
+<text x="196.66666666666666" y="22" class="swimlane-lbl" text-anchor="middle">Guest / Customer</text>
+<rect x="393.3333333333333" y="0" width="393.3333333333333" height="900" class="swimlane-bg alt"/>
+<text x="590.0" y="22" class="swimlane-lbl" text-anchor="middle">AuthService</text>
+<line x1="393.3333333333333" y1="0" x2="393.3333333333333" y2="900" class="swimlane-divider"/>
+<rect x="786.6666666666666" y="0" width="393.3333333333333" height="900" class="swimlane-bg"/>
+<text x="983.3333333333333" y="22" class="swimlane-lbl" text-anchor="middle">Mail &amp; Notifications</text>
+<line x1="786.6666666666666" y1="0" x2="786.6666666666666" y2="900" class="swimlane-divider"/>
+<circle cx="196.66666666666666" cy="40" r="9" class="init-state"/>
+<rect x="66.66666666666666" y="80" width="260" height="50" rx="10" class="box"/><text x="196.66666666666666" y="109.0" class="lbl" text-anchor="middle">Fill registration form</text>
+<line x1="196.66666666666666" y1="130" x2="196.66666666666666" y2="170" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="460.0" y="170" width="260" height="50" rx="10" class="box"/><text x="590.0" y="199.0" class="lbl" text-anchor="middle">AuthService::register()</text>
+<line x1="196.66666666666666" y1="135" x2="590.0" y2="195" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="460.0" y="240" width="260" height="50" rx="10" class="box"/><text x="590.0" y="262.0" class="lbl" text-anchor="middle">Create User + Customer in one DB</text>
+<text x="590.0" y="276.0" class="lbl" text-anchor="middle">transaction</text>
+<line x1="590.0" y1="220" x2="590.0" y2="240" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="460.0" y="310" width="260" height="50" rx="10" class="box"/><text x="590.0" y="325.0" class="lbl" text-anchor="middle">issueVerificationCode(): cache a</text>
+<text x="590.0" y="339.0" class="lbl" text-anchor="middle">6-digit code, fire</text>
+<text x="590.0" y="353.0" class="lbl" text-anchor="middle">VerificationCodeIssued</text>
+<line x1="590.0" y1="290" x2="590.0" y2="310" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="853.3333333333333" y="390" width="260" height="50" rx="10" class="box"/><text x="983.3333333333333" y="412.0" class="lbl" text-anchor="middle">SendVerificationCode listener emails</text>
+<text x="983.3333333333333" y="426.0" class="lbl" text-anchor="middle">the code</text>
+<line x1="590.0" y1="360" x2="983.3333333333333" y2="390" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="66.66666666666666" y="480" width="260" height="50" rx="10" class="box"/><text x="196.66666666666666" y="502.0" class="lbl" text-anchor="middle">Customer opens the email and enters the</text>
+<text x="196.66666666666666" y="516.0" class="lbl" text-anchor="middle">code</text>
+<line x1="983.3333333333333" y1="440" x2="196.66666666666666" y2="480" class="edge strong" marker-end="url(#arrow)"/>
+<polygon points="590.0,560 700.0,595.0 590.0,630 480.0,595.0" class="decision"/><text x="590.0" y="599.0" class="lbl" text-anchor="middle">Code matches &amp; not expired?</text>
+<line x1="196.66666666666666" y1="530" x2="590.0" y2="560" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="480.0" y="660" width="220" height="55" rx="10" class="box"/><text x="590.0" y="684.5" class="lbl" text-anchor="middle">email_verified_at is set —</text>
+<text x="590.0" y="698.5" class="lbl" text-anchor="middle">account fully active</text>
+<line x1="590.0" y1="630" x2="590.0" y2="660" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="576.1" y="636.0" width="27.799999999999997" height="14" class="edge-lbl-bg"/>
+<text x="590.0" y="647.0" class="edge-lbl" text-anchor="middle">yes</text>
+<circle cx="590.0" cy="750" r="11" class="final-state-outer"/><circle cx="590.0" cy="750" r="7" class="final-state-inner"/>
+<line x1="590.0" y1="715" x2="590.0" y2="739" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="86.66666666666666" y="660" width="220" height="55" rx="10" class="box"/><text x="196.66666666666666" y="691.5" class="lbl" text-anchor="middle">Show error; offer resend</text>
+<line x1="490.0" y1="595" x2="286.66666666666663" y2="680" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="337.7333333333333" y="628.5" width="21.2" height="14" class="edge-lbl-bg"/>
+<text x="348.3333333333333" y="639.5" class="edge-lbl" text-anchor="middle">no</text>
+<line x1="286.66666666666663" y1="715" x2="196.66666666666666" y2="530" class="edge strong" marker-end="url(#arrow)"/>
+</svg>
+  </div>
+  <div class="diagram-card" style="margin-top:16px;box-shadow:none"><strong>Maps to</strong><ul style="margin:8px 0 0;padding-inline-start:20px;color:#4b5563"><li><code>App\Services\People\AuthService::register()</code> and <code>::verify()</code>.</li>
+<li><code>App\Events\VerificationCodeIssued</code> &rarr; <code>SendVerificationCode</code> listener &rarr; <code>VerificationCodeMail</code>.</li>
+<li>API: <code>POST /auth/register</code>, <code>POST /auth/verify-email</code>, <code>POST /auth/resend-verification</code>.</li>
+<li>The code is never stored as an in-app notification (see docs/NOTIFICATIONS.md) &mdash; only mailed, and held server-side in the cache with a 15 minute expiry.</li></ul></div>
+</main>
+<footer class="page-foot">Part of the <a href="../../README.md">Flavor</a> documentation set. Generated as plain SVG/HTML/CSS &mdash; no external diagram tooling required to view or edit.</footer>
+</body>
+</html>

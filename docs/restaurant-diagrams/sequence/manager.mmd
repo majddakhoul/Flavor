@@ -1,0 +1,24 @@
+sequenceDiagram
+    autonumber
+    actor M as manager
+    participant API as Laravel API
+    participant DB as Database
+
+    M->>API: POST /api/auth/login
+    API-->>M: 200 token (user_type=Manager)
+    M->>API: POST /api/employees (first_name, last_name, position, salary, bonus)
+    API->>DB: create user (user_type=Employee) + employee record
+    API-->>M: 201 employee created
+    M->>API: POST /api/meals (name, prep_time, category_id, percentage)
+    M->>API: POST /api/meals/:id/ingredients (ingredient_id, quantity)[]
+    API->>DB: sync ingredient_meal recipe
+    API-->>M: 200 meal saved, sellingPrice computed
+    M->>API: POST /api/offers (title, discount_amount, start_date, end_date)
+    M->>API: POST /api/offers/:id/meals (meal_id, quantity)[]
+    API->>DB: sync meal_offer bundle
+    API-->>M: 201 offer created
+    M->>API: POST /api/maintenances (maintenance_item, price, discount)
+    API->>DB: total_price = price - discount%
+    API-->>M: 201 maintenance logged
+    M->>API: GET /api/reports/ratings?type=meal
+    API-->>M: 200 average stars per meal

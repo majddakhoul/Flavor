@@ -11,10 +11,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     use Filterable;
+    use HasApiTokens;
     use HasFactory;
     use Notifiable;
 
@@ -28,6 +30,7 @@ class User extends Authenticatable
         'status',
         'user_type',
         'location_id',
+        'preferred_locale',
     ];
 
     protected $hidden = [
@@ -146,5 +149,16 @@ class User extends Authenticatable
     public function hasVerifiedEmail(): bool
     {
         return $this->email_verified_at !== null;
+    }
+
+    public function notificationLocale(): string
+    {
+        $locale = $this->preferred_locale;
+
+        if (is_string($locale) && in_array($locale, config('flavor.locales'), true)) {
+            return $locale;
+        }
+
+        return (string) config('app.fallback_locale');
     }
 }

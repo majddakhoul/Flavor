@@ -32,7 +32,7 @@
                 @forelse ($meals as $meal)
                     <tr>
                         <td class="cell-media">
-                            <img src="{{ $meal->image_url }}" alt="">
+                            <img src="{{ $meal->image_url }}" alt="" data-lightbox="{{ $meal->t('name') }}">
                             <span>
                                 <b>{{ $meal->t('name') }}</b><br>
                                 <x-badge :tone="$meal->availability->tone() === 'success' ? 'success' : 'muted'" plain>{{ $meal->availability->label() }}</x-badge>

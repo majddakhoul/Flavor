@@ -1,0 +1,24 @@
+sequenceDiagram
+    autonumber
+    actor C as chef
+    participant API as Laravel API
+    participant DB as Database
+
+    C->>API: POST /api/auth/login
+    API-->>C: 200 token (position=Chef)
+    C->>API: GET /api/orders?status=Confirmed
+    API-->>C: 200 kitchen queue with meal_order lines
+    loop for each order line
+        C->>API: GET /api/meals/:id/ingredients
+        API-->>C: 200 recipe with ingredient stock_quantity
+        alt ingredient stock_quantity too low
+            C->>API: PATCH /api/meals/:id (availability=unavailable)
+            API->>DB: update meals.availability
+            API-->>C: 200 meal hidden from menu
+        else enough stock
+            C->>API: PATCH /api/meal-order/:id (prepared=true)
+            API->>DB: mark line prepared
+        end
+    end
+    C->>API: PATCH /api/orders/:id (status=Confirmed, ready_for_service)
+    API-->>C: 200 order handed to waiter or delivery

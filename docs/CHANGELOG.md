@@ -4,6 +4,100 @@ All notable changes made while rebuilding the original project into the current 
 
 ---
 
+## 2.2.3 — One seeder system, not several
+
+Removed three orphaned seeder files (`UserSeeder`, `TestDatabaseSeeder`, `FocusedRestaurantSeeder`) left over from before the clean rebuild. None were called from `DatabaseSeeder` or referenced anywhere else — `UserSeeder` in particular predated the current model structure entirely (hardcoded `gmail.com` test accounts, Arabic comments describing code that no longer matched the schema). `php artisan migrate:fresh --seed` now runs exactly one, fully verified seeder chain, in dependency order, covering every table:
+
+| Seeder | Produces |
+| --- | --- |
+| `LocationSeeder` | 6 delivery areas across Damascus, Aleppo, Latakia and Homs |
+| `CategorySeeder` | 7 menu categories, fully translated (en/ar/fr) |
+| `IngredientSeeder` | 30 ingredients with stock and unit cost |
+| `MealSeeder` | 18 meals, each with a real photo, a costed recipe, and full translations |
+| `OfferSeeder` | 4 bundle offers, each with a real photo and its meal lineup |
+| `TableSeeder` | 24 tables across indoor, outdoor, VIP and rooftop, translated |
+| `StaffSeeder` | 7 staff accounts covering every position, password `password` |
+| `CustomerSeeder` | 8 customers with varied allergies and one pre-banned account |
+| `ReservationSeeder` | 9 reservations spanning six days in the past to six days ahead, every status |
+| `OrderSeeder` | 42 orders across delivery/takeaway/reservation types and every status, 2-4 line items each |
+| `MaintenanceSeeder` | 6 maintenance records tied to staff |
+| `RatingSeeder` | A star rating from four customers on every meal, three on every offer |
+
+Every seeder uses `firstOrCreate`/`updateOrCreate` and is safe to run more than once, and every one that depends on other tables checks for empty prerequisites and returns cleanly instead of throwing.
+
+---
+
+## 2.2.2 — Local setup no longer requires Redis
+
+- `.env.example` defaulted `CACHE_DRIVER` and `QUEUE_CONNECTION` to `redis`, which crashes any request that touches the cache (including the `throttle:auth` rate limiter on `/login`) with `Predis\Connection\Resource\Exception\StreamInitException` unless a Redis server happens to be running locally. Redis is genuinely optional — the framework's own defaults (`file` cache, `sync` queue) need nothing extra installed and are now what `.env.example` ships. Redis remains fully supported for anyone who sets `CACHE_DRIVER=redis` / `QUEUE_CONNECTION=redis` themselves, e.g. in production.
+- Updated `docs/PACKAGES.md` and this README's Caching/Background work sections to match, and clarified that the catalog/dashboard cache wrapper already degrades gracefully if Redis is unreachable, but framework-level features like rate limiting talk to the cache directly and correctly fail hard instead of silently disabling a security control.
+
+---
+
+## 2.2.1 — Logo clarity and browser cache-busting
+
+- Found and fixed a real gap the earlier logo pass missed: `.sidebar__brand img` (the staff workspace sidebar header) had its own separate, hardcoded `38px` size that was never updated when the rest of the brand mark was resized — it now matches the same clear, consistent sizing as everywhere else (46px).
+- Increased the base `.brand` mark size (header, footer, auth page) from 40px to 46px, and the auth page's large variant from 76px to 80px, for better legibility across the board.
+- Added cache-busting (`?v=<file modified time>`) to the `app.css` and `app.js` tags. Static assets like these are aggressively cached by browsers under their exact URL — a CSS-only change (like the sizing fix above) can silently keep showing the old, cached stylesheet even after the server-side file is updated and the page is reloaded normally. This makes every future asset change take effect on the next page load, no hard refresh or manual cache-clear required.
+
+---
+
+## 2.2.0 — Real photography, image consistency, and a click-to-enlarge viewer
+
+### Photos
+
+- Every one of the 18 seeded meals and 4 seeded offers now ships with a real, correctly-cropped photograph, wired automatically through `MealSeeder`/`OfferSeeder` into the `pictures` table — nothing to source or configure after `php artisan migrate --seed`.
+- Added a `picture_id` column, a `picture()` relationship and an `image_url` accessor to `Offer`, mirroring `Meal` — offers never had photo support before.
+
+### Visual consistency
+
+- Fixed the meal detail page's hero photo sizing to use a fixed `aspect-ratio` instead of `max-height`, so every dish's hero image renders at the same size regardless of the source photo's proportions.
+- Added a hero photo to the offer detail page, which previously showed no image of the offer at all, only its bundled meals.
+- Added photo thumbnails to the offers admin list, matching the meals admin list, now that offers have photos.
+- Introduced two small reusable CSS patterns, `.media-hero` and `.media-square`, so any future image placement gets the same consistent, cropped-to-fit treatment for free.
+
+### Click-to-enlarge viewer
+
+- Added a lightweight, dependency-free lightbox (`initLightbox()` in `app.js`, `.lightbox` in `app.css`): clicking any meal or offer photo — in a grid, a detail hero, a bundle thumbnail, or an admin table row — opens it full-size over the interface. Closes on backdrop click, the close button, or Escape.
+
+### Logo
+
+- Finished the logo audit: the six error pages (403/404/419/429/500/503) were still using the old compressed lockup image; they now use the same scalable vector mark as the rest of the interface.
+
+---
+
+## 2.1.0 — API layer, notifications, and polish
+
+### API
+
+- Reinstalled Laravel Sanctum for token authentication, scoped entirely to a new `api` middleware group and `sanctum` guard; the web application's session guard is untouched.
+- Rebuilt the JSON API from scratch under `app/Http/Controllers/Api`, versioned at `/api/v1`, organised into `Auth`, `Catalog`, `Account`, `Manage` and a shared `NotificationController` — mirroring the web controller layout exactly.
+- Every API controller is a thin adapter over the existing `Service` layer; no business logic was duplicated between web and API.
+- Added 16 `Http/Resources` classes for consistent JSON shaping, and an `ApiResponse` trait for a uniform `{ success, message, data, meta }` envelope.
+- Added search, filter, sort and pagination to every list endpoint via the existing `QueryOptions` support class — no new query logic was needed, it was already shared infrastructure.
+- Added `most-consumed ingredients`, `top-selling meals` and `top-selling offers` endpoints and repository methods.
+- Added a fully documented, generated Postman collection (`docs/flavor-api.postman_collection.json`) covering all 117 requests.
+- Deleted the original ~100 single-action legacy API controllers and their form requests, which had been orphaned since the 2.0.0 rebuild removed `routes/api.php` from the router without deleting the files on disk.
+
+### Notifications
+
+- Added a database notification channel alongside the existing email notifications, via a shared `FlavorNotification` base class that reuses the existing `Mailable` classes for the mail half.
+- Added nine notification types across four domains (Sales, Reservations, Inventory, People), each routed to the actor who actually needs it — including two new staff-facing, database-only alerts (new order, new reservation) that did not exist before.
+- Added `preferred_locale` to `users`; every notification — mail and in-app — now renders in the *recipient's* language, not the acting user's.
+- Added a notification bell to both the staff and customer headers, and a full notification centre page.
+
+### Fixes and cleanup
+
+- Fixed the `auto-fit` grid on the menu and offers pages producing a full-width card when only one result matched a filter; introduced a dedicated `.grid-cards` class using `auto-fill`.
+- Reprocessed the supplied logo artwork: removed its flat background and re-hued it to the site's amber/olive palette.
+- Swapped the compressed full logo lockup for the existing scalable vector mark in every navigation and auth context, and enlarged it on the sign-in/register screen.
+- Moved the shopping cart's storage from the PHP session to the cache layer, keyed by user ID — the session dependency was incompatible with a stateless token API, and the change has no effect on the web experience.
+- Removed the unused `ichtrojan/laravel-otp` dependency (superseded by `AuthService`'s own cache-based verification codes since 2.0.0, but never actually removed from `composer.json`).
+- Removed an orphaned, unbranded `ReservationCodeMail` class and its unused view.
+- Moved the `Auth::logout()` call out of `AuthService::deactivate()` and into the web controller, since session handling is a transport concern, not a domain one — the service can now be safely called from the token-based API too.
+
+---
+
 ## 2.0.0 — Rebuild
 
 ### Identity and interface

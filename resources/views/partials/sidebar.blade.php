@@ -1,7 +1,7 @@
 @php($user = auth()->user())
 <aside class="sidebar" id="workspace-sidebar">
     <a class="sidebar__brand" href="{{ route('manage.dashboard') }}">
-        <img src="{{ asset('assets/img/brand/logo-192.png') }}" alt="">
+        <img src="{{ asset('assets/img/brand/mark.svg') }}" alt="">
         <span><b>{{ config('flavor.brand.name') }}</b><small>{{ __('app.workspace') }}</small></span>
     </a>
 

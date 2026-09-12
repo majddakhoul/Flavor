@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reservation Booking — Flavor Diagrams</title>
+<link rel="stylesheet" href="assets/diagrams.css">
+
+</head>
+<body>
+<header class="topbar">
+  <div>
+    <p class="topbar__crumbs"><a href="index.html">Diagrams</a> / Behaviour — Activity Diagram</p>
+    <h1 class="topbar__title">Reservation Booking</h1>
+  </div>
+  <a href="../../README.md">&larr; Back to README</a>
+</header>
+<main class="shell">
+  <div class="diagram-head">
+    <p>Booking a table, whether the customer does it themselves or a waiter takes it over the phone — the same service, the same conflict check, either way.</p>
+  </div>
+  <div class="legend"><span><i style="background:var(--color-surface-2)"></i>Swimlane (actor / layer)</span>
+<span><i style="background:var(--color-primary-light)"></i>Decision</span>
+<span><i style="background:var(--color-warning-light)"></i>Note</span></div>
+  <div class="diagram-card">
+    <svg viewBox="0 0 1180 940" xmlns="http://www.w3.org/2000/svg" class="diagram-svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" class="arrowhead"/>
+  </marker>
+  <marker id="arrow-open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+    <path d="M1,1 L9,5 L1,9" fill="none" class="arrowhead-open"/>
+  </marker>
+  <marker id="diamond-start" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0,5 L5,0 L10,5 L5,10 z" class="diamond-marker"/>
+  </marker>
+</defs>
+
+<rect x="0.0" y="0" width="295.0" height="940" class="swimlane-bg"/>
+<text x="147.5" y="22" class="swimlane-lbl" text-anchor="middle">Customer / Waiter</text>
+<rect x="295.0" y="0" width="295.0" height="940" class="swimlane-bg alt"/>
+<text x="442.5" y="22" class="swimlane-lbl" text-anchor="middle">TableAvailabilityService</text>
+<line x1="295.0" y1="0" x2="295.0" y2="940" class="swimlane-divider"/>
+<rect x="590.0" y="0" width="295.0" height="940" class="swimlane-bg"/>
+<text x="737.5" y="22" class="swimlane-lbl" text-anchor="middle">ReservationService</text>
+<line x1="590.0" y1="0" x2="590.0" y2="940" class="swimlane-divider"/>
+<rect x="885.0" y="0" width="295.0" height="940" class="swimlane-bg alt"/>
+<text x="1032.5" y="22" class="swimlane-lbl" text-anchor="middle">Notifications</text>
+<line x1="885.0" y1="0" x2="885.0" y2="940" class="swimlane-divider"/>
+<circle cx="147.5" cy="40" r="9" class="init-state"/>
+<rect x="32.5" y="80" width="230" height="55" rx="10" class="box"/><text x="147.5" y="104.5" class="lbl" text-anchor="middle">Choose party size, start &amp; end</text>
+<text x="147.5" y="118.5" class="lbl" text-anchor="middle">time</text>
+<line x1="147.5" y1="135" x2="147.5" y2="170" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="322.5" y="180" width="240" height="55" rx="10" class="box"/><text x="442.5" y="197.5" class="lbl" text-anchor="middle">availableBetween(): find active</text>
+<text x="442.5" y="211.5" class="lbl" text-anchor="middle">tables free across every existing</text>
+<text x="442.5" y="225.5" class="lbl" text-anchor="middle">reservation in that window</text>
+<line x1="147.5" y1="135" x2="442.5" y2="180" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="32.5" y="270" width="230" height="50" rx="10" class="box"/><text x="147.5" y="292.0" class="lbl" text-anchor="middle">Pick one or more tables from the</text>
+<text x="147.5" y="306.0" class="lbl" text-anchor="middle">free list</text>
+<line x1="442.5" y1="235" x2="147.5" y2="270" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="617.5" y="350" width="240" height="50" rx="10" class="box"/><text x="737.5" y="379.0" class="lbl" text-anchor="middle">ReservationService::create()</text>
+<line x1="147.5" y1="320" x2="737.5" y2="350" class="edge strong" marker-end="url(#arrow)"/>
+<polygon points="737.5,425 852.5,462.5 737.5,500 622.5,462.5" class="decision"/><text x="737.5" y="454.5" class="lbl" text-anchor="middle">conflictingTableIds() empty &amp;</text>
+<text x="737.5" y="466.5" class="lbl" text-anchor="middle">capacity sufficient? (locked</text>
+<text x="737.5" y="478.5" class="lbl" text-anchor="middle">rows)</text>
+<line x1="737.5" y1="400" x2="737.5" y2="425" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="32.5" y="530" width="230" height="55" rx="10" class="box"/><text x="147.5" y="554.5" class="lbl" text-anchor="middle">Show conflict error; return to</text>
+<text x="147.5" y="568.5" class="lbl" text-anchor="middle">table selection</text>
+<line x1="637.5" y1="463" x2="252.5" y2="545" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="414.4" y="495.0" width="21.2" height="14" class="edge-lbl-bg"/>
+<text x="425.0" y="506.0" class="edge-lbl" text-anchor="middle">no</text>
+<line x1="252.5" y1="585" x2="147.5" y2="295" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="617.5" y="530" width="240" height="55" rx="10" class="box"/><text x="737.5" y="547.5" class="lbl" text-anchor="middle">Create Reservation (Pending) +</text>
+<text x="737.5" y="561.5" class="lbl" text-anchor="middle">reservation_table rows in one</text>
+<text x="737.5" y="575.5" class="lbl" text-anchor="middle">transaction</text>
+<line x1="837.5" y1="463" x2="847.5" y2="540" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="843.6" y="492.5" width="27.799999999999997" height="14" class="edge-lbl-bg"/>
+<text x="857.5" y="503.5" class="edge-lbl" text-anchor="middle">yes</text>
+<rect x="617.5" y="620" width="240" height="50" rx="10" class="box"/><text x="737.5" y="649.0" class="lbl" text-anchor="middle">Fire ReservationCreated</text>
+<line x1="737.5" y1="585" x2="737.5" y2="620" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="922.5" y="705" width="220" height="55" rx="10" class="box"/><text x="1032.5" y="722.5" class="lbl" text-anchor="middle">Notify customer (mail + in-app:</text>
+<text x="1032.5" y="736.5" class="lbl" text-anchor="middle">reservation code) and floor</text>
+<text x="1032.5" y="750.5" class="lbl" text-anchor="middle">staff (in-app)</text>
+<line x1="737.5" y1="670" x2="1032.5" y2="705" class="edge strong" marker-end="url(#arrow)"/>
+<rect x="32.5" y="800" width="230" height="50" rx="10" class="box"/><text x="147.5" y="822.0" class="lbl" text-anchor="middle">Reservation code shown to the</text>
+<text x="147.5" y="836.0" class="lbl" text-anchor="middle">customer</text>
+<line x1="1032.5" y1="760" x2="147.5" y2="800" class="edge strong" marker-end="url(#arrow)"/>
+<circle cx="147.5" cy="880" r="11" class="final-state-outer"/><circle cx="147.5" cy="880" r="7" class="final-state-inner"/>
+<line x1="147.5" y1="850" x2="147.5" y2="879" class="edge strong" marker-end="url(#arrow)"/>
+</svg>
+  </div>
+  <div class="diagram-card" style="margin-top:16px;box-shadow:none"><strong>Maps to</strong><ul style="margin:8px 0 0;padding-inline-start:20px;color:#4b5563"><li><code>App\Services\Reservations\TableAvailabilityService::availableBetween()</code> and <code>ReservationService::create()</code>.</li>
+<li>Double-booking protection: <code>conflictingTableIds()</code> locks the candidate table rows with <code>lockForUpdate()</code> before confirming, so two concurrent bookings cannot both claim the same table.</li>
+<li><code>App\Events\ReservationCreated</code> &rarr; <code>SendReservationTicket</code> (customer) and <code>NotifyStaffOfNewReservation</code> (staff with the <code>floor</code> ability).</li>
+<li>API: <code>GET /account/reservations/availability</code>, <code>POST /account/reservations</code> (customer) or <code>POST /manage/reservations</code> (staff, same service underneath).</li></ul></div>
+</main>
+<footer class="page-foot">Part of the <a href="../../README.md">Flavor</a> documentation set. Generated as plain SVG/HTML/CSS &mdash; no external diagram tooling required to view or edit.</footer>
+</body>
+</html>
